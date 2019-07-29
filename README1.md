@@ -12,11 +12,7 @@
 
 ## Description
 
-This repo provides a simple example for how to setup various CI services as
-well as integrating analysis tools into these services. These tools should be
-used as part of a comprehensive Software Development Process (SDP) and can also
-be used as a starting template for any C or C++ application. The following CI
-tools are used, providing testing support for Windows, Cygwin, Linux and macOS
+BXR_PloverPC는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감 정보 검출 및 유출을 방지 하기 위한 방향으로 진행될 예정이다.
 
 - [Travis CI](https://travis-ci.org/)
 - [AppVeyor](https://www.appveyor.com/)
