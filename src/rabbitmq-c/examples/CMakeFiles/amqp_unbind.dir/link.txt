@@ -1,0 +1,1 @@
+/usr/bin/cc -Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common -fvisibility=hidden  -std=gnu90 -O3 -DNDEBUG  -rdynamic CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o CMakeFiles/amqp_unbind.dir/utils.c.o CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o  -o amqp_unbind -Wl,-rpath,/rabbitmq-c/librabbitmq ../librabbitmq/librabbitmq.so.4.3.1 -lssl -lcrypto -lrt -pthread 

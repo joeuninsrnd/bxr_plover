@@ -1,0 +1,1 @@
+/usr/bin/cc -Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common -fvisibility=hidden  -std=gnu90 -O3 -DNDEBUG  -rdynamic CMakeFiles/test_parse_url.dir/test_parse_url.c.o  -o test_parse_url ../librabbitmq/librabbitmq.a -lssl -lcrypto -lrt -pthread 
