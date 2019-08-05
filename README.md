@@ -13,6 +13,7 @@
 ## Description
 
 BXR_PloverPC는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감 정보 검출 및 유출을 방지 하기 위한 방향으로 진행될 예정이다.
+RabbitMQ를 사용하여 Server와 Client 통신하는 부분을 개발하고, MariaDB를 사용할 예정이다.
 
 - [Travis CI](https://travis-ci.org/)
 - [AppVeyor](https://www.appveyor.com/)
