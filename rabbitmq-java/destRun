@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#echo -e "\n"
+
+java -classpath .:$MYPATH:$HOME/destination.jar:$CLASSPATH destination/Receive 
+
