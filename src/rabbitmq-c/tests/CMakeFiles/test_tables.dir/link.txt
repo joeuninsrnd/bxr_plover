@@ -1,0 +1,1 @@
+/usr/bin/cc -Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common -fvisibility=hidden  -std=gnu90 -O3 -DNDEBUG  -rdynamic CMakeFiles/test_tables.dir/test_tables.c.o  -o test_tables ../librabbitmq/librabbitmq.a -lssl -lcrypto -lrt -pthread 
