@@ -12,7 +12,7 @@
 
 ## Description
 
-BXR_PloverPC는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감 정보 검출 및 유출을 방지 하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신하는 부분을 개발하고 MariaDB를 사용할 예정이다.
+BXR_PloverPC는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감 정보 검출 및 유출을 방지 하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신하는 부분을 개발하고 MariaDB를 사용할 예정이다. (RabbitMQ와 MariaDB를 연동해서 사용하기위해 Maxscale을 사용하려하는데 아직 Debian10을 지원하지 않아서 다른방법을 찾는중...)
 
 - [Travis CI](https://travis-ci.org/)
 - [AppVeyor](https://www.appveyor.com/)
