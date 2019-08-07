@@ -35,7 +35,7 @@ public class DBcon {
 			//Statement st = con.createStatement();
 			PreparedStatement pst = null;
 			StringBuilder sb = new StringBuilder();
-			String data = sb.append("INSERT INTO rabbit(message) " + "VALUE(" + message1 + ")").toString();
+			String data = sb.append("INSERT INTO rabbit(message) " + "VALUE('" + message1 + "')").toString();
 			//st.executeUpdate(data);
 			pst = con.prepareStatement(data);
 			//pst.setString(7, message1);
