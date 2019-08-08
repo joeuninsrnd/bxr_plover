@@ -6,19 +6,19 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/librabbitmq/amqp_hostcheck.c
+/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c
 amqp_hostcheck.h
-/rabbitmq-c/librabbitmq/amqp_hostcheck.h
+/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.h
 string.h
 -
 
-/rabbitmq-c/librabbitmq/amqp_hostcheck.h
+/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.h
 
-/rabbitmq-c/tests/test_hostcheck.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_hostcheck.c
 config.h
-/rabbitmq-c/tests/config.h
+/bxr_ploverpc/src/rabbitmq-c/tests/config.h
 amqp_hostcheck.h
-/rabbitmq-c/tests/amqp_hostcheck.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp_hostcheck.h
 stdio.h
 -
 stdlib.h

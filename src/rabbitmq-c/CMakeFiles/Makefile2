@@ -59,10 +59,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /rabbitmq-c
+CMAKE_SOURCE_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /rabbitmq-c
+CMAKE_BINARY_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 #=============================================================================
 # Directory level rules for directory librabbitmq
@@ -91,7 +91,7 @@ librabbitmq/preinstall:
 librabbitmq/CMakeFiles/rabbitmq-static.dir/all:
 	$(MAKE) -f librabbitmq/CMakeFiles/rabbitmq-static.dir/build.make librabbitmq/CMakeFiles/rabbitmq-static.dir/depend
 	$(MAKE) -f librabbitmq/CMakeFiles/rabbitmq-static.dir/build.make librabbitmq/CMakeFiles/rabbitmq-static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=60,61,62,63,64,65,66,67,68,69,70,71,72,73,74 "Built target rabbitmq-static"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=60,61,62,63,64,65,66,67,68,69,70,71,72,73,74 "Built target rabbitmq-static"
 .PHONY : librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 
 # Include target in all.
@@ -101,9 +101,9 @@ all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 
 # Build rule for subdir invocation for target.
 librabbitmq/CMakeFiles/rabbitmq-static.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 15
 	$(MAKE) -f CMakeFiles/Makefile2 librabbitmq/CMakeFiles/rabbitmq-static.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : librabbitmq/CMakeFiles/rabbitmq-static.dir/rule
 
 # Convenience name for target.
@@ -128,7 +128,7 @@ clean: librabbitmq/CMakeFiles/rabbitmq-static.dir/clean
 librabbitmq/CMakeFiles/rabbitmq.dir/all:
 	$(MAKE) -f librabbitmq/CMakeFiles/rabbitmq.dir/build.make librabbitmq/CMakeFiles/rabbitmq.dir/depend
 	$(MAKE) -f librabbitmq/CMakeFiles/rabbitmq.dir/build.make librabbitmq/CMakeFiles/rabbitmq.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=45,46,47,48,49,50,51,52,53,54,55,56,57,58,59 "Built target rabbitmq"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=45,46,47,48,49,50,51,52,53,54,55,56,57,58,59 "Built target rabbitmq"
 .PHONY : librabbitmq/CMakeFiles/rabbitmq.dir/all
 
 # Include target in all.
@@ -138,9 +138,9 @@ all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 
 # Build rule for subdir invocation for target.
 librabbitmq/CMakeFiles/rabbitmq.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 15
 	$(MAKE) -f CMakeFiles/Makefile2 librabbitmq/CMakeFiles/rabbitmq.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : librabbitmq/CMakeFiles/rabbitmq.dir/rule
 
 # Convenience name for target.
@@ -203,7 +203,7 @@ examples/preinstall:
 examples/CMakeFiles/amqp_connect_timeout.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_connect_timeout.dir/build.make examples/CMakeFiles/amqp_connect_timeout.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_connect_timeout.dir/build.make examples/CMakeFiles/amqp_connect_timeout.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=5,6,7,8 "Built target amqp_connect_timeout"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=5,6,7,8 "Built target amqp_connect_timeout"
 .PHONY : examples/CMakeFiles/amqp_connect_timeout.dir/all
 
 # Include target in all.
@@ -213,9 +213,9 @@ all: examples/CMakeFiles/amqp_connect_timeout.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_connect_timeout.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_connect_timeout.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_connect_timeout.dir/rule
 
 # Convenience name for target.
@@ -240,7 +240,7 @@ clean: examples/CMakeFiles/amqp_connect_timeout.dir/clean
 examples/CMakeFiles/amqp_rpc_sendstring_client.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_rpc_sendstring_client.dir/build.make examples/CMakeFiles/amqp_rpc_sendstring_client.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_rpc_sendstring_client.dir/build.make examples/CMakeFiles/amqp_rpc_sendstring_client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=29,30,31,32 "Built target amqp_rpc_sendstring_client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=29,30,31,32 "Built target amqp_rpc_sendstring_client"
 .PHONY : examples/CMakeFiles/amqp_rpc_sendstring_client.dir/all
 
 # Include target in all.
@@ -250,9 +250,9 @@ all: examples/CMakeFiles/amqp_rpc_sendstring_client.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_rpc_sendstring_client.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_rpc_sendstring_client.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_rpc_sendstring_client.dir/rule
 
 # Convenience name for target.
@@ -277,7 +277,7 @@ clean: examples/CMakeFiles/amqp_rpc_sendstring_client.dir/clean
 examples/CMakeFiles/amqp_listenq.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_listenq.dir/build.make examples/CMakeFiles/amqp_listenq.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_listenq.dir/build.make examples/CMakeFiles/amqp_listenq.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=21,22,23,24 "Built target amqp_listenq"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=21,22,23,24 "Built target amqp_listenq"
 .PHONY : examples/CMakeFiles/amqp_listenq.dir/all
 
 # Include target in all.
@@ -287,9 +287,9 @@ all: examples/CMakeFiles/amqp_listenq.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_listenq.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_listenq.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_listenq.dir/rule
 
 # Convenience name for target.
@@ -314,7 +314,7 @@ clean: examples/CMakeFiles/amqp_listenq.dir/clean
 examples/CMakeFiles/amqp_listen.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_listen.dir/build.make examples/CMakeFiles/amqp_listen.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_listen.dir/build.make examples/CMakeFiles/amqp_listen.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=17,18,19,20 "Built target amqp_listen"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=17,18,19,20 "Built target amqp_listen"
 .PHONY : examples/CMakeFiles/amqp_listen.dir/all
 
 # Include target in all.
@@ -324,9 +324,9 @@ all: examples/CMakeFiles/amqp_listen.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_listen.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_listen.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_listen.dir/rule
 
 # Convenience name for target.
@@ -351,7 +351,7 @@ clean: examples/CMakeFiles/amqp_listen.dir/clean
 examples/CMakeFiles/amqp_bind.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_bind.dir/build.make examples/CMakeFiles/amqp_bind.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_bind.dir/build.make examples/CMakeFiles/amqp_bind.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=1,2,3,4 "Built target amqp_bind"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=1,2,3,4 "Built target amqp_bind"
 .PHONY : examples/CMakeFiles/amqp_bind.dir/all
 
 # Include target in all.
@@ -361,9 +361,9 @@ all: examples/CMakeFiles/amqp_bind.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_bind.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_bind.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_bind.dir/rule
 
 # Convenience name for target.
@@ -388,7 +388,7 @@ clean: examples/CMakeFiles/amqp_bind.dir/clean
 examples/CMakeFiles/amqp_sendstring.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_sendstring.dir/build.make examples/CMakeFiles/amqp_sendstring.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_sendstring.dir/build.make examples/CMakeFiles/amqp_sendstring.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=33,34,35,36 "Built target amqp_sendstring"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=33,34,35,36 "Built target amqp_sendstring"
 .PHONY : examples/CMakeFiles/amqp_sendstring.dir/all
 
 # Include target in all.
@@ -398,9 +398,9 @@ all: examples/CMakeFiles/amqp_sendstring.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_sendstring.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_sendstring.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_sendstring.dir/rule
 
 # Convenience name for target.
@@ -425,7 +425,7 @@ clean: examples/CMakeFiles/amqp_sendstring.dir/clean
 examples/CMakeFiles/amqp_ssl_connect.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_ssl_connect.dir/build.make examples/CMakeFiles/amqp_ssl_connect.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_ssl_connect.dir/build.make examples/CMakeFiles/amqp_ssl_connect.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=37,38,39,40 "Built target amqp_ssl_connect"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=37,38,39,40 "Built target amqp_ssl_connect"
 .PHONY : examples/CMakeFiles/amqp_ssl_connect.dir/all
 
 # Include target in all.
@@ -435,9 +435,9 @@ all: examples/CMakeFiles/amqp_ssl_connect.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_ssl_connect.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_ssl_connect.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_ssl_connect.dir/rule
 
 # Convenience name for target.
@@ -462,7 +462,7 @@ clean: examples/CMakeFiles/amqp_ssl_connect.dir/clean
 examples/CMakeFiles/amqp_producer.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_producer.dir/build.make examples/CMakeFiles/amqp_producer.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_producer.dir/build.make examples/CMakeFiles/amqp_producer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=25,26,27,28 "Built target amqp_producer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=25,26,27,28 "Built target amqp_producer"
 .PHONY : examples/CMakeFiles/amqp_producer.dir/all
 
 # Include target in all.
@@ -472,9 +472,9 @@ all: examples/CMakeFiles/amqp_producer.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_producer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_producer.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_producer.dir/rule
 
 # Convenience name for target.
@@ -499,7 +499,7 @@ clean: examples/CMakeFiles/amqp_producer.dir/clean
 examples/CMakeFiles/amqp_exchange_declare.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_exchange_declare.dir/build.make examples/CMakeFiles/amqp_exchange_declare.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_exchange_declare.dir/build.make examples/CMakeFiles/amqp_exchange_declare.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=13,14,15,16 "Built target amqp_exchange_declare"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=13,14,15,16 "Built target amqp_exchange_declare"
 .PHONY : examples/CMakeFiles/amqp_exchange_declare.dir/all
 
 # Include target in all.
@@ -509,9 +509,9 @@ all: examples/CMakeFiles/amqp_exchange_declare.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_exchange_declare.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_exchange_declare.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_exchange_declare.dir/rule
 
 # Convenience name for target.
@@ -536,7 +536,7 @@ clean: examples/CMakeFiles/amqp_exchange_declare.dir/clean
 examples/CMakeFiles/amqp_consumer.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_consumer.dir/build.make examples/CMakeFiles/amqp_consumer.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_consumer.dir/build.make examples/CMakeFiles/amqp_consumer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=9,10,11,12 "Built target amqp_consumer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=9,10,11,12 "Built target amqp_consumer"
 .PHONY : examples/CMakeFiles/amqp_consumer.dir/all
 
 # Include target in all.
@@ -546,9 +546,9 @@ all: examples/CMakeFiles/amqp_consumer.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_consumer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_consumer.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_consumer.dir/rule
 
 # Convenience name for target.
@@ -573,7 +573,7 @@ clean: examples/CMakeFiles/amqp_consumer.dir/clean
 examples/CMakeFiles/amqp_unbind.dir/all: librabbitmq/CMakeFiles/rabbitmq.dir/all
 	$(MAKE) -f examples/CMakeFiles/amqp_unbind.dir/build.make examples/CMakeFiles/amqp_unbind.dir/depend
 	$(MAKE) -f examples/CMakeFiles/amqp_unbind.dir/build.make examples/CMakeFiles/amqp_unbind.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=41,42,43,44 "Built target amqp_unbind"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=41,42,43,44 "Built target amqp_unbind"
 .PHONY : examples/CMakeFiles/amqp_unbind.dir/all
 
 # Include target in all.
@@ -583,9 +583,9 @@ all: examples/CMakeFiles/amqp_unbind.dir/all
 
 # Build rule for subdir invocation for target.
 examples/CMakeFiles/amqp_unbind.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 19
 	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/amqp_unbind.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : examples/CMakeFiles/amqp_unbind.dir/rule
 
 # Convenience name for target.
@@ -640,7 +640,7 @@ tests/preinstall:
 tests/CMakeFiles/test_parse_url.dir/all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 	$(MAKE) -f tests/CMakeFiles/test_parse_url.dir/build.make tests/CMakeFiles/test_parse_url.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_parse_url.dir/build.make tests/CMakeFiles/test_parse_url.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=82,83 "Built target test_parse_url"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=82,83 "Built target test_parse_url"
 .PHONY : tests/CMakeFiles/test_parse_url.dir/all
 
 # Include target in all.
@@ -650,9 +650,9 @@ all: tests/CMakeFiles/test_parse_url.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_parse_url.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_parse_url.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_parse_url.dir/rule
 
 # Convenience name for target.
@@ -677,7 +677,7 @@ clean: tests/CMakeFiles/test_parse_url.dir/clean
 tests/CMakeFiles/test_hostcheck.dir/all:
 	$(MAKE) -f tests/CMakeFiles/test_hostcheck.dir/build.make tests/CMakeFiles/test_hostcheck.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_hostcheck.dir/build.make tests/CMakeFiles/test_hostcheck.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=77,78,79 "Built target test_hostcheck"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=77,78,79 "Built target test_hostcheck"
 .PHONY : tests/CMakeFiles/test_hostcheck.dir/all
 
 # Include target in all.
@@ -687,9 +687,9 @@ all: tests/CMakeFiles/test_hostcheck.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_hostcheck.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 3
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_hostcheck.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_hostcheck.dir/rule
 
 # Convenience name for target.
@@ -714,7 +714,7 @@ clean: tests/CMakeFiles/test_hostcheck.dir/clean
 tests/CMakeFiles/test_status_enum.dir/all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 	$(MAKE) -f tests/CMakeFiles/test_status_enum.dir/build.make tests/CMakeFiles/test_status_enum.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_status_enum.dir/build.make tests/CMakeFiles/test_status_enum.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=86,87 "Built target test_status_enum"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=86,87 "Built target test_status_enum"
 .PHONY : tests/CMakeFiles/test_status_enum.dir/all
 
 # Include target in all.
@@ -724,9 +724,9 @@ all: tests/CMakeFiles/test_status_enum.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_status_enum.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_status_enum.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_status_enum.dir/rule
 
 # Convenience name for target.
@@ -751,7 +751,7 @@ clean: tests/CMakeFiles/test_status_enum.dir/clean
 tests/CMakeFiles/test_merge_capabilities.dir/all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 	$(MAKE) -f tests/CMakeFiles/test_merge_capabilities.dir/build.make tests/CMakeFiles/test_merge_capabilities.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_merge_capabilities.dir/build.make tests/CMakeFiles/test_merge_capabilities.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=80,81 "Built target test_merge_capabilities"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=80,81 "Built target test_merge_capabilities"
 .PHONY : tests/CMakeFiles/test_merge_capabilities.dir/all
 
 # Include target in all.
@@ -761,9 +761,9 @@ all: tests/CMakeFiles/test_merge_capabilities.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_merge_capabilities.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_merge_capabilities.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_merge_capabilities.dir/rule
 
 # Convenience name for target.
@@ -788,7 +788,7 @@ clean: tests/CMakeFiles/test_merge_capabilities.dir/clean
 tests/CMakeFiles/test_sasl_mechanism.dir/all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 	$(MAKE) -f tests/CMakeFiles/test_sasl_mechanism.dir/build.make tests/CMakeFiles/test_sasl_mechanism.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_sasl_mechanism.dir/build.make tests/CMakeFiles/test_sasl_mechanism.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=84,85 "Built target test_sasl_mechanism"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=84,85 "Built target test_sasl_mechanism"
 .PHONY : tests/CMakeFiles/test_sasl_mechanism.dir/all
 
 # Include target in all.
@@ -798,9 +798,9 @@ all: tests/CMakeFiles/test_sasl_mechanism.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_sasl_mechanism.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_sasl_mechanism.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_sasl_mechanism.dir/rule
 
 # Convenience name for target.
@@ -825,7 +825,7 @@ clean: tests/CMakeFiles/test_sasl_mechanism.dir/clean
 tests/CMakeFiles/test_tables.dir/all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 	$(MAKE) -f tests/CMakeFiles/test_tables.dir/build.make tests/CMakeFiles/test_tables.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_tables.dir/build.make tests/CMakeFiles/test_tables.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=88,89 "Built target test_tables"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=88,89 "Built target test_tables"
 .PHONY : tests/CMakeFiles/test_tables.dir/all
 
 # Include target in all.
@@ -835,9 +835,9 @@ all: tests/CMakeFiles/test_tables.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_tables.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_tables.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_tables.dir/rule
 
 # Convenience name for target.
@@ -862,7 +862,7 @@ clean: tests/CMakeFiles/test_tables.dir/clean
 tests/CMakeFiles/test_basic.dir/all: librabbitmq/CMakeFiles/rabbitmq-static.dir/all
 	$(MAKE) -f tests/CMakeFiles/test_basic.dir/build.make tests/CMakeFiles/test_basic.dir/depend
 	$(MAKE) -f tests/CMakeFiles/test_basic.dir/build.make tests/CMakeFiles/test_basic.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=75,76 "Built target test_basic"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=75,76 "Built target test_basic"
 .PHONY : tests/CMakeFiles/test_basic.dir/all
 
 # Include target in all.
@@ -872,9 +872,9 @@ all: tests/CMakeFiles/test_basic.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_basic.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_basic.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /rabbitmq-c/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /bxr_ploverpc/src/rabbitmq-c/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_basic.dir/rule
 
 # Convenience name for target.

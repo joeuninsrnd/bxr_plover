@@ -1,4 +1,4 @@
-# Install script for directory: /rabbitmq-c/tests
+# Install script for directory: /bxr_ploverpc/src/rabbitmq-c/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

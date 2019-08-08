@@ -1,4 +1,4 @@
-# Install script for directory: /rabbitmq-c
+# Install script for directory: /bxr_ploverpc/src/rabbitmq-c
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,14 +38,14 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu/pkgconfig" TYPE FILE FILES "/rabbitmq-c/librabbitmq.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu/pkgconfig" TYPE FILE FILES "/bxr_ploverpc/src/rabbitmq-c/librabbitmq.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/rabbitmq-c/librabbitmq/cmake_install.cmake")
-  include("/rabbitmq-c/examples/cmake_install.cmake")
-  include("/rabbitmq-c/tests/cmake_install.cmake")
+  include("/bxr_ploverpc/src/rabbitmq-c/librabbitmq/cmake_install.cmake")
+  include("/bxr_ploverpc/src/rabbitmq-c/examples/cmake_install.cmake")
+  include("/bxr_ploverpc/src/rabbitmq-c/tests/cmake_install.cmake")
 
 endif()
 
@@ -57,5 +57,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/rabbitmq-c/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/bxr_ploverpc/src/rabbitmq-c/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
