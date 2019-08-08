@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/rabbitmq-c/examples/amqp_producer.c" "/rabbitmq-c/examples/CMakeFiles/amqp_producer.dir/amqp_producer.c.o"
-  "/rabbitmq-c/examples/unix/platform_utils.c" "/rabbitmq-c/examples/CMakeFiles/amqp_producer.dir/unix/platform_utils.c.o"
-  "/rabbitmq-c/examples/utils.c" "/rabbitmq-c/examples/CMakeFiles/amqp_producer.dir/utils.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/examples/amqp_producer.c" "/bxr_ploverpc/src/rabbitmq-c/examples/CMakeFiles/amqp_producer.dir/amqp_producer.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c" "/bxr_ploverpc/src/rabbitmq-c/examples/CMakeFiles/amqp_producer.dir/unix/platform_utils.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/examples/utils.c" "/bxr_ploverpc/src/rabbitmq-c/examples/CMakeFiles/amqp_producer.dir/utils.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
@@ -18,7 +18,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq.dir/DependInfo.cmake"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

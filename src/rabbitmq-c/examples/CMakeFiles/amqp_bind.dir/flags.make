@@ -6,5 +6,5 @@ C_FLAGS = -Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common -fv
 
 C_DEFINES = 
 
-C_INCLUDES = -I/rabbitmq-c/librabbitmq -I/rabbitmq-c/examples/unix 
+C_INCLUDES = -I/bxr_ploverpc/src/rabbitmq-c/librabbitmq -I/bxr_ploverpc/src/rabbitmq-c/examples/unix 
 

@@ -6,5 +6,5 @@ C_FLAGS = -Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common -fv
 
 C_DEFINES = -DAMQP_STATIC -DHAVE_CONFIG_H
 
-C_INCLUDES = -I/rabbitmq-c/librabbitmq -I/rabbitmq-c/tests/unix 
+C_INCLUDES = -I/bxr_ploverpc/src/rabbitmq-c/librabbitmq -I/bxr_ploverpc/src/rabbitmq-c/tests/unix 
 

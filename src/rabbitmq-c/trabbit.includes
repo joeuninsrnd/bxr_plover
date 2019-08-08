@@ -1,0 +1,9 @@
+examples
+librabbitmq
+librabbitmq/unix
+librabbitmq/win32
+librabbitmq/win32/msinttypes
+tests/win32/msinttypes
+tools
+tools/unix
+tools/win32

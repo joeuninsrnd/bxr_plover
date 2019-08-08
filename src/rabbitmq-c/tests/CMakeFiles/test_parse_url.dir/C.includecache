@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/tests/test_parse_url.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_parse_url.c
 config.h
-/rabbitmq-c/tests/config.h
+/bxr_ploverpc/src/rabbitmq-c/tests/config.h
 stdio.h
 -
 stdlib.h

@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /rabbitmq-c
+CMAKE_SOURCE_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /rabbitmq-c
+CMAKE_BINARY_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # Include any dependencies generated for this target.
 include examples/CMakeFiles/amqp_unbind.dir/depend.make
@@ -59,42 +59,42 @@ include examples/CMakeFiles/amqp_unbind.dir/flags.make
 
 examples/CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o: examples/CMakeFiles/amqp_unbind.dir/flags.make
 examples/CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o: examples/amqp_unbind.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object examples/CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o   -c /rabbitmq-c/examples/amqp_unbind.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object examples/CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_unbind.dir/amqp_unbind.c.o   -c /bxr_ploverpc/src/rabbitmq-c/examples/amqp_unbind.c
 
 examples/CMakeFiles/amqp_unbind.dir/amqp_unbind.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/amqp_unbind.dir/amqp_unbind.c.i"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/examples/amqp_unbind.c > CMakeFiles/amqp_unbind.dir/amqp_unbind.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/examples/amqp_unbind.c > CMakeFiles/amqp_unbind.dir/amqp_unbind.c.i
 
 examples/CMakeFiles/amqp_unbind.dir/amqp_unbind.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/amqp_unbind.dir/amqp_unbind.c.s"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/examples/amqp_unbind.c -o CMakeFiles/amqp_unbind.dir/amqp_unbind.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/examples/amqp_unbind.c -o CMakeFiles/amqp_unbind.dir/amqp_unbind.c.s
 
 examples/CMakeFiles/amqp_unbind.dir/utils.c.o: examples/CMakeFiles/amqp_unbind.dir/flags.make
 examples/CMakeFiles/amqp_unbind.dir/utils.c.o: examples/utils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object examples/CMakeFiles/amqp_unbind.dir/utils.c.o"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_unbind.dir/utils.c.o   -c /rabbitmq-c/examples/utils.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object examples/CMakeFiles/amqp_unbind.dir/utils.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_unbind.dir/utils.c.o   -c /bxr_ploverpc/src/rabbitmq-c/examples/utils.c
 
 examples/CMakeFiles/amqp_unbind.dir/utils.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/amqp_unbind.dir/utils.c.i"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/examples/utils.c > CMakeFiles/amqp_unbind.dir/utils.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/examples/utils.c > CMakeFiles/amqp_unbind.dir/utils.c.i
 
 examples/CMakeFiles/amqp_unbind.dir/utils.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/amqp_unbind.dir/utils.c.s"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/examples/utils.c -o CMakeFiles/amqp_unbind.dir/utils.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/examples/utils.c -o CMakeFiles/amqp_unbind.dir/utils.c.s
 
 examples/CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o: examples/CMakeFiles/amqp_unbind.dir/flags.make
 examples/CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o: examples/unix/platform_utils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object examples/CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o   -c /rabbitmq-c/examples/unix/platform_utils.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object examples/CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.o   -c /bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c
 
 examples/CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.i"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/examples/unix/platform_utils.c > CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c > CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.i
 
 examples/CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.s"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/examples/unix/platform_utils.c -o CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c -o CMakeFiles/amqp_unbind.dir/unix/platform_utils.c.s
 
 # Object files for target amqp_unbind
 amqp_unbind_OBJECTS = \
@@ -113,8 +113,8 @@ examples/amqp_unbind: librabbitmq/librabbitmq.so.4.3.1
 examples/amqp_unbind: /usr/lib/x86_64-linux-gnu/libssl.so
 examples/amqp_unbind: /usr/lib/x86_64-linux-gnu/libcrypto.so
 examples/amqp_unbind: examples/CMakeFiles/amqp_unbind.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable amqp_unbind"
-	cd /rabbitmq-c/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/amqp_unbind.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable amqp_unbind"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/amqp_unbind.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 examples/CMakeFiles/amqp_unbind.dir/build: examples/amqp_unbind
@@ -122,10 +122,10 @@ examples/CMakeFiles/amqp_unbind.dir/build: examples/amqp_unbind
 .PHONY : examples/CMakeFiles/amqp_unbind.dir/build
 
 examples/CMakeFiles/amqp_unbind.dir/clean:
-	cd /rabbitmq-c/examples && $(CMAKE_COMMAND) -P CMakeFiles/amqp_unbind.dir/cmake_clean.cmake
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && $(CMAKE_COMMAND) -P CMakeFiles/amqp_unbind.dir/cmake_clean.cmake
 .PHONY : examples/CMakeFiles/amqp_unbind.dir/clean
 
 examples/CMakeFiles/amqp_unbind.dir/depend:
-	cd /rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /rabbitmq-c /rabbitmq-c/examples /rabbitmq-c /rabbitmq-c/examples /rabbitmq-c/examples/CMakeFiles/amqp_unbind.dir/DependInfo.cmake --color=$(COLOR)
+	cd /bxr_ploverpc/src/rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/examples /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/examples /bxr_ploverpc/src/rabbitmq-c/examples/CMakeFiles/amqp_unbind.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : examples/CMakeFiles/amqp_unbind.dir/depend
 

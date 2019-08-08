@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/rabbitmq-c/librabbitmq/amqp_hostcheck.c" "/rabbitmq-c/tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o"
-  "/rabbitmq-c/tests/test_hostcheck.c" "/rabbitmq-c/tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c" "/bxr_ploverpc/src/rabbitmq-c/tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/tests/test_hostcheck.c" "/bxr_ploverpc/src/rabbitmq-c/tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
