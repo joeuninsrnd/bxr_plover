@@ -45,66 +45,6 @@
 
 #include "utils.h"
 
-char file_Parsing(char jumin[])
-{
-    FILE *fp = fopen("/home/joeun/parsejumin/jumin.txt", "r");
-
-    if(fp == NULL)
-    {
-        printf("Can not open files. \n");
-    }
-
-    fscanf(fp, "%s", jumin);
-
-    fclose(fp);
-    return jumin[15];
-}
-
-char check_Jumin(char jumin[])
-{
-    int i, result, sum = 0;
-
-    file_Parsing(jumin);
-
-//*******************************주민번호 유효성 검사*************************************//
-
-    for(i = 0;i < 13;i++)                    //index를 12까지 반복문을 수행
-    {
-        if(i < 6)                            //index 0~5까지는 index+2를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i+2);
-        }
-        if(i > 6 && i < 9)                   //inedx 7~8까지는 index+1를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i+1);
-        }
-        if(i > 8)                            //index 9~12까지는 index-7를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i-7);
-        }
-    }
-        result = 11 - (sum % 11);
-
-     if(result >= 10)
-     {
-         result -= 10;
-     }
-     else
-         result;
-
-     if(result == (jumin[13]-'0'))           //result값이 주민번호 마지막과 같은지 확인.
-     {
-         /******올바른 주민 등록 번호******/
-         /* amqp_rpc_sendstring_client.c 에서 messeage보내는 부분에 jumin[15] 넣어서 전송*/
-         return jumin[15];
-     }
-     else
-     {
-         /******잘못된 주민 등록 번호******/
-         /* 처리하기 */
-     }
-}
-
 int main(int argc, char *argv[]) {
   char const *hostname;
   int port, status;
@@ -115,12 +55,10 @@ int main(int argc, char *argv[]) {
   amqp_connection_state_t conn;
   amqp_bytes_t reply_to_queue;
 
-  char jumin[15];
-  check_Jumin(jumin);
-
-  if (argc < 5) { /* minimum number of mandatory arguments */
+  if (argc < 6) { /* minimum number of mandatory arguments */
     fprintf(stderr,
-            "usage:\namqp_rpc_sendstring_client host port exchange routingkey \n");
+            "usage:\namqp_rpc_sendstring_client host port exchange routingkey "
+            "messagebody\n");
     return 1;
   }
 
@@ -128,6 +66,7 @@ int main(int argc, char *argv[]) {
   port = atoi(argv[2]);
   exchange = argv[3];
   routingkey = argv[4];
+  messagebody = argv[5];
 
   /*
      establish a channel that is used to connect RabbitMQ server
@@ -192,7 +131,7 @@ int main(int argc, char *argv[]) {
     */
     die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
                                     amqp_cstring_bytes(routingkey), 0, 0,
-                                    &props, amqp_cstring_bytes(jumin)),
+                                    &props, amqp_cstring_bytes(messagebody)),
                  "Publishing");
 
     amqp_bytes_free(props.reply_to);
