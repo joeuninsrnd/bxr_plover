@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/tests/test_basic.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_basic.c
 amqp.h
-/rabbitmq-c/tests/amqp.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp.h
 amqp_tcp_socket.h
-/rabbitmq-c/tests/amqp_tcp_socket.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp_tcp_socket.h
 amqp_time.h
-/rabbitmq-c/tests/amqp_time.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp_time.h
 stdio.h
 -
 stdlib.h

@@ -1,4 +1,4 @@
-# Install script for directory: /rabbitmq-c/librabbitmq
+# Install script for directory: /bxr_ploverpc/src/rabbitmq-c/librabbitmq
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,8 +50,8 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     endif()
   endforeach()
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu" TYPE SHARED_LIBRARY FILES
-    "/rabbitmq-c/librabbitmq/librabbitmq.so.4.3.1"
-    "/rabbitmq-c/librabbitmq/librabbitmq.so.4"
+    "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/librabbitmq.so.4.3.1"
+    "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/librabbitmq.so.4"
     )
   foreach(file
       "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu/librabbitmq.so.4.3.1"
@@ -73,7 +73,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu/librabbitmq.so"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu" TYPE SHARED_LIBRARY FILES "/rabbitmq-c/librabbitmq/librabbitmq.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu" TYPE SHARED_LIBRARY FILES "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/librabbitmq.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu/librabbitmq.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu/librabbitmq.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -83,15 +83,15 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu" TYPE STATIC_LIBRARY FILES "/rabbitmq-c/librabbitmq/librabbitmq.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/x86_64-linux-gnu" TYPE STATIC_LIBRARY FILES "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/librabbitmq.a")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE FILE FILES
-    "/rabbitmq-c/librabbitmq/amqp.h"
-    "/rabbitmq-c/librabbitmq/amqp_framing.h"
-    "/rabbitmq-c/librabbitmq/amqp_tcp_socket.h"
-    "/rabbitmq-c/librabbitmq/amqp_ssl_socket.h"
+    "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp.h"
+    "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_framing.h"
+    "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_tcp_socket.h"
+    "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_ssl_socket.h"
     )
 endif()
 

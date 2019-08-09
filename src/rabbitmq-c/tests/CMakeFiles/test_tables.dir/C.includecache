@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/tests/test_tables.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_tables.c
 errno.h
 -
 stdarg.h

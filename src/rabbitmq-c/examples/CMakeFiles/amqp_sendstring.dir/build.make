@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /rabbitmq-c
+CMAKE_SOURCE_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /rabbitmq-c
+CMAKE_BINARY_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # Include any dependencies generated for this target.
 include examples/CMakeFiles/amqp_sendstring.dir/depend.make
@@ -59,42 +59,42 @@ include examples/CMakeFiles/amqp_sendstring.dir/flags.make
 
 examples/CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.o: examples/CMakeFiles/amqp_sendstring.dir/flags.make
 examples/CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.o: examples/amqp_sendstring.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object examples/CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.o"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.o   -c /rabbitmq-c/examples/amqp_sendstring.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object examples/CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.o   -c /bxr_ploverpc/src/rabbitmq-c/examples/amqp_sendstring.c
 
 examples/CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.i"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/examples/amqp_sendstring.c > CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/examples/amqp_sendstring.c > CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.i
 
 examples/CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.s"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/examples/amqp_sendstring.c -o CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/examples/amqp_sendstring.c -o CMakeFiles/amqp_sendstring.dir/amqp_sendstring.c.s
 
 examples/CMakeFiles/amqp_sendstring.dir/utils.c.o: examples/CMakeFiles/amqp_sendstring.dir/flags.make
 examples/CMakeFiles/amqp_sendstring.dir/utils.c.o: examples/utils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object examples/CMakeFiles/amqp_sendstring.dir/utils.c.o"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_sendstring.dir/utils.c.o   -c /rabbitmq-c/examples/utils.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object examples/CMakeFiles/amqp_sendstring.dir/utils.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_sendstring.dir/utils.c.o   -c /bxr_ploverpc/src/rabbitmq-c/examples/utils.c
 
 examples/CMakeFiles/amqp_sendstring.dir/utils.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/amqp_sendstring.dir/utils.c.i"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/examples/utils.c > CMakeFiles/amqp_sendstring.dir/utils.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/examples/utils.c > CMakeFiles/amqp_sendstring.dir/utils.c.i
 
 examples/CMakeFiles/amqp_sendstring.dir/utils.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/amqp_sendstring.dir/utils.c.s"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/examples/utils.c -o CMakeFiles/amqp_sendstring.dir/utils.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/examples/utils.c -o CMakeFiles/amqp_sendstring.dir/utils.c.s
 
 examples/CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.o: examples/CMakeFiles/amqp_sendstring.dir/flags.make
 examples/CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.o: examples/unix/platform_utils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object examples/CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.o"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.o   -c /rabbitmq-c/examples/unix/platform_utils.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object examples/CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.o   -c /bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c
 
 examples/CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.i"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/examples/unix/platform_utils.c > CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c > CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.i
 
 examples/CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.s"
-	cd /rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/examples/unix/platform_utils.c -o CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/examples/unix/platform_utils.c -o CMakeFiles/amqp_sendstring.dir/unix/platform_utils.c.s
 
 # Object files for target amqp_sendstring
 amqp_sendstring_OBJECTS = \
@@ -113,8 +113,8 @@ examples/amqp_sendstring: librabbitmq/librabbitmq.so.4.3.1
 examples/amqp_sendstring: /usr/lib/x86_64-linux-gnu/libssl.so
 examples/amqp_sendstring: /usr/lib/x86_64-linux-gnu/libcrypto.so
 examples/amqp_sendstring: examples/CMakeFiles/amqp_sendstring.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable amqp_sendstring"
-	cd /rabbitmq-c/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/amqp_sendstring.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable amqp_sendstring"
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/amqp_sendstring.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 examples/CMakeFiles/amqp_sendstring.dir/build: examples/amqp_sendstring
@@ -122,10 +122,10 @@ examples/CMakeFiles/amqp_sendstring.dir/build: examples/amqp_sendstring
 .PHONY : examples/CMakeFiles/amqp_sendstring.dir/build
 
 examples/CMakeFiles/amqp_sendstring.dir/clean:
-	cd /rabbitmq-c/examples && $(CMAKE_COMMAND) -P CMakeFiles/amqp_sendstring.dir/cmake_clean.cmake
+	cd /bxr_ploverpc/src/rabbitmq-c/examples && $(CMAKE_COMMAND) -P CMakeFiles/amqp_sendstring.dir/cmake_clean.cmake
 .PHONY : examples/CMakeFiles/amqp_sendstring.dir/clean
 
 examples/CMakeFiles/amqp_sendstring.dir/depend:
-	cd /rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /rabbitmq-c /rabbitmq-c/examples /rabbitmq-c /rabbitmq-c/examples /rabbitmq-c/examples/CMakeFiles/amqp_sendstring.dir/DependInfo.cmake --color=$(COLOR)
+	cd /bxr_ploverpc/src/rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/examples /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/examples /bxr_ploverpc/src/rabbitmq-c/examples/CMakeFiles/amqp_sendstring.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : examples/CMakeFiles/amqp_sendstring.dir/depend
 

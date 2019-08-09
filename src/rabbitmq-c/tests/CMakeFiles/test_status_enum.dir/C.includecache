@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/tests/test_status_enum.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_status_enum.c
 config.h
-/rabbitmq-c/tests/config.h
+/bxr_ploverpc/src/rabbitmq-c/tests/config.h
 amqp.h
-/rabbitmq-c/tests/amqp.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp.h
 stdio.h
 -
 stdlib.h

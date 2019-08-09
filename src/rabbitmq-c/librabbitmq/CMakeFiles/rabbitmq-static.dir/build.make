@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /rabbitmq-c
+CMAKE_SOURCE_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /rabbitmq-c
+CMAKE_BINARY_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # Include any dependencies generated for this target.
 include librabbitmq/CMakeFiles/rabbitmq-static.dir/depend.make
@@ -59,185 +59,185 @@ include librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o: librabbitmq/amqp_framing.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o   -c /rabbitmq-c/librabbitmq/amqp_framing.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_framing.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_framing.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_framing.c > CMakeFiles/rabbitmq-static.dir/amqp_framing.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_framing.c > CMakeFiles/rabbitmq-static.dir/amqp_framing.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_framing.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_framing.c -o CMakeFiles/rabbitmq-static.dir/amqp_framing.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_framing.c -o CMakeFiles/rabbitmq-static.dir/amqp_framing.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.o: librabbitmq/amqp_api.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_api.c.o   -c /rabbitmq-c/librabbitmq/amqp_api.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_api.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_api.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_api.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_api.c > CMakeFiles/rabbitmq-static.dir/amqp_api.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_api.c > CMakeFiles/rabbitmq-static.dir/amqp_api.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_api.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_api.c -o CMakeFiles/rabbitmq-static.dir/amqp_api.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_api.c -o CMakeFiles/rabbitmq-static.dir/amqp_api.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o: librabbitmq/amqp_connection.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o   -c /rabbitmq-c/librabbitmq/amqp_connection.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_connection.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_connection.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_connection.c > CMakeFiles/rabbitmq-static.dir/amqp_connection.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_connection.c > CMakeFiles/rabbitmq-static.dir/amqp_connection.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_connection.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_connection.c -o CMakeFiles/rabbitmq-static.dir/amqp_connection.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_connection.c -o CMakeFiles/rabbitmq-static.dir/amqp_connection.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o: librabbitmq/amqp_mem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o   -c /rabbitmq-c/librabbitmq/amqp_mem.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_mem.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_mem.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_mem.c > CMakeFiles/rabbitmq-static.dir/amqp_mem.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_mem.c > CMakeFiles/rabbitmq-static.dir/amqp_mem.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_mem.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_mem.c -o CMakeFiles/rabbitmq-static.dir/amqp_mem.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_mem.c -o CMakeFiles/rabbitmq-static.dir/amqp_mem.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o: librabbitmq/amqp_socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o   -c /rabbitmq-c/librabbitmq/amqp_socket.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_socket.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_socket.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_socket.c > CMakeFiles/rabbitmq-static.dir/amqp_socket.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_socket.c > CMakeFiles/rabbitmq-static.dir/amqp_socket.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_socket.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_socket.c -o CMakeFiles/rabbitmq-static.dir/amqp_socket.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_socket.c -o CMakeFiles/rabbitmq-static.dir/amqp_socket.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.o: librabbitmq/amqp_table.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_table.c.o   -c /rabbitmq-c/librabbitmq/amqp_table.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_table.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_table.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_table.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_table.c > CMakeFiles/rabbitmq-static.dir/amqp_table.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_table.c > CMakeFiles/rabbitmq-static.dir/amqp_table.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_table.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_table.c -o CMakeFiles/rabbitmq-static.dir/amqp_table.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_table.c -o CMakeFiles/rabbitmq-static.dir/amqp_table.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.o: librabbitmq/amqp_url.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_url.c.o   -c /rabbitmq-c/librabbitmq/amqp_url.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_url.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_url.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_url.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_url.c > CMakeFiles/rabbitmq-static.dir/amqp_url.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_url.c > CMakeFiles/rabbitmq-static.dir/amqp_url.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_url.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_url.c -o CMakeFiles/rabbitmq-static.dir/amqp_url.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_url.c -o CMakeFiles/rabbitmq-static.dir/amqp_url.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o: librabbitmq/amqp_tcp_socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o   -c /rabbitmq-c/librabbitmq/amqp_tcp_socket.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_tcp_socket.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_tcp_socket.c > CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_tcp_socket.c > CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_tcp_socket.c -o CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_tcp_socket.c -o CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.o: librabbitmq/amqp_time.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_time.c.o   -c /rabbitmq-c/librabbitmq/amqp_time.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_time.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_time.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_time.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_time.c > CMakeFiles/rabbitmq-static.dir/amqp_time.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_time.c > CMakeFiles/rabbitmq-static.dir/amqp_time.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_time.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_time.c -o CMakeFiles/rabbitmq-static.dir/amqp_time.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_time.c -o CMakeFiles/rabbitmq-static.dir/amqp_time.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o: librabbitmq/amqp_consumer.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o   -c /rabbitmq-c/librabbitmq/amqp_consumer.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_consumer.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_consumer.c > CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_consumer.c > CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_consumer.c -o CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_consumer.c -o CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o: librabbitmq/amqp_openssl.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o   -c /rabbitmq-c/librabbitmq/amqp_openssl.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_openssl.c > CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl.c > CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_openssl.c -o CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl.c -o CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o: librabbitmq/amqp_openssl_hostname_validation.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o   -c /rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c > CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c > CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o: librabbitmq/amqp_hostcheck.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o   -c /rabbitmq-c/librabbitmq/amqp_hostcheck.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_hostcheck.c > CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c > CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_hostcheck.c -o CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c -o CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.s
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o: librabbitmq/CMakeFiles/rabbitmq-static.dir/flags.make
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o: librabbitmq/amqp_openssl_bio.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o   -c /rabbitmq-c/librabbitmq/amqp_openssl_bio.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_bio.c
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.i"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_openssl_bio.c > CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_bio.c > CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.i
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.s"
-	cd /rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_openssl_bio.c -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_bio.c -o CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.s
 
 # Object files for target rabbitmq-static
 rabbitmq__static_OBJECTS = \
@@ -275,9 +275,9 @@ librabbitmq/librabbitmq.a: librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostc
 librabbitmq/librabbitmq.a: librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o
 librabbitmq/librabbitmq.a: librabbitmq/CMakeFiles/rabbitmq-static.dir/build.make
 librabbitmq/librabbitmq.a: librabbitmq/CMakeFiles/rabbitmq-static.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking C static library librabbitmq.a"
-	cd /rabbitmq-c/librabbitmq && $(CMAKE_COMMAND) -P CMakeFiles/rabbitmq-static.dir/cmake_clean_target.cmake
-	cd /rabbitmq-c/librabbitmq && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/rabbitmq-static.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking C static library librabbitmq.a"
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && $(CMAKE_COMMAND) -P CMakeFiles/rabbitmq-static.dir/cmake_clean_target.cmake
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/rabbitmq-static.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 librabbitmq/CMakeFiles/rabbitmq-static.dir/build: librabbitmq/librabbitmq.a
@@ -285,10 +285,10 @@ librabbitmq/CMakeFiles/rabbitmq-static.dir/build: librabbitmq/librabbitmq.a
 .PHONY : librabbitmq/CMakeFiles/rabbitmq-static.dir/build
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/clean:
-	cd /rabbitmq-c/librabbitmq && $(CMAKE_COMMAND) -P CMakeFiles/rabbitmq-static.dir/cmake_clean.cmake
+	cd /bxr_ploverpc/src/rabbitmq-c/librabbitmq && $(CMAKE_COMMAND) -P CMakeFiles/rabbitmq-static.dir/cmake_clean.cmake
 .PHONY : librabbitmq/CMakeFiles/rabbitmq-static.dir/clean
 
 librabbitmq/CMakeFiles/rabbitmq-static.dir/depend:
-	cd /rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /rabbitmq-c /rabbitmq-c/librabbitmq /rabbitmq-c /rabbitmq-c/librabbitmq /rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/DependInfo.cmake --color=$(COLOR)
+	cd /bxr_ploverpc/src/rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/librabbitmq /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/librabbitmq /bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : librabbitmq/CMakeFiles/rabbitmq-static.dir/depend
 

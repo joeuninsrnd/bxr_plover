@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/tests/test_merge_capabilities.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_merge_capabilities.c
 amqp_socket.h
-/rabbitmq-c/tests/amqp_socket.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp_socket.h
 amqp_table.h
-/rabbitmq-c/tests/amqp_table.h
+/bxr_ploverpc/src/rabbitmq-c/tests/amqp_table.h
 stdio.h
 -
 stdlib.h

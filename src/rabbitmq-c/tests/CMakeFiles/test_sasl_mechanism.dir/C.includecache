@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/rabbitmq-c/tests/test_sasl_mechanism.c
+/bxr_ploverpc/src/rabbitmq-c/tests/test_sasl_mechanism.c
 stdio.h
 -
 stdlib.h

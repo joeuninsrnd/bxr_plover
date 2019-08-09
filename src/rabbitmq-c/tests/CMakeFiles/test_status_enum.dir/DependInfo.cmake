@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/rabbitmq-c/tests/test_status_enum.c" "/rabbitmq-c/tests/CMakeFiles/test_status_enum.dir/test_status_enum.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/tests/test_status_enum.c" "/bxr_ploverpc/src/rabbitmq-c/tests/CMakeFiles/test_status_enum.dir/test_status_enum.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
@@ -22,7 +22,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/DependInfo.cmake"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

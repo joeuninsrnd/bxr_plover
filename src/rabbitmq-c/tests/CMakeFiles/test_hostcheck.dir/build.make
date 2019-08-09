@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /rabbitmq-c
+CMAKE_SOURCE_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /rabbitmq-c
+CMAKE_BINARY_DIR = /bxr_ploverpc/src/rabbitmq-c
 
 # Include any dependencies generated for this target.
 include tests/CMakeFiles/test_hostcheck.dir/depend.make
@@ -59,29 +59,29 @@ include tests/CMakeFiles/test_hostcheck.dir/flags.make
 
 tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o: tests/CMakeFiles/test_hostcheck.dir/flags.make
 tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o: tests/test_hostcheck.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o"
-	cd /rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o   -c /rabbitmq-c/tests/test_hostcheck.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o   -c /bxr_ploverpc/src/rabbitmq-c/tests/test_hostcheck.c
 
 tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test_hostcheck.dir/test_hostcheck.c.i"
-	cd /rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/tests/test_hostcheck.c > CMakeFiles/test_hostcheck.dir/test_hostcheck.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/tests/test_hostcheck.c > CMakeFiles/test_hostcheck.dir/test_hostcheck.c.i
 
 tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test_hostcheck.dir/test_hostcheck.c.s"
-	cd /rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/tests/test_hostcheck.c -o CMakeFiles/test_hostcheck.dir/test_hostcheck.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/tests/test_hostcheck.c -o CMakeFiles/test_hostcheck.dir/test_hostcheck.c.s
 
 tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o: tests/CMakeFiles/test_hostcheck.dir/flags.make
 tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o: librabbitmq/amqp_hostcheck.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o"
-	cd /rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o   -c /rabbitmq-c/librabbitmq/amqp_hostcheck.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o"
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o   -c /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c
 
 tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.i"
-	cd /rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /rabbitmq-c/librabbitmq/amqp_hostcheck.c > CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.i
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c > CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.i
 
 tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.s"
-	cd /rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /rabbitmq-c/librabbitmq/amqp_hostcheck.c -o CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.s
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c -o CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.s
 
 # Object files for target test_hostcheck
 test_hostcheck_OBJECTS = \
@@ -95,8 +95,8 @@ tests/test_hostcheck: tests/CMakeFiles/test_hostcheck.dir/test_hostcheck.c.o
 tests/test_hostcheck: tests/CMakeFiles/test_hostcheck.dir/__/librabbitmq/amqp_hostcheck.c.o
 tests/test_hostcheck: tests/CMakeFiles/test_hostcheck.dir/build.make
 tests/test_hostcheck: tests/CMakeFiles/test_hostcheck.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable test_hostcheck"
-	cd /rabbitmq-c/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_hostcheck.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/bxr_ploverpc/src/rabbitmq-c/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable test_hostcheck"
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_hostcheck.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 tests/CMakeFiles/test_hostcheck.dir/build: tests/test_hostcheck
@@ -104,10 +104,10 @@ tests/CMakeFiles/test_hostcheck.dir/build: tests/test_hostcheck
 .PHONY : tests/CMakeFiles/test_hostcheck.dir/build
 
 tests/CMakeFiles/test_hostcheck.dir/clean:
-	cd /rabbitmq-c/tests && $(CMAKE_COMMAND) -P CMakeFiles/test_hostcheck.dir/cmake_clean.cmake
+	cd /bxr_ploverpc/src/rabbitmq-c/tests && $(CMAKE_COMMAND) -P CMakeFiles/test_hostcheck.dir/cmake_clean.cmake
 .PHONY : tests/CMakeFiles/test_hostcheck.dir/clean
 
 tests/CMakeFiles/test_hostcheck.dir/depend:
-	cd /rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /rabbitmq-c /rabbitmq-c/tests /rabbitmq-c /rabbitmq-c/tests /rabbitmq-c/tests/CMakeFiles/test_hostcheck.dir/DependInfo.cmake --color=$(COLOR)
+	cd /bxr_ploverpc/src/rabbitmq-c && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/tests /bxr_ploverpc/src/rabbitmq-c /bxr_ploverpc/src/rabbitmq-c/tests /bxr_ploverpc/src/rabbitmq-c/tests/CMakeFiles/test_hostcheck.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : tests/CMakeFiles/test_hostcheck.dir/depend
 

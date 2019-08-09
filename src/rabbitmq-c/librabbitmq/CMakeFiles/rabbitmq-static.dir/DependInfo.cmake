@@ -4,20 +4,20 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/rabbitmq-c/librabbitmq/amqp_api.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_connection.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_consumer.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_framing.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_hostcheck.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_mem.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_openssl.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_openssl_bio.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_socket.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_table.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_tcp_socket.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_time.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.o"
-  "/rabbitmq-c/librabbitmq/amqp_url.c" "/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_api.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_api.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_connection.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_connection.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_consumer.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_consumer.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_framing.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_framing.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_hostcheck.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_hostcheck.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_mem.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_mem.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_bio.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_bio.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_openssl_hostname_validation.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_openssl_hostname_validation.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_socket.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_socket.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_table.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_table.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_tcp_socket.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_tcp_socket.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_time.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_time.c.o"
+  "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/amqp_url.c" "/bxr_ploverpc/src/rabbitmq-c/librabbitmq/CMakeFiles/rabbitmq-static.dir/amqp_url.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
