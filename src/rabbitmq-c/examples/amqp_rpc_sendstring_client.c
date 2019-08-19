@@ -47,7 +47,7 @@
 
 char file_Parsing(char jumin[])
 {
-    FILE *fp = fopen("/home/joeun/parsejumin/jumin.txt", "r");
+    FILE *fp = fopen("/bxr_ploverpc/src/rabbitmq-c/examples/jumin.txt", "r"); //읽을 파일의 위치
 
     if(fp == NULL)
     {
