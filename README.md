@@ -24,7 +24,6 @@ The following checks are performed:
 - [Git Check](https://git-scm.com/docs/git-diff)
 - [Astyle](http://astyle.sourceforge.net/)
 - [Clang Tidy](http://clang.llvm.org/extra/clang-tidy/)
-- [CppCheck](http://cppcheck.sourceforge.net/)
 - [GCC Compiler Tests](https://gcc.gnu.org/)
 - [Clang Compiler Tests](https://clang.llvm.org/)
 
@@ -279,75 +278,6 @@ checks, resulting in different results depending on which version you use.
   fi
 ```
 
-From Travis CI, we enable Clang Tidy, and dump its output to a file. If this
-file contains "warning" or "error" we fail the test, and output the issues
-reported by Clang Tidy to the user to be fixed. This ensures that every
-PR has been statically checked.
-
-### CppCheck
-
-CppCheck is another static analysis tool.
-
-```cmake
-list(APPEND CPPCHECK_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-)
-
-ExternalProject_Add(
-    cppcheck
-    GIT_REPOSITORY      https://github.com/danmar/cppcheck.git
-    GIT_TAG             1.79
-    GIT_SHALLOW         1
-    CMAKE_ARGS          ${CPPCHECK_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/external/cppcheck/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/cppcheck/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/cppcheck/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/cppcheck/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/cppcheck/src
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/cppcheck/build
-)
-```
-
-The version of CppCheck provided by Ubuntu 14.04 is old, and does not support
-C++11 well, so we grab a specific version of CppCheck from GitHub, allowing
-all users of the project to use the same version.
-
-```cmake
-list(APPEND CPPCHECK_ARGS
-    --enable=warning,style,performance,portability,unusedFunction
-    --std=c++11
-    --verbose
-    --error-exitcode=1
-    --language=c++
-    -DMAIN=main
-    -I ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/include/*.h
-    ${CMAKE_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_SOURCE_DIR}/test/*.cpp
-)
-
-add_custom_target(
-    check
-    COMMAND ${CMAKE_BINARY_DIR}/bin/cppcheck ${CPPCHECK_ARGS}
-    COMMENT "running cppcheck"
-)
-```
-
-We then add a custom target for our newly built CppCheck application, telling
-CppCheck to enable all of its checks (minus pedantic warnings) and to check
-all of our source files. Note that CppCheck needs to know that MAIN=main,
-otherwise it will think that the main function is not executed, and we need
-to tell CppCheck to error with a non-0 error code so that Travis CI reports
-a failed test if any of the checks fail.
-
-```yml
-- cmake -DENABLE_CPPCHECK=ON -DCMAKE_CXX_COMPILER="g++-6" ..
-- make
-- make check
-```
-
-Running the Travis CI test is as simply as turning on CppCheck, and running
-the custom make target.
 
 
 
