@@ -25,16 +25,11 @@ The following checks are performed:
 - [Astyle](http://astyle.sourceforge.net/)
 - [Clang Tidy](http://clang.llvm.org/extra/clang-tidy/)
 - [CppCheck](http://cppcheck.sourceforge.net/)
-- [Codacy](https://www.codacy.com)
-- [Coverity Scan](https://scan.coverity.com/)
-- [Codecov](https://codecov.io/)
-- [Coveralls](https://coveralls.io/)
 - [Google Sanitizers](https://github.com/google/sanitizers)
 - [Valgrind](http://valgrind.org/)
 - [GCC Compiler Tests](https://gcc.gnu.org/)
 - [Clang Compiler Tests](https://clang.llvm.org/)
 - [XCode Compiler Tests](https://developer.apple.com/xcode/)
-- [Visual Studio Compiler Tests](https://www.visualstudio.com/)
 
 The following real world projects use a variety of these techniques as part
 of their SDP:
@@ -48,75 +43,17 @@ of their SDP:
 Although this repo can be made to run on most systems, the following are the
 supported platforms and their dependencies:
 
-#### Ubuntu 16.10 (or Higher):
+#### Debian 10 (Buster):
 ```
 sudo apt-get install git build-essential cmake
 ```
 
-#### Windows (Cygwin):
-```
-setup-x86_64.exe -q -P git,make,gcc-core,gcc-g++,cmake
-```
-
-#### Windows (Visual Studio):
-
-Install the following packages:
-- [Visual Studio SDK 10](https://go.microsoft.com/fwlink/?linkid=838916)
-- [Visual Studio 2017](https://www.visualstudio.com/thank-you-downloading-visual-studio/?sku=Community&rel=15#)
-  - Check "Desktop development with C++"
-  - Check "C++ CLI / Support"
-  - Check "Standard Library Modules"
-- [CMake v3.6+](https://cmake.org/download/)
-- [Git for Windows](https://github.com/git-for-windows/git/releases)
-
-#### macOS:
-- [XCode 7.3+](https://developer.apple.com/xcode/)
-- [CMake v3.6+](https://cmake.org/download/)
 
 ## Compilation / Testing / Installation
 
 To compile and install this example, use the following instructions:
 
 #### GCC / Clang
-```
-git clone https://github.com/ainfosec/ci_helloworld.git
-
-mkdir ci_helloworld/build
-cd ci_helloworld/build
-
-cmake ..
-
-make
-make test
-```
-
-#### Visual Studio 2017 (NMake)
-```
-git clone https://github.com/ainfosec/ci_helloworld.git
-
-mkdir ci_helloworld/build
-cd ci_helloworld/build
-
-cmake -G "NMake Makefiles" ..
-
-nmake
-nmake test
-```
-
-#### Visual Studio 2017 (MSBuild)
-```
-git clone https://github.com/ainfosec/ci_helloworld.git
-
-mkdir ci_helloworld/build
-cd ci_helloworld/build
-
-cmake -G "Visual Studio 15 2017 Win64" ..
-
-msbuild ci_helloworld.sln
-ctest
-```
-
-#### XCode 7.3+
 ```
 git clone https://github.com/ainfosec/ci_helloworld.git
 
