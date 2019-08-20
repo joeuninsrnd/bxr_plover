@@ -1,327 +1,343 @@
+cmake_minimum_required(VERSION 2.8.12)
+project(rabbitmq-c "C")
+
+# Enable MACOSX_RPATH by default. See: cmake --help-policy CMP0042
+if (POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif()
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+# Follow all steps below in order to calculate new ABI version when updating the library
+# NOTE: THIS IS UNRELATED to the actual project version
 #
-# CI Hello World
-#
-# Copyright (C) 2017 Assured Information Security, Inc.
-# Author: Rian Quinn        <quinnr@ainfosec.com>
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# 1. If the library source code has changed at all since the last update, then increment revision
+# 2. If any interfaces have been added, removed, or changed since the last update, increment current and set revision to 0.
+# 3. If any interfaces have been added since the last public release, then increment age.
+# 4. If any interfaces have been removed since the last public release, then set age to 0.
 
-cmake_minimum_required(VERSION 3.6)
-project(ci_helloworld C CXX)
+set(RMQ_SOVERSION_CURRENT   7)
+set(RMQ_SOVERSION_REVISION  1)
+set(RMQ_SOVERSION_AGE       3)
 
-include(ExternalProject)
-find_package(Git REQUIRED)
+math(EXPR RMQ_SOVERSION_MAJOR "${RMQ_SOVERSION_CURRENT} - ${RMQ_SOVERSION_AGE}")
+math(EXPR RMQ_SOVERSION_MINOR "${RMQ_SOVERSION_AGE}")
+math(EXPR RMQ_SOVERSION_PATCH "${RMQ_SOVERSION_REVISION}")
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(RMQ_VERSION ${RMQ_SOVERSION_MAJOR}.${RMQ_SOVERSION_MINOR}.${RMQ_SOVERSION_PATCH})
+set(RMQ_SOVERSION ${RMQ_SOVERSION_MAJOR})
 
-# ------------------------------------------------------------------------------
-# Includes
-# ------------------------------------------------------------------------------
+file(STRINGS librabbitmq/amqp.h _API_VERSION_MAJOR REGEX "^#define AMQP_VERSION_MAJOR [0-9]+$")
+file(STRINGS librabbitmq/amqp.h _API_VERSION_MINOR REGEX "^#define AMQP_VERSION_MINOR [0-9]+$")
+file(STRINGS librabbitmq/amqp.h _API_VERSION_PATCH REGEX "^#define AMQP_VERSION_PATCH [0-9]+$")
 
-include_directories(include)
-include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
+string(REGEX MATCH "[0-9]+" _API_VERSION_MAJOR ${_API_VERSION_MAJOR})
+string(REGEX MATCH "[0-9]+" _API_VERSION_MINOR ${_API_VERSION_MINOR})
+string(REGEX MATCH "[0-9]+" _API_VERSION_PATCH ${_API_VERSION_PATCH})
 
-# ------------------------------------------------------------------------------
-# Catch
-# ------------------------------------------------------------------------------
+# VERSION to match what is in autotools
+set(VERSION ${_API_VERSION_MAJOR}.${_API_VERSION_MINOR}.${_API_VERSION_PATCH})
 
-list(APPEND CATCH_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-)
+if (CMAKE_GENERATOR MATCHES ".*(Make|Ninja).*"
+    AND NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+  message(STATUS "CMAKE_BUILD_TYPE not specified. Creating ${CMAKE_BUILD_TYPE} build")
+endif()
 
-ExternalProject_Add(
-    catch
-    GIT_REPOSITORY      https://github.com/Bareflank/catch.git
-    GIT_TAG             v1.2
-    GIT_SHALLOW         1
-    CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/external/catch/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/catch/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/catch/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/catch/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/catch/src
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/catch/build
-)
+include(TestCInline)
+include(CheckSymbolExists)
+include(CheckLibraryExists)
+include(CMakePushCheckState)
+include(GNUInstallDirs)
+include(CheckCCompilerFlag)
 
-# ------------------------------------------------------------------------------
-# Hippomocks
-# ------------------------------------------------------------------------------
+# Detect if we need to link against a socket library:
+cmake_push_check_state()
+if (WIN32)
+  # Always use WinSock2 on Windows
+  set(SOCKET_LIBRARIES ws2_32)
+else ()
+  # Is it in the default link?
+  check_symbol_exists(getaddrinfo "sys/types.h;sys/socket.h;netdb.h" HAVE_GETADDRINFO)
+  if (NOT (HAVE_GETADDRINFO EQUAL 1))
+    SET(CMAKE_REQUIRED_LIBRARIES "socket")
+    check_symbol_exists(getaddrinfo "sys/types.h;sys/socket.h;netdb.h" HAVE_GETADDRINFO2)
+    if (HAVE_GETADDRINFO2 EQUAL 1)
+      set(SOCKET_LIBRARIES socket)
+    else ()
+      SET(CMAKE_REQUIRED_LIBRARIES "socket;nsl")
+      check_symbol_exists(getaddrinfo "sys/types.h;sys/socket.h;netdb.h" HAVE_GETADDRINFO3)
+      if (HAVE_GETADDRINFO3 EQUAL 1)
+        set(SOCKET_LIBRARIES socket nsl)
+      else ()
+        message(FATAL_ERROR "Cannot find name resolution library (containing symbol getaddrinfo)")
+      endif ()
+    endif ()
+  endif ()
 
-list(APPEND HIPPOMOCKS_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-)
+  set(CMAKE_REQUIRED_LIBRARIES ${SOCKET_LIBRARIES})
+  check_symbol_exists(socket "sys/types.h;sys/socket.h" HAVE_SOCKET)
+  if (NOT HAVE_SOCKET EQUAL 1)
+    set(CMAKE_REQUIRED_LIBRARIES socket ${SOCKET_LIBRARIES})
+    check_symbol_exists(socket "sys/types.h;sys/socket.h" HAVE_SOCKET2)
+    if (HAVE_SOCKET2 EQUAL 1)
+      set(SOCKET_LIBRARIES socket ${SOCKET_LIBRARIES})
+    else ()
+      set(CMAKE_REQUIRED_LIBRARIES socket nsl ${SOCKET_LIBRARIES})
+      check_symbol_exists(socket "sys/types.h;sys/socket.h" HAVE_SOCKET3)
+      if (HAVE_SOCKET3 EQUAL 1)
+        set(SOCKET_LIBRARIES socket nsl ${SOCKET_LIBRARIES})
+      else ()
+        message(FATAL_ERROR "Cannot find socket library (containing symbol socket)")
+      endif ()
+    endif ()
+  endif ()
+endif ()
+cmake_pop_check_state()
 
-ExternalProject_Add(
-    hippomocks
-    GIT_REPOSITORY      https://github.com/Bareflank/hippomocks.git
-    GIT_TAG             v1.2
-    GIT_SHALLOW         1
-    CMAKE_ARGS          ${HIPPOMOCKS_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/external/hippomocks/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/hippomocks/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/hippomocks/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/hippomocks/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/hippomocks/src
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/hippomocks/build
-)
+cmake_push_check_state()
+set(CMAKE_REQUIRED_LIBRARIES ${SOCKET_LIBRARIES})
+check_symbol_exists(poll poll.h HAVE_POLL)
+if (NOT HAVE_POLL)
+  if (WIN32)
+    set(HAVE_SELECT 1)
+  else()
+    check_symbol_exists(select sys/select.h HAVE_SELECT)
+  endif()
+  if (NOT HAVE_SELECT)
+    message(FATAL_ERROR "rabbitmq-c requires poll() or select() to be available")
+  endif()
+endif()
+cmake_pop_check_state()
 
-# ------------------------------------------------------------------------------
-# GSL
-# ------------------------------------------------------------------------------
+check_library_exists(rt clock_gettime "time.h" CLOCK_GETTIME_NEEDS_LIBRT)
+check_library_exists(rt posix_spawnp "spawn.h" POSIX_SPAWNP_NEEDS_LIBRT)
+if (CLOCK_GETTIME_NEEDS_LIBRT OR POSIX_SPAWNP_NEEDS_LIBRT)
+  set(LIBRT rt)
+endif()
 
-list(APPEND GSL_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-)
+option(ENABLE_SSL_SUPPORT "Enable SSL support" ON)
 
-ExternalProject_Add(
-    gsl
-    GIT_REPOSITORY      https://github.com/Bareflank/GSL.git
-    GIT_TAG             v1.2
-    GIT_SHALLOW         1
-    CMAKE_ARGS          ${GSL_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/external/gsl/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/gsl/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/gsl/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/gsl/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/gsl/src
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/gsl/build
-)
+if (ENABLE_SSL_SUPPORT)
+  find_package(OpenSSL 0.9.8 REQUIRED)
 
-# ------------------------------------------------------------------------------
-# Astyle
-# ------------------------------------------------------------------------------
+  cmake_push_check_state()
+  set(THREADS_PREFER_PTHREAD_FLAG ON)
+  find_package(Threads REQUIRED)
+  cmake_pop_check_state()
+endif()
 
-if(ENABLE_ASTYLE)
+if (MSVC)
+  set(CMAKE_C_FLAGS "/W4 /nologo ${CMAKE_C_FLAGS}")
+elseif (CMAKE_C_COMPILER_ID MATCHES ".*Clang")
+  set(CMAKE_C_FLAGS "-Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common -fvisibility=hidden ${CMAKE_C_FLAGS}")
+elseif (CMAKE_COMPILER_IS_GNUCC)
+  set(RMQ_C_FLAGS "-Wall -Wextra -Wstrict-prototypes -Wno-unused-function -fno-common")
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if (GCC_VERSION VERSION_GREATER 4.0 OR GCC_VERSION VERSION_EQUAL 4.0)
+      set(RMQ_C_FLAGS "${RMQ_C_FLAGS} -fvisibility=hidden")
+  endif()
+  set(CMAKE_C_FLAGS "${RMQ_C_FLAGS} ${CMAKE_C_FLAGS}")
+endif ()
 
-    list(APPEND ASTYLE_CMAKE_ARGS
-        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-    )
+CHECK_C_COMPILER_FLAG("-std=gnu90" HAVE_GNU90)
+if (HAVE_GNU90)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
+else()
+  CHECK_C_COMPILER_FLAG("-std=c90" HAVE_C90)
+  if (HAVE_C90)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c90")
+  endif()
+endif()
 
-    ExternalProject_Add(
-        astyle
-        GIT_REPOSITORY      https://github.com/Bareflank/astyle.git
-        GIT_TAG             v1.2
-        GIT_SHALLOW         1
-        CMAKE_ARGS          ${ASTYLE_CMAKE_ARGS}
-        PREFIX              ${CMAKE_BINARY_DIR}/external/astyle/prefix
-        TMP_DIR             ${CMAKE_BINARY_DIR}/external/astyle/tmp
-        STAMP_DIR           ${CMAKE_BINARY_DIR}/external/astyle/stamp
-        DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/astyle/download
-        SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/astyle/src
-        BINARY_DIR          ${CMAKE_BINARY_DIR}/external/astyle/build
-    )
+option(REGENERATE_AMQP_FRAMING "Regenerate amqp_framing.h/amqp_framing.c sources (for developer use)" OFF)
+mark_as_advanced(REGENERATE_AMQP_FRAMING)
 
-    list(APPEND ASTYLE_ARGS
-        --style=1tbs
-        --lineend=linux
-        --suffix=none
-        --pad-oper
-        --unpad-paren
-        --break-closing-brackets
-        --align-pointer=name
-        --align-reference=name
-        --indent-preproc-define
-        --indent-switches
-        --indent-col1-comments
-        --keep-one-line-statements
-        --keep-one-line-blocks
-        --pad-header
-        --convert-tabs
-        --min-conditional-indent=0
-        --indent=spaces=4
-        --close-templates
-        --add-brackets
-        --break-after-logical
-        ${CMAKE_SOURCE_DIR}/include/*.h
-        ${CMAKE_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_SOURCE_DIR}/test/*.cpp
-    )
+if (REGENERATE_AMQP_FRAMING)
+  find_package(PythonInterp)
+  if (NOT PYTHONINTERP_FOUND)
+    message(FATAL_ERROR "REGENERATE_AMQP_FRAMING requires Python to be available")
+  endif ()
 
-    if(NOT WIN32 STREQUAL "1")
-        add_custom_target(
-            format
-            COMMAND ${CMAKE_BINARY_DIR}/bin/astyle ${ASTYLE_ARGS}
-            COMMENT "running astyle"
-        )
+  #Determine Python Version:
+  if(PYTHON_EXECUTABLE)
+    execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c
+      "import sys; sys.stdout.write(';'.join([str(x) for x in sys.version_info[:3]]))"
+      OUTPUT_VARIABLE _VERSION
+      RESULT_VARIABLE _PYTHON_VERSION_RESULT
+      ERROR_QUIET)
+    if(NOT _PYTHON_VERSION_RESULT)
+      string(REPLACE ";" "." PYTHON_VERSION_STRING "${_VERSION}")
+      list(GET _VERSION 0 PYTHON_VERSION_MAJOR)
+      list(GET _VERSION 1 PYTHON_VERSION_MINOR)
+      list(GET _VERSION 2 PYTHON_VERSION_PATCH)
+      if(PYTHON_VERSION_PATCH EQUAL 0)
+        # it's called "Python 2.7", not "2.7.0"
+        string(REGEX REPLACE "\\.0$" "" PYTHON_VERSION_STRING "${PYTHON_VERSION_STRING}")
+      endif()
     else()
-        add_custom_target(
-            format
-            COMMAND ${CMAKE_BINARY_DIR}/bin/astyle.exe ${ASTYLE_ARGS}
-            COMMENT "running astyle"
-        )
+      # sys.version predates sys.version_info, so use that
+      execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c "import sys; sys.stdout.write(sys.version)"
+        OUTPUT_VARIABLE _VERSION
+        RESULT_VARIABLE _PYTHON_VERSION_RESULT
+        ERROR_QUIET)
+      if(NOT _PYTHON_VERSION_RESULT)
+        string(REGEX REPLACE " .*" "" PYTHON_VERSION_STRING "${_VERSION}")
+        string(REGEX REPLACE "^([0-9]+)\\.[0-9]+.*" "\\1" PYTHON_VERSION_MAJOR "${PYTHON_VERSION_STRING}")
+        string(REGEX REPLACE "^[0-9]+\\.([0-9])+.*" "\\1" PYTHON_VERSION_MINOR "${PYTHON_VERSION_STRING}")
+        if(PYTHON_VERSION_STRING MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+.*")
+          string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" PYTHON_VERSION_PATCH "${PYTHON_VERSION_STRING}")
+        else()
+          set(PYTHON_VERSION_PATCH "0")
+        endif()
+      else()
+        # sys.version was first documented for Python 1.5, so assume
+        # this is older.
+        set(PYTHON_VERSION_STRING "1.4")
+        set(PYTHON_VERSION_MAJOR "1")
+        set(PYTHON_VERSION_MAJOR "4")
+        set(PYTHON_VERSION_MAJOR "0")
+      endif()
     endif()
+    unset(_PYTHON_VERSION_RESULT)
+    unset(_VERSION)
+  endif(PYTHON_EXECUTABLE)
 
-endif()
+  # If we're running v3.x look for a 2to3 utility
+  if (PYTHON_VERSION_MAJOR GREATER 2)
+    get_filename_component(PYTHON_EXE_DIR ${PYTHON_EXECUTABLE} PATH)
+    find_program(PYTHON_2TO3_EXECUTABLE
+      NAMES 2to3
+      HINTS ${PYTHON_EXE_DIR}
+      )
 
-# ------------------------------------------------------------------------------
-# Clang Tidy
-# ------------------------------------------------------------------------------
+    if ("PYTHON_2TO3_EXECUTABLE-NOTFOUND" STREQUAL PYTHON_2TO3_EXECUTABLE)
+      message(FATAL_ERROR "Unable to find 2to3 python utility, specify python 2.7 or specify 2to3 utility")
+    endif ()
+  endif (PYTHON_VERSION_MAJOR GREATER 2)
 
-if(ENABLE_CLANG_TIDY)
 
-    find_program(CLANG_TIDY_BIN clang-tidy-4.0)
-    find_program(RUN_CLANG_TIDY_BIN run-clang-tidy-4.0.py)
+  #check for json or simplejson
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import json"
+    RESULT_VARIABLE CHECK_PYTHON_JSON_FAILED
+  )
 
-    if(CLANG_TIDY_BIN STREQUAL "CLANG_TIDY_BIN-NOTFOUND")
-        message(FATAL_ERROR "unable to locate clang-tidy-4.0")
-    endif()
-
-    if(RUN_CLANG_TIDY_BIN STREQUAL "RUN_CLANG_TIDY_BIN-NOTFOUND")
-        message(FATAL_ERROR "unable to locate run-clang-tidy-4.0.py")
-    endif()
-
-    list(APPEND RUN_CLANG_TIDY_BIN_ARGS
-        -clang-tidy-binary ${CLANG_TIDY_BIN}
-        -header-filter=.*
-        -checks=clan*,cert*,misc*,perf*,cppc*,read*,mode*,-cert-err58-cpp,-misc-noexcept-move-constructor
+  if (CHECK_PYTHON_JSON_FAILED)
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import simplejson"
+      RESULT_VARIABLE CHECK_PYTHON_SIMPLEJSON_FAILED
     )
 
-    add_custom_target(
-        tidy
-        COMMAND ${RUN_CLANG_TIDY_BIN} ${RUN_CLANG_TIDY_BIN_ARGS}
-        COMMENT "running clang tidy"
+    if (CHECK_PYTHON_SIMPLEJSON_FAILED)
+      message(FATAL_ERROR "REGENERATE_AMQP_FRAMING requires a python with json or simplejson modules")
+    endif (CHECK_PYTHON_SIMPLEJSON_FAILED)
+  endif (CHECK_PYTHON_JSON_FAILED)
+
+
+  find_path(AMQP_CODEGEN_DIR
+    amqp_codegen.py
+    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/codegen
+          ${CMAKE_CURRENT_SOURCE_DIR}/rabbitmq-codegen
+          ${CMAKE_CURRENT_SOURCE_DIR}/../rabbitmq-codegen
+          DOC "Path to directory containing amqp_codegen.py (rabbitmq-codegen)"
+          NO_DEFAULT_PATH
+          )
+
+  if (AMQP_CODEGEN_DIR STREQUAL "AMQP_CODEGEN_DIR-NOTFOUND")
+    message(SEND_ERROR "REGENERATE_AMQP_FRAMING requires the amqp_codegen.py script. If this is a git clone you can:\n\ngit submodule init\ngit submodule update\n\n Or set AMQP_CODEGEN_DIR to directory containing amqp_codegen.py")
+  else ()
+    message(STATUS "Found amqp_codegen.py in ${AMQP_CODEGEN_DIR}")
+  endif()
+endif (REGENERATE_AMQP_FRAMING)
+
+find_package(POPT)
+find_package(XmlTo)
+find_package(Doxygen)
+
+if (POPT_FOUND AND XmlTo_FOUND)
+  set(DO_DOCS ON)
+endif()
+
+
+option(BUILD_SHARED_LIBS "Build rabbitmq-c as a shared library" ON)
+option(BUILD_STATIC_LIBS "Build rabbitmq-c as a static library" ON)
+
+option(BUILD_EXAMPLES "Build Examples" ON)
+option(BUILD_TOOLS "Build Tools (requires POPT Library)" ${POPT_FOUND})
+option(BUILD_TOOLS_DOCS "Build man pages for Tools (requires xmlto)" ${DO_DOCS})
+option(BUILD_TESTS "Build tests (run tests with make test)" ON)
+option(BUILD_API_DOCS "Build Doxygen API docs" ${DOXYGEN_FOUND})
+
+if (NOT BUILD_SHARED_LIBS AND NOT BUILD_STATIC_LIBS)
+    message(FATAL_ERROR "One or both of BUILD_SHARED_LIBS or BUILD_STATIC_LIBS must be set to ON to build")
+endif()
+
+add_subdirectory(librabbitmq)
+
+if (BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif ()
+
+if (BUILD_TOOLS)
+  if (POPT_FOUND)
+    add_subdirectory(tools)
+  else ()
+    message(WARNING "POpt library was not found. Tools will not be built")
+  endif ()
+endif ()
+
+if (BUILD_TESTS)
+  if (NOT BUILD_STATIC_LIBS)
+    message(FATAL_ERROR
+      "Tests can only be built against static libraries "
+      "(set BUILD_STATIC_LIBS=ON)")
+  endif ()
+  enable_testing()
+  add_subdirectory(tests)
+endif (BUILD_TESTS)
+
+if (BUILD_API_DOCS)
+  if (NOT DOXYGEN_FOUND)
+    message(FATAL_ERROR "Doxygen is required to build the API documentation")
+  endif ()
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxyfile @ONLY)
+
+  add_custom_target(docs
+    COMMAND ${DOXYGEN_EXECUTABLE}
+    VERBATIM
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs
+    DEPENDS rabbitmq
+    COMMENT "Generating API documentation"
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
     )
+endif ()
 
+set(libs_private ${SOCKET_LIBRARIES} ${LIBRT})
+if (ENABLE_SSL_SUPPORT)
+  set(requires_private "openssl")
+  set(libs_private ${libs_private} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-# ------------------------------------------------------------------------------
-# CppCheck
-# ------------------------------------------------------------------------------
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix "\${prefix}")
+set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
+set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
 
-if(ENABLE_CPPCHECK)
+configure_file(cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/librabbitmq/config.h)
+configure_file(librabbitmq.pc.in ${CMAKE_CURRENT_BINARY_DIR}/librabbitmq.pc @ONLY)
 
-    list(APPEND CPPCHECK_CMAKE_ARGS
-        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-    )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/librabbitmq.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+  )
 
-    ExternalProject_Add(
-        cppcheck
-        GIT_REPOSITORY      https://github.com/danmar/cppcheck.git
-        GIT_TAG             1.79
-        GIT_SHALLOW         1
-        CMAKE_ARGS          ${CPPCHECK_CMAKE_ARGS}
-        PREFIX              ${CMAKE_BINARY_DIR}/external/cppcheck/prefix
-        TMP_DIR             ${CMAKE_BINARY_DIR}/external/cppcheck/tmp
-        STAMP_DIR           ${CMAKE_BINARY_DIR}/external/cppcheck/stamp
-        DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/cppcheck/download
-        SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/cppcheck/src
-        BINARY_DIR          ${CMAKE_BINARY_DIR}/external/cppcheck/build
-    )
+if (BUILD_SHARED_LIBS)
+  message(STATUS "Building rabbitmq as a shared library - yes")
+else ()
+  message(STATUS "Building rabbitmq as a shared library - no")
+endif ()
 
-    list(APPEND CPPCHECK_ARGS
-        --enable=warning,style,performance,portability,unusedFunction
-        --std=c++11
-        --verbose
-        --error-exitcode=1
-        --language=c++
-        -DMAIN=main
-        -I ${CMAKE_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/include/*.h
-        ${CMAKE_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_SOURCE_DIR}/test/*.cpp
-    )
-
-    add_custom_target(
-        check
-        COMMAND ${CMAKE_BINARY_DIR}/bin/cppcheck ${CPPCHECK_ARGS}
-        COMMENT "running cppcheck"
-    )
-
-endif()
-
-# ------------------------------------------------------------------------------
-# Coverage
-# ------------------------------------------------------------------------------
-
-if(ENABLE_COVERAGE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftest-coverage")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
-endif()
-
-# ------------------------------------------------------------------------------
-# Google Sanitizers
-# ------------------------------------------------------------------------------
-
-if(ENABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
-endif()
-
-if(ENABLE_USAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
-endif()
-
-if(ENABLE_TSAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
-endif()
-
-# ------------------------------------------------------------------------------
-# Valgrind
-# ------------------------------------------------------------------------------
-
-set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --leak-check=full")
-set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --track-fds=yes")
-set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --trace-children=yes")
-set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1")
-
-# ------------------------------------------------------------------------------
-# Main Executable
-# ------------------------------------------------------------------------------
-
-add_executable(ci_helloworld src/main.cpp)
-add_dependencies(ci_helloworld gsl)
-target_compile_definitions(ci_helloworld PRIVATE VIRTUAL= MAIN=main)
-
-# ------------------------------------------------------------------------------
-# Tests
-# ------------------------------------------------------------------------------
-
-include(CTest)
-
-add_library(test_catch STATIC test/test.cpp)
-add_dependencies(test_catch catch)
-
-add_library(business_logic STATIC src/main.cpp)
-add_dependencies(business_logic gsl)
-target_compile_definitions(business_logic PRIVATE VIRTUAL=virtual MAIN=unittest_main)
-
-macro(do_test str)
-    add_executable(test_${str} test/test_${str}.cpp)
-    add_test(test_${str} test_${str})
-    target_link_libraries(test_${str} test_catch)
-    target_link_libraries(test_${str} business_logic)
-    add_dependencies(test_${str} gsl)
-    add_dependencies(test_${str} catch)
-    add_dependencies(test_${str} hippomocks)
-    target_compile_definitions(test_${str} PRIVATE VIRTUAL=virtual)
-endmacro(do_test)
-
-do_test(main)
-do_test(producer)
-do_test(consumer)
+if (BUILD_STATIC_LIBS)
+  message(STATUS "Building rabbitmq as a static library - yes")
+else ()
+  message(STATUS "Building rabbitmq as a static library - no")
+endif ()
