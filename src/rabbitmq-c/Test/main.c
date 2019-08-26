@@ -33,7 +33,7 @@ static int compile_regex (regex_t * r, const char * regex_text)
   expression in "r".
  */
 
-static int match_regex (regex_t * r, const char * to_match)
+static char match_regex (regex_t * r, const char * to_match)
 {
     /* "P" is a pointer into the string which points to the end of the
        previous match. */
@@ -43,17 +43,23 @@ static int match_regex (regex_t * r, const char * to_match)
     /* "M" contains the matches found. */
     regmatch_t m[n_matches];
 
-    while (1) {
+    while (1)
+    {
         int i = 0;
         int nomatch = regexec (r, p, n_matches, m, 0);
-        if (nomatch) {
+        char data_buffer[16];
+
+        if (nomatch)
+        {
             printf ("No more matches.\n");
             return nomatch;
         }
+
         for (i = 0; i < n_matches; i++)
         {
-            int start;
-            int finish;
+            int start, finish;
+            char sub_buffer[16];
+
 
             if (m[i].rm_so == -1)
             {
@@ -63,28 +69,28 @@ static int match_regex (regex_t * r, const char * to_match)
             start  = m[i].rm_so + (p - to_match);
             finish = m[i].rm_eo + (p - to_match);
 
-            if (i == 0)
+            if (i == 0) //주민번호 검사 통과한 부분
             {
-                printf ("$& is ");
-            }
-            else
-            {
-                printf ("$%d is ", i);
-            }
+                //printf("%.*s \n", (finish - start), to_match + start); //(finish - start), to_match + start <-이값을 변수에 저장해서 리턴보내
+                for (int j = 0; j < 14; j++)
+                {
+                    sub_buffer[j] = *(to_match + start + j);
+                    printf("j:%d  %s\n", j, sub_buffer);
+                }
+                printf("data: %s\n\n", sub_buffer);
+                printf("data: %s\n\n", data_buffer);
 
-            printf("'%.*s'\n", (finish - start), to_match + start);
-
-            if( (int)((finish - start), to_match + start) == 14)
-            {
-                printf ("'%.*s' (bytes %d:%d)\n", (finish - start), to_match + start, start, finish);
+                memset(sub_buffer, 0, 16);
             }
         }
+
         p += m[0].rm_eo;
     }
+
     return 0;
 }
 
-int check_file()
+char check_file()
 {
     FILE* fp = NULL;
     regex_t r;
@@ -105,13 +111,12 @@ int check_file()
     {
         fread(buffer, sizeof(char), 255, fp);
         compile_regex (& r, regex_text);
-        find_text = buffer;
+        find_text = buffer; // 버퍼 크기만큼 읽어서 find_text에 넣고 검사
         match_regex (& r, find_text);
-        memset(buffer, 0, 255);
     }
 
+    memset(buffer, 0, 255);
     regfree (& r);
-
     fclose(fp);
 
 
@@ -178,72 +183,4 @@ int main()
     regfree(&preg);
 }
 */
-/*
-char file_Parsing(char jumin[])
-{
-    FILE *fp = fopen("/home/joeun/parsejumin/jumin.txt", "r");
 
-    if(fp == NULL)
-    {
-        printf("Can not open files. \n");
-    }
-
-    fscanf(fp, "%s", jumin);
-
-    fclose(fp);
-    return jumin[15];
-}
-
-char check_Jumin(char jumin[])
-{
-    int i, result, sum = 0;
-
-    file_Parsing(jumin);
-
-//-/////////////////////주민번호 유효성 검사//////////////////////////////////////-//
-
-    for(i = 0; i < 13; i++)                    //index를 12까지 반복문을 수행
-    {
-        if(i < 6)                            //index 0~5까지는 index+2를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i+2);
-        }
-        if(i > 6 && i < 9)                   //inedx 7~8까지는 index+1를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i+1);
-        }
-        if(i > 8)                            //index 9~12까지는 index-7를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i-7);
-        }
-    }
-        result = 11 - (sum % 11);
-
-     if(result >= 10)
-     {
-         result -= 10;
-     }
-     else
-         result;
-
-     if(result == (jumin[13]-'0'))           //result값이 주민번호 마지막과 같은지 확인.
-     {
-         //-//////올바른 주민 등록 번호//////-//
-         // amqp_rpc_sendstring_client.c 에서 messeage보내는 부분에 jumin[15] 넣어서 전송//
-         printf("%s\n", jumin);
-         return jumin[15];
-     }
-     else
-     {
-         //-/////잘못된 주민 등록 번호/////-//
-         //- 처리하기 -//
-     }
-
-}
-//-///////////////////////////////////////////////////////////////////////////////////////-//
-int main()
-{
-    char jumin[15];
-    check_Jumin(jumin);
-}
-*/
