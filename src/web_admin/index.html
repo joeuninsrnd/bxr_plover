@@ -20,6 +20,9 @@
   <!-- Custom styles for this template-->
   <link href="css/sb-admin.css" rel="stylesheet">
 
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="js/side_nav.js"></script>
+
 </head>
 
 <body id="page-top">
@@ -75,7 +78,7 @@
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="sidebar navbar-nav">
+    <!-- <ul class="sidebar navbar-nav">
       <div class="sidebar-fixed">
         <li class="nav-item active">
           <a class="nav-link" href="index.html">
@@ -115,7 +118,65 @@
             <span>폼</span></a>
         </li>
       </div>
-    </ul>
+    </ul> -->
+
+    <!-- Side Nav -->
+    <div id="gnb">
+      <ul>
+        <li><a href="#none"><i class="xi-chart-pie"></i>통계조회</a>
+          <ul>
+            <li><a href="#none"><i class="xi-label-o"></i>정기검사</a>
+              <ul class="depth-last">
+                <li><a href="#none">검출패턴정의</a></li>
+                <li><a href="#none">정기점검검사결과</a></li>
+              </ul>
+            </li>
+            <li><a href="#none"><i class="xi-label-o"></i>로그보기</a>
+              <ul class="depth-last">
+                <li><a href="#none">사용자검사로그</a></li>
+                <li><a href="#none">관리자로그</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li><a href="#none"><i class="xi-users"></i>조직관리</a>
+          <ul>
+            <li><a href="#none"><i class="xi-label-o"></i>부서관리</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>사용자관리</a>
+              <ul class="depth-last">
+                <li><a href="#none">접속현황</a></li>
+                <li><a href="#none">미점검PC현황</a></li>
+                <li><a href="#none">검출기능</a></li>
+                <li><a href="#none">관리자강제검사</a></li>
+                <li><a href="#none">메세지전송</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#none"><i class="xi-security"></i>정책설정</a>
+          <ul>
+            <li><a href="#none"><i class="xi-label-o"></i>개인정보검출</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>정기검사주기</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>정책이력관리</a></li>
+          </ul>
+        </li>
+        <li><a href="#none"><i class="xi-desktop"></i>게시판</a>
+          <ul>
+            <li><a href="#none"><i class="xi-label-o"></i>공지사항</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>FAQ</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>QnA</a></li>
+          </ul>
+        </li>
+        <li><a href="#none"><i class="xi-cog"></i>환경설정</a>
+          <ul>
+            <li><a href="#none"><i class="xi-label-o"></i>관리자설정</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>에이전트설정</a></li>
+            <li><a href="#none"><i class="xi-label-o"></i>용량설정</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
 
     <div id="content-wrapper">
         <div class="container-fluid">
