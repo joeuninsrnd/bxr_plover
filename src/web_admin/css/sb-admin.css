@@ -10766,7 +10766,6 @@ body {
 #gnb .depth-last {
   padding-bottom: 0;
 }
-/**/
 /* END Side Nav (GNB) */
 
 
@@ -10829,7 +10828,6 @@ body {
 .card-login .form-control {font-size: 1rem;}
 .card-login .login-footer {margin: 0.5rem 0;text-align: right;}
 .card-login .login-footer a {font-size: 0.8rem;}
-.card-login .login-footer a:first-child {margin-right: 0.5rem;}
 
 .card-register {
   max-width: 40rem;
