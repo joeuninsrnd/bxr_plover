@@ -33,76 +33,140 @@
  * ***** END LICENSE BLOCK *****
  */
 
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
+#include <regex.h>
+#include <errno.h>
+#include <sys/types.h>
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
-
 #include <assert.h>
 
 #include "utils.h"
 
-char file_Parsing(char jumin[])
-{
-    FILE *fp = fopen("/bxr_ploverpc/src/rabbitmq-c/examples/jumin.txt", "r"); //읽을 파일의 위치
+#define MAX_ERROR_MSG 0x1000
 
-    if(fp == NULL)
+typedef struct Data_storage
+{
+    char jumin[15];
+
+}data_storage;
+
+data_storage static ds[100]; //일단 전역변수로 해놓음(나중에 함수내에서 지역변수로 처리하기)
+
+/* Compile the regular expression described by "regex_text" into
+   "r". */
+
+int compile_regex (regex_t * r, const char * regex_text)
+{
+    int status = regcomp (r, regex_text, REG_EXTENDED|REG_NEWLINE);
+
+    if (status != 0)
     {
-        printf("Can not open files. \n");
+    char error_message[MAX_ERROR_MSG];
+
+    regerror (status, r, error_message, MAX_ERROR_MSG);
+
+    printf ("Regex error compiling '%s': %s\n", regex_text, error_message);
+
+    return 1;
     }
 
-    fscanf(fp, "%s", jumin);
-
-    fclose(fp);
-    return jumin[15];
+    return 0;
 }
 
-char check_Jumin(char jumin[])
+/*
+  Match the string in "to_match" against the compiled regular
+  expression in "r".
+ */
+
+char match_regex (regex_t * r, const char * to_match)
 {
-    int i, result, sum = 0;
+    /* "P" is a pointer into the string which points to the end of the
+       previous match. */
+    const char * p = to_match;
+    /* "N_matches" is the maximum number of matches allowed. */
+    const int n_matches = 100;
+    /* "M" contains the matches found. */
+    regmatch_t m[n_matches];
 
-    file_Parsing(jumin);
+    int k = 0;
 
-//*******************************주민번호 유효성 검사*************************************//
-
-    for(i = 0;i < 13;i++)                    //index를 12까지 반복문을 수행
+    while (1)
     {
-        if(i < 6)                            //index 0~5까지는 index+2를 해서 곱하고 더한다
+        int nomatch = regexec (r, p, n_matches, m, 0);
+
+        if (nomatch)
         {
-            sum += (jumin[i]-'0') * (i+2);
+            printf ("No more matches.\n");
+            return 0;
         }
-        if(i > 6 && i < 9)                   //inedx 7~8까지는 index+1를 해서 곱하고 더한다
+
+        else
         {
-            sum += (jumin[i]-'0') * (i+1);
+            int i;
+            for (i = 0; i < n_matches; i++)
+            {
+                int start;
+                //int finish;
+
+                if (m[i].rm_so == -1)
+                {
+                    break;
+                }
+
+                start  = m[i].rm_so + (p - to_match);
+                //finish = m[i].rm_eo + (p - to_match);
+
+                if (i == 0) //주민번호 검사 통과한 부분
+                {
+                    int j;
+                    for ( j = 0; j < 14; j++)
+                    {
+                        ds[k].jumin[j] = *(to_match + start + j);
+                    }
+                    //printf("%s\n", ds[k].jumin);
+                    k++; //data_storage구조체의 k번째 주민등록번호
+                }
+            }
         }
-        if(i > 8)                            //index 9~12까지는 index-7를 해서 곱하고 더한다
-        {
-            sum += (jumin[i]-'0') * (i-7);
-        }
+
+        p += m[0].rm_eo;
     }
-        result = 11 - (sum % 11);
+}
 
-     if(result >= 10)
-     {
-         result -= 10;
-     }
-     else
-         result;
+char check_file()
+{
+    FILE* fp = NULL;
+    regex_t r;
+    char buffer[5000];
+    const char * regex_text;
+    const char * find_text;
 
-     if(result == (jumin[13]-'0'))           //result값이 주민번호 마지막과 같은지 확인.
-     {
-         /******올바른 주민 등록 번호******/
-         /* amqp_rpc_sendstring_client.c 에서 messeage보내는 부분에 jumin[15] 넣어서 전송*/
-         return jumin[15];
-     }
-     else
-     {
-         /******잘못된 주민 등록 번호******/
-         /* 처리하기 */
-     }
+    fp = fopen("/home/joeun/parsejumin/jumin.txt", "r");
+
+    if(NULL == fp)
+    {
+        return 1;
+    }
+
+    regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민등록번호 정규식
+
+    while (feof(fp) == 0)
+    {
+        fread(buffer, sizeof(char), sizeof(buffer), fp);
+        compile_regex (& r, regex_text);
+        find_text = buffer; // 버퍼 크기만큼 읽어서 find_text에 넣고 검사
+        match_regex (& r, find_text);
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+    regfree (& r);
+    fclose(fp);
+
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -110,13 +174,13 @@ int main(int argc, char *argv[]) {
   int port, status;
   char const *exchange;
   char const *routingkey;
-  char const *messagebody;
+  char const *messagebody; //messagebody부분: 보낼 data 여기에 담으면 됌
+  messagebody = &ds->jumin[15]; 
   amqp_socket_t *socket = NULL;
   amqp_connection_state_t conn;
   amqp_bytes_t reply_to_queue;
 
-  char jumin[15];
-  check_Jumin(jumin);
+  check_file();
 
   if (argc < 5) { /* minimum number of mandatory arguments */
     fprintf(stderr,
@@ -192,7 +256,7 @@ int main(int argc, char *argv[]) {
     */
     die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
                                     amqp_cstring_bytes(routingkey), 0, 0,
-                                    &props, amqp_cstring_bytes(jumin)),
+                                    &props, amqp_cstring_bytes(ds->jumin)),
                  "Publishing");
 
     amqp_bytes_free(props.reply_to);
