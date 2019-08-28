@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
   char const *exchange;
   char const *routingkey;
   char const *messagebody; //messagebody부분: 보낼 data 여기에 담으면 됌
-  messagebody = &ds->jumin[15]; 
+ // messagebody = &ds->jumin[15]; 
   amqp_socket_t *socket = NULL;
   amqp_connection_state_t conn;
   amqp_bytes_t reply_to_queue;
@@ -256,7 +256,7 @@ int main(int argc, char *argv[]) {
     */
     die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
                                     amqp_cstring_bytes(routingkey), 0, 0,
-                                    &props, amqp_cstring_bytes(messagebody)),
+                                    &props, amqp_cstring_bytes(ds[1].jumin)),
                  "Publishing");
 
     amqp_bytes_free(props.reply_to);
