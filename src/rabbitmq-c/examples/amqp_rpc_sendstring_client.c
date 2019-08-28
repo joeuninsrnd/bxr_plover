@@ -256,7 +256,7 @@ int main(int argc, char *argv[]) {
     */
     die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
                                     amqp_cstring_bytes(routingkey), 0, 0,
-                                    &props, amqp_cstring_bytes(ds->jumin)),
+                                    &props, amqp_cstring_bytes(messagebody)),
                  "Publishing");
 
     amqp_bytes_free(props.reply_to);
