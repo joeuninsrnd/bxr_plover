@@ -51,11 +51,13 @@
 typedef struct Data_storage
 {
     char jumin[15];
+    char passport[10];
+    char driver[15];
 
 }data_storage;
 
 static data_storage ds[100]; //일단 전역변수로 해놓음(나중에 함수내에서 지역변수로 처리하기)
-static int cnt;
+static int cnt; //data_storage에 들어가는 data개수 세는 변수
 
 /* Compile the regular expression described by "regex_text" into
    "r". */
@@ -93,6 +95,7 @@ char match_regex (regex_t * r, const char * to_match)
     /* "M" contains the matches found. */
     regmatch_t m[n_matches];
 
+    //버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
     while (1)
     {
         int nomatch = regexec (r, p, n_matches, m, 0);
@@ -122,11 +125,12 @@ char match_regex (regex_t * r, const char * to_match)
                 if (i == 0) //주민번호 검사 통과한 부분
                 {
                     int j;
+
                     for ( j = 0; j < 14; j++)
                     {
                         ds[cnt].jumin[j] = *(to_match + start + j);
                     }
-                    //printf("%s\n", ds[k].jumin);
+
                     cnt++; //data_storage구조체의 cnt번째 주민등록번호
                 }
             }
@@ -144,6 +148,7 @@ char check_file()
     const char * regex_text;
     const char * find_text;
 
+    //지정한 위치의 파일을 열고 읽기//
     fp = fopen("/home/joeun/parsejumin/jumin.txt", "r");
 
     if(NULL == fp)
@@ -151,16 +156,21 @@ char check_file()
         return 1;
     }
 
-    regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민등록번호 정규식
+    //각 개인정보의 정규식//
+    regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
 
+    //정규식 컴파일//
+    compile_regex (& r, regex_text);
+
+    //버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동//
     while (feof(fp) == 0)
     {
         fread(buffer, sizeof(char), sizeof(buffer), fp);
-        compile_regex (& r, regex_text);
-        find_text = buffer; // 버퍼 크기만큼 읽어서 find_text에 넣고 검사
+        find_text = buffer;
         match_regex (& r, find_text);
     }
 
+    //메모리관리(초기화), 파일닫기//
     memset(buffer, 0, sizeof(buffer));
     regfree (& r);
     fclose(fp);
@@ -252,6 +262,7 @@ int main(int argc, char *argv[]) {
     /*
       publish
     */
+    //amqp_cstring_bytes(message)에서 message부분에 data_storage에 저장한 data넣고 publish. data 1개당 message 1개//
     int i;
     for (i = 0; i < cnt; i++)
     {
@@ -259,9 +270,6 @@ int main(int argc, char *argv[]) {
                                         amqp_cstring_bytes(routingkey), 0, 0,
                                         &props, amqp_cstring_bytes(ds[i].jumin)), "Publishing"); //구조체 포인터부분
     }
-
-
-
 
     amqp_bytes_free(props.reply_to);
   }
