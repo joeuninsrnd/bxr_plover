@@ -54,7 +54,8 @@ typedef struct Data_storage
 
 }data_storage;
 
-data_storage static ds[100]; //일단 전역변수로 해놓음(나중에 함수내에서 지역변수로 처리하기)
+static data_storage ds[100]; //일단 전역변수로 해놓음(나중에 함수내에서 지역변수로 처리하기)
+static int cnt;
 
 /* Compile the regular expression described by "regex_text" into
    "r". */
@@ -92,8 +93,6 @@ char match_regex (regex_t * r, const char * to_match)
     /* "M" contains the matches found. */
     regmatch_t m[n_matches];
 
-    int k = 0;
-
     while (1)
     {
         int nomatch = regexec (r, p, n_matches, m, 0);
@@ -125,10 +124,10 @@ char match_regex (regex_t * r, const char * to_match)
                     int j;
                     for ( j = 0; j < 14; j++)
                     {
-                        ds[k].jumin[j] = *(to_match + start + j);
+                        ds[cnt].jumin[j] = *(to_match + start + j);
                     }
                     //printf("%s\n", ds[k].jumin);
-                    k++; //data_storage구조체의 k번째 주민등록번호
+                    cnt++; //data_storage구조체의 cnt번째 주민등록번호
                 }
             }
         }
@@ -170,12 +169,11 @@ char check_file()
 }
 
 int main(int argc, char *argv[]) {
-  char const *hostname;
+  char *hostname;
   int port, status;
-  char const *exchange;
-  char const *routingkey;
-  char const *messagebody; //messagebody부분: 보낼 data 여기에 담으면 됌
- // messagebody = &ds->jumin[15]; 
+  char *exchange;
+  char *routingkey;
+
   amqp_socket_t *socket = NULL;
   amqp_connection_state_t conn;
   amqp_bytes_t reply_to_queue;
@@ -254,10 +252,16 @@ int main(int argc, char *argv[]) {
     /*
       publish
     */
-    die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-                                    amqp_cstring_bytes(routingkey), 0, 0,
-                                    &props, amqp_cstring_bytes(ds[1].jumin)),
-                 "Publishing");
+    int i;
+    for (i = 0; i < cnt; i++)
+    {
+        die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+                                        amqp_cstring_bytes(routingkey), 0, 0,
+                                        &props, amqp_cstring_bytes(ds[i].jumin)), "Publishing"); //구조체 포인터부분
+    }
+
+
+
 
     amqp_bytes_free(props.reply_to);
   }
@@ -366,3 +370,4 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
+
