@@ -125,7 +125,7 @@ static void dump_row(long count, int numinrow, int *chs) {
       if (isprint(chs[i])) {
         printf("%c", chs[i]);
       } else {
-        printf(".");
+        printf("%d", chs[i]); 
       }
     }
   }

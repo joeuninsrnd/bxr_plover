@@ -50,14 +50,13 @@
 
 typedef struct Data_storage
 {
-    char jumin[15];
-    char passport[10];
-    char driver[15];
+    char jumin;
+    char passport;
+    char driver;
 
 }data_storage;
 
-static data_storage ds[100]; //일단 전역변수로 해놓음(나중에 함수내에서 지역변수로 처리하기)
-static int cnt; //data_storage에 들어가는 data개수 세는 변수
+static data_storage ds;
 
 /* Compile the regular expression described by "regex_text" into
    "r". */
@@ -112,7 +111,6 @@ char match_regex (regex_t * r, const char * to_match)
             for (i = 0; i < n_matches; i++)
             {
                 int start;
-                //int finish;
 
                 if (m[i].rm_so == -1)
                 {
@@ -120,18 +118,10 @@ char match_regex (regex_t * r, const char * to_match)
                 }
 
                 start  = m[i].rm_so + (p - to_match);
-                //finish = m[i].rm_eo + (p - to_match);
 
                 if (i == 0) //주민번호 검사 통과한 부분
                 {
-                    int j;
-
-                    for ( j = 0; j < 14; j++)
-                    {
-                        ds[cnt].jumin[j] = *(to_match + start + j);
-                    }
-
-                    cnt++; //data_storage구조체의 cnt번째 주민등록번호
+                    ds.jumin++; //검출된 주민등록번호의 수
                 }
             }
         }
@@ -262,14 +252,10 @@ int main(int argc, char *argv[]) {
     /*
       publish
     */
-    //amqp_cstring_bytes(message)에서 message부분에 data_storage에 저장한 data넣고 publish. data 1개당 message 1개//
-    int i;
-    for (i = 0; i < cnt; i++)
-    {
-        die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-                                        amqp_cstring_bytes(routingkey), 0, 0,
-                                        &props, amqp_cstring_bytes(ds[i].jumin)), "Publishing"); //구조체 포인터부분
-    }
+
+    die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+                                    amqp_cstring_bytes(routingkey), 0, 0,
+                                    &props, amqp_cstring_bytes(&ds.jumin)), "Publishing"); //구조체 포인터부분
 
     amqp_bytes_free(props.reply_to);
   }
@@ -378,4 +364,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
