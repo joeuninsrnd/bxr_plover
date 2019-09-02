@@ -17,11 +17,7 @@ BXR_PLOVER는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 �
 (이후에 여권번호, 운전면허번호 등 과 같은 다양한 민감정보를 검출하도록 확장할 계획)
 
   <프로세스 구상도 및 사용 도구>
-  Client        <===>          Server         <===>          Web          <===>          관리자
-Debian 10                 CentOS 7.6.1810                Tomcat 9.0.21                 Web Console
-GTK+ 3.24.10              RabbitMQ 3.7.17                Web/WAS
-RabbitMQ 3.7.17           MariaDB 10.4.7
-
+Client(Debian 10, GTK+ 3.24.10, RabbitMQ 3.7.17)  <===>  Server(CentOS 7.6.1810, RabbitMQ 3.7.17, MariaDB 10.4.7)  <===>  Web(Tomcat, Web/WAS 9.0.21)  <===>  관리자(Web Console)
 
 - [Travis CI](https://travis-ci.org/)
 - [AppVeyor](https://www.appveyor.com/)
