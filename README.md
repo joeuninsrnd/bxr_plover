@@ -12,8 +12,16 @@
 
 ## Description
 
-BXR_PLOVER는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감 정보 검출 및 유출을 방지 하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신하는 부분을 개발하고 MariaDB를 사용할 예정이다. (RabbitMQ와 MariaDB를 연동해서 사용하기위해 Maxscale을 사용하려하는데 아직 Debian10을 지원하지 않아서 JDBC를 사용중이다.)
-현재 Server/Client 통신가능하며 민감 정보 검출 하는 모듈을 개발중이다.
+BXR_PLOVER는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감 정보 검출 및 유출을 방지 하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신을 하고 MariaDB, Tomcat을 사용할 예정이다.
+현재 Server/Client 통신과 txt파일 형태의 민감정보(주민등록번호) 검출이 가능하며 hwp, pdf 등과 같은 다양한 문서포맷을 검출하는 모듈을 개발중이다.
+(이후에 여권번호, 운전면허번호 등 과 같은 다양한 민감정보를 검출하도록 확장할 계획)
+
+  <프로세스 구상도 및 사용 도구>
+  Client        <===>          Server         <===>          Web          <===>          관리자
+Debian 10                 CentOS 7.6.1810                Tomcat 9.0.21                 Web Console
+GTK+ 3.24.10              RabbitMQ 3.7.17                Web/WAS
+RabbitMQ 3.7.17           MariaDB 10.4.7
+
 
 - [Travis CI](https://travis-ci.org/)
 - [AppVeyor](https://www.appveyor.com/)
