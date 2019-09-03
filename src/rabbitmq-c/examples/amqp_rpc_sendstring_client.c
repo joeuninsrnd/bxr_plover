@@ -40,9 +40,12 @@
 #include <regex.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
 #include <assert.h>
+#include <dirent.h>
 
 #include "utils.h"
 
@@ -130,42 +133,79 @@ char match_regex (regex_t * r, const char * to_match)
     }
 }
 
-char check_file()
+int scan_dir(const char *path)
 {
+    DIR* dp = NULL;
+    struct dirent* file = NULL;
+    struct stat buf;
+    char filename[4096];
     FILE* fp = NULL;
     regex_t r;
-    char buffer[5000];
     const char * regex_text;
     const char * find_text;
+    char buffer[5000];
 
-    //지정한 위치의 파일을 열고 읽기//
-    fp = fopen("/home/joeun/parsejumin/jumin.txt", "r");
-
-    if(NULL == fp)
+    if ((dp = opendir(path))== NULL)
     {
-        return 1;
+        printf("폴더를 열수 없습니다.\n");
+
+        return -1;
     }
 
-    //각 개인정보의 정규식//
-    regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
-
-    //정규식 컴파일//
-    compile_regex (& r, regex_text);
-
-    //버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동//
-    while (feof(fp) == 0)
+    while ((file = readdir(dp)) != NULL)
     {
-        fread(buffer, sizeof(char), sizeof(buffer), fp);
-        find_text = buffer;
-        match_regex (& r, find_text);
+        //filename에 현재 path넣기//￣
+        sprintf(filename, "%s/%s", path, file->d_name);
+        lstat(filename, &buf);
+
+        //폴더//
+        if(S_ISDIR(buf.st_mode))
+        {
+            // .이거하고 ..이거 제외//
+            if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
+            {
+                continue;
+            }
+
+            //안에 폴더로 재귀함수//
+            scan_dir(filename);
+        }
+
+        //파일//
+        else if(S_ISREG(buf.st_mode))
+        {
+            printf("File name: %s\n", file->d_name);
+            fp = fopen(filename, "r");
+
+            if(NULL == fp)
+            {
+                printf("파일을 열수 없습니다.\n");
+                return 1;
+            }
+
+            //각 개인정보의 정규식//
+            regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
+
+            //정규식 컴파일//
+            compile_regex (& r, regex_text);
+
+            //버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동//
+            while (feof(fp) == 0)
+            {
+                fread(buffer, sizeof(char), sizeof(buffer), fp);
+                find_text = buffer;
+                match_regex (& r, find_text);
+            }
+
+            //메모리관리(초기화), 파일닫기//
+            memset(buffer, 0, sizeof(buffer));
+            regfree (& r);
+            fclose(fp);
+        }
     }
 
-    //메모리관리(초기화), 파일닫기//
-    memset(buffer, 0, sizeof(buffer));
-    regfree (& r);
-    fclose(fp);
-
-    return 0;
+    closedir(dp);
+    return  0;
 }
 
 int main(int argc, char *argv[]) {
@@ -178,7 +218,8 @@ int main(int argc, char *argv[]) {
   amqp_connection_state_t conn;
   amqp_bytes_t reply_to_queue;
 
-  check_file();
+  char path[4096] = "/home/joeun/testd";
+  scan_dir(path);
 
   if (argc < 5) { /* minimum number of mandatory arguments */
     fprintf(stderr,
