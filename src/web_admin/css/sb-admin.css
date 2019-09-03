@@ -4597,6 +4597,11 @@ div.checkbox-wrapper {margin-right: 90px;}
   font-size: 1rem;
   line-height: inherit;
   white-space: nowrap;
+  width: 100px;
+}
+.navbar-brand img {
+  width: 100%;
+  height: 100%;
 }
 
 .navbar-brand:hover, .navbar-brand:focus {
@@ -10481,6 +10486,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  min-height: 800px;
 }
 
 #wrapper #content-wrapper {
@@ -10813,14 +10819,14 @@ body {
   --input-padding-y: 0.75rem;
 }
 
-.card-login {
+.card-login, .card-register {
   max-width: 25rem;
   padding: 3rem;
 }
-.card-login .card-header, .card-login .card-body {
+.card-login .card-header, .card-login .card-body, .card-register .card-header {
   padding: 0;
 }
-.card-login .card-header {
+.card-login .card-header, .card-register .card-header {
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: 2rem;
