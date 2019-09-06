@@ -47,7 +47,7 @@
 #include <assert.h>
 #include <dirent.h>
 
-#include "utils.h"
+//#include "utils.h"
 
 #define MAX_ERROR_MSG 0x1000
 
@@ -104,7 +104,6 @@ char match_regex (regex_t * r, const char * to_match)
 
         if (nomatch)
         {
-            printf ("No more matches.\n");
             return 0;
         }
 
@@ -113,14 +112,10 @@ char match_regex (regex_t * r, const char * to_match)
             int i;
             for (i = 0; i < n_matches; i++)
             {
-                int start;
-
                 if (m[i].rm_so == -1)
                 {
                     break;
                 }
-
-                start  = m[i].rm_so + (p - to_match);
 
                 if (i == 0) //주민번호 검사 통과한 부분
                 {
@@ -239,20 +234,27 @@ int main(int argc, char *argv[]) {
   conn = amqp_new_connection();
 
   socket = amqp_tcp_socket_new(conn);
+
   if (!socket) {
-    die("creating TCP socket");
+    //die("creating TCP socket");
+      printf("creating TCP socket");
   }
 
   status = amqp_socket_open(socket, hostname, port);
   if (status) {
-    die("opening TCP socket");
+    //die("opening TCP socket");
+      printf("opening TCP socket");
   }
 
-  die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
+  /*die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
                                "guest", "guest"),
-                    "Logging in");
+                    "Logging in");*/
+  amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
+                                 "guest", "guest");
+
   amqp_channel_open(conn, 1);
-  die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
+  //die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
+  amqp_get_rpc_reply(conn);
 
   /*
      create private reply_to queue
@@ -261,7 +263,8 @@ int main(int argc, char *argv[]) {
   {
     amqp_queue_declare_ok_t *r = amqp_queue_declare(
         conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
-    die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
+    //die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
+    amqp_get_rpc_reply(conn);
     reply_to_queue = amqp_bytes_malloc_dup(r->queue);
     if (reply_to_queue.bytes == NULL) {
       fprintf(stderr, "Out of memory while copying queue name");
@@ -294,9 +297,12 @@ int main(int argc, char *argv[]) {
       publish
     */
 
-    die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+    /*die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
                                     amqp_cstring_bytes(routingkey), 0, 0,
-                                    &props, amqp_cstring_bytes(&ds.jumin)), "Publishing"); //구조체 포인터부분
+                                    &props, amqp_cstring_bytes(&ds.jumin)), "Publishing");*/ //구조체 포인터부분
+    amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+                                        amqp_cstring_bytes(routingkey), 0, 0,
+                                        &props, amqp_cstring_bytes(&ds.jumin));
 
     amqp_bytes_free(props.reply_to);
   }
@@ -308,7 +314,8 @@ int main(int argc, char *argv[]) {
   {
     amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
                        amqp_empty_table);
-    die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
+    //die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
+    amqp_get_rpc_reply(conn);
     amqp_bytes_free(reply_to_queue);
 
     {
@@ -377,8 +384,7 @@ int main(int argc, char *argv[]) {
           body_received += frame.payload.body_fragment.len;
           assert(body_received <= body_target);
 
-          amqp_dump(frame.payload.body_fragment.bytes,
-                    frame.payload.body_fragment.len);
+          //amqp_dump(frame.payload.body_fragment.bytes, frame.payload.body_fragment.len);
         }
 
         if (body_received != body_target) {
@@ -397,11 +403,12 @@ int main(int argc, char *argv[]) {
      closing
   */
 
-  die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),
-                    "Closing channel");
-  die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS),
-                    "Closing connection");
-  die_on_error(amqp_destroy_connection(conn), "Ending connection");
+ // die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS), "Closing channel");
+  amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS);
+  //die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS), "Closing connection");
+  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
+  //die_on_error(amqp_destroy_connection(conn), "Ending connection");
+  amqp_destroy_connection(conn);
 
   return 0;
 }
