@@ -4,9 +4,6 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkApplicationWindow" id="appwindow1">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Blue X-Ray Plover v0.1</property>
-    <property name="default_width">200</property>
-    <property name="default_height">200</property>
     <signal name="destroy" handler="on_appwindow1_destroy" swapped="no"/>
     <child>
       <placeholder/>
@@ -16,14 +13,34 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
+          <object class="GtkHeaderBar" id="headerbar1">
+            <property name="width_request">400</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="title" translatable="yes">Blue X-Ray Plover v0.1</property>
+            <property name="subtitle" translatable="yes">개방형 OS를 위한 민가정보 생명주기 관리 프로그램</property>
+            <property name="spacing">2</property>
+            <child>
+              <object class="GtkImage" id="icon1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="stock">gtk-missing-image</property>
+                <property name="icon_size">6</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="x">1</property>
+            <property name="y">1</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkBox" id="box1">
-            <property name="width_request">200</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid1">
-                <property name="width_request">200</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="border_width">0</property>
@@ -47,6 +64,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="activate" handler="on_btn_detect_activate" swapped="no"/>
+                    <signal name="button-press-event" handler="on_btn_detect_button_press_event" swapped="no"/>
+                    <signal name="button-release-event" handler="on_btn_detect_button_release_event" swapped="no"/>
                     <signal name="clicked" handler="on_btn_detect_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -87,35 +107,8 @@
             <property name="y">80</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkLabel" id="clb">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">label</property>
-          </object>
-          <packing>
-            <property name="x">200</property>
-            <property name="y">222</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="cbt">
-            <property name="label" translatable="yes">button</property>
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="on_cbt_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">50</property>
-            <property name="y">222</property>
-          </packing>
-        </child>
       </object>
     </child>
   </object>
 </interface>
+
