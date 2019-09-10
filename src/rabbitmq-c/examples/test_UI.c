@@ -24,7 +24,7 @@ typedef struct Data_storage
 }data_storage;
 
 static data_storage ds;
-static const gchar *path;
+static gchar *path;
 
 /* Compile the regular expression described by "regex_text" into
    "r". */
@@ -385,7 +385,9 @@ int detect_func()
 }
 
 
+//UI 부분//
 GtkEntry *entry_detect;
+GtkFileChooser *filechooser_detect;
 
 int main(int argc, char *argv[])
 {
@@ -397,6 +399,7 @@ int main(int argc, char *argv[])
     gtk_builder_add_from_file(gtkBuilder, "tglade.glade", NULL);
     window = GTK_WIDGET(gtk_builder_get_object(gtkBuilder, "appwindow1"));
     entry_detect = GTK_ENTRY(gtk_builder_get_object(gtkBuilder, "entry_detect"));
+    filechooser_detect = GTK_FILE_CHOOSER(gtk_builder_get_object(gtkBuilder, "filechooser_detect"));
     gtk_builder_connect_signals(gtkBuilder, NULL);
     
 
@@ -409,11 +412,34 @@ int main(int argc, char *argv[])
 
 void on_entry_detect_activate(GtkEntry *entry_detect)
 {
-	path = gtk_entry_get_text(entry_detect);
+	path = (gchar *)gtk_entry_get_text(entry_detect);
 	g_print("선택한 폴더 위치: %s\n", path);
+}
+
+void on_filechooser_detect_file_set(GtkFileChooser *filechooser_detect)
+{
+	GFile *file;
+
+	file = gtk_file_chooser_get_current_folder_file (filechooser_detect);
+	if (!file)
+	return;
+	path = g_file_get_uri (file);
+	g_object_unref (file);
+
+	for(int i = 0; i <1024; i++)
+	{
+		path [i] = path[i + 7]; //URI앞에 file:// 이거 지우기위한거
+		if(path[i] == 0)
+		{
+		g_print("선택한 폴더 위치: %s\n", path);
+		return;
+		}
+	}
+	return;
 }
 
 void on_btn_detect_clicked()
 {
     detect_func();
 }
+

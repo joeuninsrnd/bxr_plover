@@ -4,7 +4,9 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkApplicationWindow" id="appwindow1">
     <property name="can_focus">False</property>
-    <signal name="destroy" handler="on_appwindow1_destroy" swapped="no"/>
+    <property name="title" translatable="yes">Blue X-Ray Plover v0.1</property>
+    <property name="default_width">200</property>
+    <property name="default_height">200</property>
     <child>
       <placeholder/>
     </child>
@@ -13,60 +15,23 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkHeaderBar" id="headerbar1">
-            <property name="width_request">400</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="title" translatable="yes">Blue X-Ray Plover v0.1</property>
-            <property name="subtitle" translatable="yes">개방형 OS를 위한 민가정보 생명주기 관리 프로그램</property>
-            <property name="spacing">2</property>
-            <child>
-              <object class="GtkImage" id="icon1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="stock">gtk-missing-image</property>
-                <property name="icon_size">6</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="x">1</property>
-            <property name="y">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkBox" id="box1">
+            <property name="width_request">200</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid1">
+                <property name="width_request">200</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="border_width">0</property>
-                <child>
-                  <object class="GtkSearchEntry" id="searchentry1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="width_chars">20</property>
-                    <property name="max_width_chars">255</property>
-                    <property name="primary_icon_activatable">False</property>
-                    <property name="primary_icon_sensitive">False</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkButton" id="btn_detect">
                     <property name="label" translatable="yes">검출</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="activate" handler="on_btn_detect_activate" swapped="no"/>
-                    <signal name="button-press-event" handler="on_btn_detect_button_press_event" swapped="no"/>
-                    <signal name="button-release-event" handler="on_btn_detect_button_release_event" swapped="no"/>
                     <signal name="clicked" handler="on_btn_detect_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -75,7 +40,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFileChooserButton" id="filechooser1">
+                  <object class="GtkFileChooserButton" id="filechooser_detect">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="action">select-folder</property>
@@ -83,13 +48,24 @@
                     <property name="show_hidden">True</property>
                     <property name="title" translatable="yes"/>
                     <property name="width_chars">0</property>
-                    <signal name="button-press-event" handler="on_filechooser1_button_press_event" swapped="no"/>
-                    <signal name="button-release-event" handler="on_filechooser1_button_release_event" swapped="no"/>
-                    <signal name="current-folder-changed" handler="on_filechooser1_current_folder_changed" swapped="no"/>
-                    <signal name="file-set" handler="on_filechooser1_file_set" swapped="no"/>
+                    <signal name="file-set" handler="on_filechooser_detect_file_set" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="entry_detect">
+                    <property name="width_request">220</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="primary_icon_stock">gtk-find</property>
+                    <property name="placeholder_text" translatable="yes">폴더의 위치를 입력하세요...</property>
+                    <signal name="activate" handler="on_entry_detect_activate" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -111,4 +87,3 @@
     </child>
   </object>
 </interface>
-
