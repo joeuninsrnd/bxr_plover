@@ -69,6 +69,7 @@ char match_regex (regex_t * r, const char * to_match)
 
         if (nomatch)
         {
+            printf ("No more matches.\n");
             return 0;
         }
 
@@ -77,14 +78,45 @@ char match_regex (regex_t * r, const char * to_match)
             int i;
             for (i = 0; i < n_matches; i++)
             {
+                int start;
+                //int finish;
+
                 if (m[i].rm_so == -1)
                 {
                     break;
                 }
 
-                if (i == 0) //주민번호 검사 통과한 부분
+                start  = m[i].rm_so + (p - to_match);
+                //finish = m[i].rm_eo + (p - to_match);
+
+                //주민번호 정규식 검사 통과//
+                if (i == 0)
                 {
-                    ds.jumin++; //검출된 주민등록번호의 수
+                    int j, chk = 0, tmp = 0, sum = 0;
+                    char buf_jumin[15] = {0,};
+                    //주민번호 유효성 검사//
+                    for ( j = 0; j < 14; j++)
+                    {
+                        buf_jumin[j] = *(to_match + start + j);
+                        buf_jumin[j] -= 48;
+                    }
+
+                    sum = buf_jumin[0]*2 + buf_jumin[1]*3 + buf_jumin[2]*4 + buf_jumin[3]*5 + buf_jumin[4]*6 + buf_jumin[5]*7
+                        + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
+
+                    chk = buf_jumin[13];
+                    tmp = 11 - (sum % 11);
+
+                    if (tmp >=10)
+                    {
+                        tmp -= 10;
+                    }
+
+                    //주민번호 유효성 통과//
+                    if (tmp == chk)
+                    {
+                        ds.jumin++; //검출된 주민등록번호의 수//
+                    }
                 }
             }
         }
@@ -114,7 +146,7 @@ int scan_dir(const char *path)
 
     while ((file = readdir(dp)) != NULL)
     {
-        //filename에 현재 path넣기//￣
+        //filename에 현재 path넣기//
         sprintf(filename, "%s/%s", path, file->d_name);
         lstat(filename, &buf);
 
@@ -442,4 +474,7 @@ void on_btn_detect_clicked()
 {
     detect_func();
 }
+
+
+
 
