@@ -21,39 +21,52 @@
 
 <body>
 
-  <div class="container">
-    <div class="card card-login mx-auto mt-5">
-      <div class="card-header">로그인</div>
-      <div class="card-body">
-        <form>
-          <div class="form-group">
-            <div class="form-label-group">
-              <input type="email" id="inputEmail" class="form-control" placeholder="아이디" required="required" autofocus="autofocus">
-              <label for="inputEmail">아이디</label>
+  <div class="container" style="margin-top:5rem;">
+    <div class="container-box-left">
+      <div class="card card-login">
+        <div class="card-header-logo"><img src="img/plover_logo_vertical.svg" alt="plover logo"></div>
+        <div class="card-header">로그인</div>
+        <div class="card-body">
+          <form>
+            <div class="form-group">
+              <div class="form-label-group">
+                <input type="email" id="inputEmail" class="form-control" placeholder="아이디" required="required" autofocus="autofocus">
+                <label for="inputEmail">아이디</label>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="form-label-group">
-              <input type="password" id="inputPassword" class="form-control" placeholder="비밀번호" required="required">
-              <label for="inputPassword">비밀번호</label>
+            <div class="form-group">
+              <div class="form-label-group">
+                <input type="password" id="inputPassword" class="form-control" placeholder="비밀번호" required="required">
+                <label for="inputPassword">비밀번호</label>
+              </div>
             </div>
-          </div>
-          <div class="form-group" style="text-align:right;margin-bottom: 1.5rem;">
-            <div class="checkbox">
-              <label style="font-size: 0.8rem !important">
-                <input type="checkbox" value="remember-me">
-                아이디 저장
-              </label>
+            <div class="form-group" style="text-align:right;margin-bottom: 1.5rem;">
+              <div class="checkbox">
+                <label style="font-size: 0.8rem !important">
+                  <input type="checkbox" value="remember-id">
+                  아이디 저장
+                </label>
+              </div>
             </div>
+            <a class="btn btn-primary btn-block" href="index.html" style="padding: 0.75rem 0.75rem;">로그인</a>
+          </form>
+          <div class="login-footer">
+            <a href="forgot-password.html">비밀번호 찾기</a>
           </div>
-          <a class="btn btn-primary btn-block" href="index.html" style="padding: 0.75rem 0.75rem;">로그인</a>
-        </form>
-        <div class="login-footer">
-          <a href="forgot-password.html">비밀번호 찾기</a>
         </div>
       </div>
-      <button class="btn btn-secondary" type="button" name="button" style="margin-top:1rem;">프로그램 다운로드</button>
+      <button class="btn btn-secondary" type="button" name="button">프로그램 다운로드</button>
     </div>
+
+    <div class="container-box-right">
+      <div class="card box-notice">
+        <div><h1>BlueX-ray 프로그램이 실행 되지 않는 경우</h1></div>
+        <div></div>
+      </div>
+      <div class="card box-notice"></div>
+      <div class="card box-notice"></div>
+    </div>
+
   </div>
 
   <!-- Bootstrap core JavaScript-->

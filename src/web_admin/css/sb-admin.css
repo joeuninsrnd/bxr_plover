@@ -615,6 +615,33 @@ pre code {
   overflow-y: scroll;
 }
 
+.container-box-left {
+  width: 36%;
+  display: inline-block;
+}
+.container-box-left .btn-secondary {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+}
+.container-box-right {
+  width: 61%;
+  margin-left: 2%;
+  display: inline-block;
+  vertical-align: top;
+}
+.container-box-right .box-notice {
+  width: 100%;
+  height: 30%;
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+.container-box-right .box-notice h1 {
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: bold;
+  font-size: 1rem;
+}
+
 .container {
   width: 100%;
   padding-right: 15px;
@@ -4876,6 +4903,8 @@ div.checkbox-wrapper {margin-right: 90px;}
 
 .navbar-expand .navbar-nav {
   display: inherit;
+  position: absolute;
+  right: 10px;
 }
 
 .navbar-expand .navbar-nav .dropdown-menu {
@@ -5061,6 +5090,11 @@ div.checkbox-wrapper {margin-right: 90px;}
 
 .card-link + .card-link {
   margin-left: 1.25rem;
+}
+
+.card-header-logo {
+  width: 100px;
+  margin: 0 auto 2rem;
 }
 
 .card-header {
@@ -10726,8 +10760,8 @@ body {
   color: #ced4da;
 }
 #gnb > ul > li a:hover {
-  color: #007bff;
-  background-color: #212529;
+  color: #fff;
+  background-color: #007bff;
 }
 #gnb > ul > li.on > a {
   color: #fff;
@@ -10736,15 +10770,18 @@ body {
 #gnb > ul > li ul {
   display: none;
   padding-left: 0;
-  padding: 0.5rem 0 0;
+  padding: 0.5rem 0;
   background-color: #212529;
 }
 #gnb > ul > li > ul > li > a {
   display: block;
-  padding: 1rem 1.5rem 1rem 2rem;
+  padding: 1rem 1.5rem;
   color: #fff;
   font-size: 0.75rem;
   background-color: #212529;
+}
+#gnb > ul > li > ul > li > a:hover {
+  background-color: #000000;
 }
 #gnb > ul > li > ul > li.on a {
   color: #fff;
@@ -10760,17 +10797,8 @@ body {
   color: #fff;
   font-size: 0.75rem;
 }
-#gnb > ul > li > ul > li li a:hover {
-  color: #007bff;
-}
-#gnb > ul li.noDepth a {
-  background-image: none !important;
-}
-#gnb .depth-last a {
-  background-color: #000 !important;
-}
-#gnb .depth-last {
-  padding-bottom: 0;
+#gnb > ul > li > ul li li a:hover {
+  background-color: #495057;
 }
 /* END Side Nav (GNB) */
 
@@ -11024,4 +11052,10 @@ i.close:hover {
 }
 .active .nav-link {
   font-weight: bold;
+}
+
+.status-info span {
+  font-size: 0.8rem;
+  font-weight: bold;
+  vertical-align: top;
 }
