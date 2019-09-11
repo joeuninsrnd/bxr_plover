@@ -34,20 +34,33 @@
     </button>
     <a class="navbar-brand mr-1" href="index.html"><img src="img/plover_logo_horizontal_white.svg" alt="plover logo"></a>
 
-    <!-- Navbar Search -->
-    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="검색어를 입력하세요." aria-label="Search" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-          <button class="btn btn-primary" type="button">
-            <i class="xi-search"></i>
-          </button>
-        </div>
-      </div>
-    </form>
-
     <!-- Navbar -->
     <ul class="navbar-nav ml-auto ml-md-0">
+      <li class="nav-item dropdown no-arrow status-info">
+        <a class="nav-link dropdown-toggle" href="#"role="button">
+          <i class="xi-user"></i>
+          <span>12/968</span>
+        </a>
+      </li>
+      <li class="nav-item dropdown no-arrow status-info">
+        <a class="nav-link dropdown-toggle" href="#"role="button">
+          <i class="xi-file"></i>
+          <span>4523/6759</span>
+        </a>
+      </li>
+      <li class="nav-item dropdown no-arrow status-info">
+        <a class="nav-link dropdown-toggle" href="#"role="button">
+          <i class="xi-lock"></i>
+          <span>372/6759</span>
+        </a>
+      </li>
+      <li class="nav-item dropdown no-arrow status-info">
+        <a class="nav-link dropdown-toggle" href="#"role="button">
+          <i class="xi-trash"></i>
+          <span>39/6759</span>
+        </a>
+      </li>
+
       <li class="nav-item dropdown no-arrow mx-1">
         <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="xi-bell"></i>
@@ -123,56 +136,34 @@
     <!-- Side Nav -->
     <div id="gnb">
       <ul>
-        <li><a href="#none"><i class="xi-chart-pie"></i>통계조회</a>
+        <li><a href="#none"><i class="xi-chart-pie"></i>대시보드</a></li>
+
+        <li><a href="#none"><i class="xi-chart-bar"></i>통계보기</a>
           <ul>
-            <li><a href="#none"><i class="xi-label-o"></i>정기검사</a>
-              <ul class="depth-last">
-                <li><a href="#none">검출패턴정의</a></li>
-                <li><a href="#none">정기점검검사결과</a></li>
-              </ul>
-            </li>
-            <li><a href="#none"><i class="xi-label-o"></i>로그보기</a>
-              <ul class="depth-last">
-                <li><a href="#none">사용자검사로그</a></li>
-                <li><a href="#none">관리자로그</a></li>
-              </ul>
-            </li>
+            <li><a href="#none">사용자</a></li>
+            <li><a href="#none">부서</a></li>
           </ul>
         </li>
 
         <li><a href="#none"><i class="xi-users"></i>조직관리</a>
           <ul>
-            <li><a href="#none"><i class="xi-label-o"></i>부서관리</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>사용자관리</a>
-              <ul class="depth-last">
-                <li><a href="#none">접속현황</a></li>
-                <li><a href="#none">미점검PC현황</a></li>
-                <li><a href="#none">검출기능</a></li>
-                <li><a href="#none">관리자강제검사</a></li>
-                <li><a href="#none">메세지전송</a></li>
-              </ul>
-            </li>
+            <li><a href="#none">사용자</a></li>
+            <li><a href="#none">부서</a></li>
           </ul>
         </li>
-        <li><a href="#none"><i class="xi-security"></i>정책설정</a>
+
+        <li><a href="#none"><i class="xi-desktop"></i>게시판관리</a>
           <ul>
-            <li><a href="#none"><i class="xi-label-o"></i>개인정보검출</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>정기검사주기</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>정책이력관리</a></li>
-          </ul>
-        </li>
-        <li><a href="#none"><i class="xi-desktop"></i>게시판</a>
-          <ul>
-            <li><a href="#none"><i class="xi-label-o"></i>공지사항</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>FAQ</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>QnA</a></li>
+            <li><a href="#none">공지사항</a></li>
+            <li><a href="#none">FAQ</a></li>
+            <li><a href="#none">QnA</a></li>
           </ul>
         </li>
         <li><a href="#none"><i class="xi-cog"></i>환경설정</a>
           <ul>
-            <li><a href="#none"><i class="xi-label-o"></i>관리자설정</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>에이전트설정</a></li>
-            <li><a href="#none"><i class="xi-label-o"></i>용량설정</a></li>
+            <li><a href="#none">서버</a></li>
+            <li><a href="#none">에이전트</a></li>
+            <li><a href="#none">관리자</a></li>
           </ul>
         </li>
       </ul>

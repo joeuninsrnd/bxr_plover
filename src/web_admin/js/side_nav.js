@@ -6,13 +6,6 @@
           $target = $(target);
       _self.speed = speed || 300;
 
-      $target.each(function(){
-        if(findChildren($(this))) {
-          return;
-        }
-        $(this).addClass('noDepth');
-      });
-
       function findChildren(obj) {
         return obj.find('> ul').length > 0;
       }
