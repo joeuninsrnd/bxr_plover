@@ -24,7 +24,7 @@ typedef struct Data_storage
 }data_storage;
 
 static data_storage ds;
-static const gchar *path;
+static gchar *path;
 
 /* Compile the regular expression described by "regex_text" into
    "r". */
@@ -69,6 +69,7 @@ char match_regex (regex_t * r, const char * to_match)
 
         if (nomatch)
         {
+            printf ("No more matches.\n");
             return 0;
         }
 
@@ -77,14 +78,45 @@ char match_regex (regex_t * r, const char * to_match)
             int i;
             for (i = 0; i < n_matches; i++)
             {
+                int start;
+                //int finish;
+
                 if (m[i].rm_so == -1)
                 {
                     break;
                 }
 
-                if (i == 0) //주민번호 검사 통과한 부분
+                start  = m[i].rm_so + (p - to_match);
+                //finish = m[i].rm_eo + (p - to_match);
+
+                //주민번호 정규식 검사 통과//
+                if (i == 0)
                 {
-                    ds.jumin++; //검출된 주민등록번호의 수
+                    int j, chk = 0, tmp = 0, sum = 0;
+                    char buf_jumin[15] = {0,};
+                    //주민번호 유효성 검사//
+                    for ( j = 0; j < 14; j++)
+                    {
+                        buf_jumin[j] = *(to_match + start + j);
+                        buf_jumin[j] -= 48;
+                    }
+
+                    sum = buf_jumin[0]*2 + buf_jumin[1]*3 + buf_jumin[2]*4 + buf_jumin[3]*5 + buf_jumin[4]*6 + buf_jumin[5]*7
+                        + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
+
+                    chk = buf_jumin[13];
+                    tmp = 11 - (sum % 11);
+
+                    if (tmp >=10)
+                    {
+                        tmp -= 10;
+                    }
+
+                    //주민번호 유효성 통과//
+                    if (tmp == chk)
+                    {
+                        ds.jumin++; //검출된 주민등록번호의 수//
+                    }
                 }
             }
         }
@@ -114,7 +146,7 @@ int scan_dir(const char *path)
 
     while ((file = readdir(dp)) != NULL)
     {
-        //filename에 현재 path넣기//￣
+        //filename에 현재 path넣기//
         sprintf(filename, "%s/%s", path, file->d_name);
         lstat(filename, &buf);
 
@@ -385,7 +417,9 @@ int detect_func()
 }
 
 
+//UI 부분//
 GtkEntry *entry_detect;
+GtkFileChooser *filechooser_detect;
 
 int main(int argc, char *argv[])
 {
@@ -397,6 +431,7 @@ int main(int argc, char *argv[])
     gtk_builder_add_from_file(gtkBuilder, "tglade.glade", NULL);
     window = GTK_WIDGET(gtk_builder_get_object(gtkBuilder, "appwindow1"));
     entry_detect = GTK_ENTRY(gtk_builder_get_object(gtkBuilder, "entry_detect"));
+    filechooser_detect = GTK_FILE_CHOOSER(gtk_builder_get_object(gtkBuilder, "filechooser_detect"));
     gtk_builder_connect_signals(gtkBuilder, NULL);
     
 
@@ -409,11 +444,37 @@ int main(int argc, char *argv[])
 
 void on_entry_detect_activate(GtkEntry *entry_detect)
 {
-	path = gtk_entry_get_text(entry_detect);
+	path = (gchar *)gtk_entry_get_text(entry_detect);
 	g_print("선택한 폴더 위치: %s\n", path);
+}
+
+void on_filechooser_detect_file_set(GtkFileChooser *filechooser_detect)
+{
+	GFile *file;
+
+	file = gtk_file_chooser_get_current_folder_file (filechooser_detect);
+	if (!file)
+	return;
+	path = g_file_get_uri (file);
+	g_object_unref (file);
+
+	for(int i = 0; i <1024; i++)
+	{
+		path [i] = path[i + 7]; //URI앞에 file:// 이거 지우기위한거
+		if(path[i] == 0)
+		{
+		g_print("선택한 폴더 위치: %s\n", path);
+		return;
+		}
+	}
+	return;
 }
 
 void on_btn_detect_clicked()
 {
     detect_func();
 }
+
+
+
+
