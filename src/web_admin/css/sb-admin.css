@@ -10812,6 +10812,17 @@ body {
 #gnb > ul > li > ul li li a:hover {
   background-color: #495057;
 }
+#gnb .xi-angle-down {
+  float: right;
+  margin-right: 0;
+  padding-top: 0.2rem;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+#gnb > ul > li.on i.xi-angle-down {
+  transform: rotate(180deg);
+  transition: all 0.2s ease;
+}
 /* END Side Nav (GNB) */
 
 
@@ -11070,6 +11081,5 @@ i.close:hover {
 
 .status-info span {
   font-size: 0.8rem;
-  font-weight: bold;
   vertical-align: top;
 }
