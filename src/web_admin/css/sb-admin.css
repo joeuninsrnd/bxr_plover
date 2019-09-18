@@ -622,24 +622,36 @@ pre code {
 .container-box-left .btn-secondary {
   width: 100%;
   margin-top: 1.5rem;
-  padding: 0.5rem;
+  padding: 0.75rem;
 }
 .container-box-right {
   width: 61%;
   margin-left: 2%;
   display: inline-block;
   vertical-align: top;
+  overflow-y: auto;
+  max-height: 629px;
 }
 .container-box-right .box-notice {
   width: 100%;
   height: 30%;
-  padding: 2rem;
+  padding: 2.25rem;
   margin-bottom: 1rem;
 }
 .container-box-right .box-notice h1 {
-  font-family: "Noto Sans KR", sans-serif;
-  font-style: bold;
+  font-weight: bold;
   font-size: 1rem;
+}
+.container-box-right .box-notice h2 {
+  font-size: 0.75rem;
+  color: #adb5bd;
+  padding-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+}
+.container-box-right .box-notice p {
+  font-size: 0.75rem;
+  margin-bottom: 0rem;
 }
 
 .container {
@@ -2659,7 +2671,7 @@ textarea.form-control {
 
 .btn {
   display: inline-block;
-  font-weight: 400;
+  font-weight: bold;
   color: #212529;
   text-align: center;
   vertical-align: middle;
@@ -2728,21 +2740,21 @@ fieldset:disabled a.btn {
 
 .btn-secondary {
   color: #fff;
-  background-color: #6c757d;
-  border-color: #6c757d;
+  background-color: #495057;
+  border-color: #495057;
 }
 
 .btn-secondary:hover {
   color: #fff;
-  background-color: #5a6268;
-  border-color: #545b62;
+  background-color: #343a40;
+  border-color: #343a40;
 }
 
 
 .btn-secondary.disabled, .btn-secondary:disabled {
   color: #fff;
-  background-color: #6c757d;
-  border-color: #6c757d;
+  background-color: #ced4da;
+  border-color: #ced4da;
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,
@@ -10800,6 +10812,17 @@ body {
 #gnb > ul > li > ul li li a:hover {
   background-color: #495057;
 }
+#gnb .xi-angle-down {
+  float: right;
+  margin-right: 0;
+  padding-top: 0.2rem;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+#gnb > ul > li.on i.xi-angle-down {
+  transform: rotate(180deg);
+  transition: all 0.2s ease;
+}
 /* END Side Nav (GNB) */
 
 
@@ -10855,7 +10878,7 @@ body {
   padding: 0;
 }
 .card-login .card-header, .card-register .card-header {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -10938,8 +10961,10 @@ footer.sticky-footer .container {
 }
 footer.sticky-footer .copyright {
   line-height: 1;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   opacity: 0.5;
+  padding: 3rem;
+  text-align: center;
 }
 
 body.sidebar-toggled footer.sticky-footer {
@@ -11056,6 +11081,5 @@ i.close:hover {
 
 .status-info span {
   font-size: 0.8rem;
-  font-weight: bold;
   vertical-align: top;
 }
