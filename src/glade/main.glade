@@ -5,7 +5,7 @@
   <object class="GtkFileChooserDialog" id="d_filechooserdialog">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
-    <signal name="destroy" handler="on_d_filechooserdialog_destroy" swapped="no"/>
+    <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -22,7 +22,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_d_filechooserdialog_open_btn_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_d_filechooserdialog_open_btn_clicked" object="d_filechooserdialog" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
