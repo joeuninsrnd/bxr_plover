@@ -18,23 +18,25 @@
 
 int chk_tf;
 
-GtkWidget *detect_window;
-GtkWidget *setting_window;
+GtkWidget	*detect_window,
+			*setting_window,
+			*d_filechooserdialog;
+			
+GtkEntry	*d_detect_entry;
 
-GtkWidget *m_detect_btn;
-GtkWidget *m_setting_btn;
-
-GtkWidget *d_option_btn;
-GtkWidget *d_folder_btn;
-GtkWidget *d_filechooserdialog;
-GtkWidget *d_filechooserdialog_open_btn;
+void on_e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data);
 
 void on_m_detect_btn_clicked(GtkButton *m_detect_btn, gpointer *data);
 void on_m_setting_btn_clicked(GtkButton *d_folder_btn, gpointer *data);
 
+void on_d_detect_btn_clicked(GtkButton *d_detect_btn, gpointer *data);
 void on_d_option_btn_clicked(GtkButton *d_option_btn, gpointer *data);
-void on_d_folder_btn_clicked(GtkButton *d_option_btn, gpointer *data);
+void on_d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data);
+void on_d_cloese_btn_clicked(GtkButton *d_cloese_btn, gpointer *data);
 void on_d_filechooserdialog_open_btn_clicked(GtkButton *d_filechooserdialog_open_btn, gpointer *data);
+void on_d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data);
+
+void on_s_cloese_btn_clicked(GtkButton *s_cloese_btn, gpointer *data);
 
 //계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다
 int chk_user()
@@ -44,6 +46,9 @@ int chk_user()
 	return chk_tf;
 }
 
+
+
+//main_window_start//
 void on_m_detect_btn_clicked(GtkButton *m_detect_btn, gpointer *data)
 {
 	gtk_widget_show(detect_window);
@@ -58,10 +63,19 @@ void on_m_setting_btn_clicked(GtkButton *m_setting_btn, gpointer *data)
 	return;
 }
 
-void on_d_option_btn_clicked(GtkButton *d_option_btn, gpointer *data)
+void on_main_wnidow_destroy()
 {
-	gtk_widget_show(setting_window);
-	
+    gtk_main_quit();
+    
+    return;
+}
+//main_window_end//
+
+
+
+//detect_detect_start//
+void on_d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data)//
+{
 	return;
 }
 
@@ -72,10 +86,75 @@ void on_d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
 	return;
 }
 
+void on_d_detect_btn_clicked(GtkButton *d_detect_btn, gpointer *data)//
+{
+	return;
+}
+
+void on_d_option_btn_clicked(GtkButton *d_option_btn, gpointer *data)
+{
+	gtk_widget_show(setting_window);
+	
+	return;
+}
+
+void on_d_encrypt_btn_clicked(GtkButton *d_encrypt_btn, gpointer *data)//
+{
+	return;
+}
+
+void on_d_delete_btn_clicked(GtkButton *d_delete_btn, gpointer *data)//
+{
+	return;
+}
+
+void on_d_cloese_btn_clicked(GtkButton *d_cloese_btn, gpointer *data)
+{
+	gtk_widget_hide(GTK_WIDGET(data));
+	
+	return;
+}
+
 void on_d_filechooserdialog_open_btn_clicked(GtkButton *d_filechooserdialog_open_btn, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
+	
+	return;
 }
+
+
+
+void on_detect_window_destroy(GtkWidget *detect_window, gpointer *data)
+{
+    gtk_widget_destroy(GTK_WIDGET(detect_window));
+    
+    return;
+}
+//detect_detect_end//
+
+
+
+//enrollment_window_start//
+void on_e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data)
+{
+	gtk_widget_hide(GTK_WIDGET(data));
+	
+	return;
+}
+//enrollment_window_end//
+
+
+
+//setting_setting_start//
+void on_s_cloese_btn_clicked(GtkButton *setting_window, gpointer *data)
+{
+	gtk_widget_hide(GTK_WIDGET(data));
+	
+	return;
+}
+//setting_setting_end//
+
+
 
 int main(int argc, char *argv[])
 {
@@ -96,21 +175,17 @@ int main(int argc, char *argv[])
     
     gtk_builder_connect_signals(builder, NULL);
     
-    m_detect_btn		= GTK_WIDGET(gtk_builder_get_object(builder, "m_detect_btn"));
-    m_setting_btn	= GTK_WIDGET(gtk_builder_get_object(builder, "m_setting_btn"));
-    d_option_btn		= GTK_WIDGET(gtk_builder_get_object(builder, "d_option_btn"));
-
     g_object_unref(builder);
 
 	chk_user(chk_tf);
 	
-	if(chk_tf == FALSE)
+	if(chk_tf == FALSE) //TRUE(1)=있다
 	{
 		gtk_widget_show(enrollment_window);
 		gtk_main();
 	}
 	
-	if(chk_tf == TRUE)
+	if(chk_tf == TRUE) 	//FALSE(0)=없다
 	{
 		gtk_widget_show(main_window);
 		gtk_main();
