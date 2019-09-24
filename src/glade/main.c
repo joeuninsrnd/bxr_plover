@@ -25,14 +25,15 @@ typedef struct Data_storage
 int chk_tf;
 static data_storage ds;
 static gchar *path;
-GFile *file;
+
 GtkWidget	*detect_window,
-			*setting_window,
-			*d_filechooserdialog;
+			*setting_window;
 			
 GtkEntry	*d_detect_entry;
 
 GtkFileChooser *d_filechooser;
+
+GFile *file;
 
 void e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data);
 
@@ -46,8 +47,6 @@ void d_close_btn_clicked	(GtkButton *d_close_btn, gpointer *data);
 void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data);
 
 void d_filechooserdialog_current_folder_changed(GtkFileChooser *d_filechooser, gpointer *data);
-void d_filechooserdialog_open_btn_clicked(GtkButton *d_filechooserdialog_open_btn, gpointer *data);
-void d_filechooserdialog_close_btn_clicked(GtkButton *d_filechooserdialog_close_btn, gpointer *data);
 
 void s_cloese_btn_clicked(GtkButton *s_cloese_btn, gpointer *data);
 
@@ -482,8 +481,26 @@ void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data)
 
 void d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
 {
-	gtk_widget_show(d_filechooserdialog);
+	GtkWidget *d_filechooserdialog;
 	
+    d_filechooserdialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_OPEN, 
+			("_열기"), GTK_RESPONSE_ACCEPT, NULL);
+
+    gtk_widget_show_all(d_filechooserdialog);
+    
+	gint resp = gtk_dialog_run(GTK_DIALOG(d_filechooserdialog));
+
+    if( resp == GTK_RESPONSE_ACCEPT)
+	{
+		gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
+   	} 
+   	
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));;
+	
+	gtk_widget_destroy(d_filechooserdialog);
+
+	g_print("선택한 폴더 위치: %s\n", path);
+
 	return;
 }
 
@@ -517,51 +534,6 @@ void d_close_btn_clicked(GtkButton *d_close_btn, gpointer *data)
 	
 	return;
 }
-
-void d_filechooserdialog_current_folder_changed(GtkFileChooser *d_filechooser, gpointer *data)
-{
-	//GFile *file;
-
-	file = gtk_file_chooser_get_current_folder_file (d_filechooser);
-	
-	if (!file)
-	{
-		return;
-	}
-	
-	path = g_file_get_uri (file);
-	g_object_unref (file);
-
-	for(int i = 0; i <1024; i++)
-	{
-		path [i] = path[i + 7]; //URI앞에 file:// 이거 지우기위한거
-		if(path[i] == 0)
-		{
-		g_print("선택한 폴더 위치: %s\n", path);
-		
-		return;
-		}
-	}
-	
-	return;
-}
-
-void d_filechooserdialog_open_btn_clicked(GtkButton *d_filechooserdialog_open_btn, gpointer *data)
-{
-	g_print("선택한 폴더 위치: %s\n", path);
-	printf("click\n");
-	
-	return;
-}
-
-void d_filechooserdialog_close_btn_clicked(GtkButton *d_filechooserdialog_close_btn, gpointer *data)
-{
-	gtk_widget_hide(GTK_WIDGET(data));
-	
-	return;
-}
-
-
 
 void detect_window_destroy(GtkWidget *detect_window, gpointer *data)
 {
@@ -601,7 +573,7 @@ int main(int argc, char *argv[])
     GtkBuilder	*builder;
     GtkWidget		*main_window,
 					*enrollment_window;
-
+					
     gtk_init(&argc, &argv);
 	
     builder = gtk_builder_new();
@@ -611,9 +583,13 @@ int main(int argc, char *argv[])
     enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
     detect_window			= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
-    d_filechooserdialog	= GTK_WIDGET(gtk_builder_get_object(builder, "d_filechooserdialog"));
-    d_filechooser			= GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "d_filechooserdialog"));
-      
+
+    
+    //닫기x 버튼을 hide로 바꾸기//
+    g_signal_connect (detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+    g_signal_connect (setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+
+        
     gtk_builder_connect_signals(builder, NULL);
     
     g_object_unref(builder);
