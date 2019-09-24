@@ -134,7 +134,7 @@ check fails. If this occurs, the diff is displayed for the user to see.
 
 
 ## LICENSE
-This project is licensed under the MIT License.
+This project is licensed under the MIT License.<br>
 https://github.com/joeunins/bxr_plover/blob/master/LICENSE.md
 
 
