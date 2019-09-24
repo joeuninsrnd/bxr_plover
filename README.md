@@ -122,173 +122,20 @@ changes.
 This check simply runs `git diff --check`, which returns with an error if the
 check fails. If this occurs, the diff is displayed for the user to see.
 
-### Astyle
-
-Source code formatting is a great way to keep a consistent look and feel with
-the code. The problem with source formatting is, unless everyone is using it,
-developers PRs will contain modifications unrelated to their specific
-changes, or worse, attempting to fix source formatting periodically will
-destroy your repo's git history each time you format the source. Therefore,
-if source formatting is to be used, it should be checked on every code
-diff to ensure the formatting is correct.
-
-For this example, we use Astyle, but Clang Format will also work. To support
-Astyle in a simple way, we provide a make target that allows the developer
-to format their source code by simply running `make format`. To do this,
-we must first get Astyle:
-
-```cmake
-list(APPEND ASTYLE_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-)
-
-ExternalProject_Add(
-    astyle
-    GIT_REPOSITORY      https://github.com/Bareflank/astyle.git
-    GIT_TAG             v1.2
-    GIT_SHALLOW         1
-    CMAKE_ARGS          ${ASTYLE_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/astyle/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/astyle/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/astyle/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/astyle/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/astyle/src
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/astyle/build
-)
-```
-
-This cmake logic uses ExternalProject_Add to automatically download Astyle,
-compile it for your platform, and install it into your build directory so that
-it can be used by our custom make target. Note that we use our own patched
-version of Astyle that changes the build system from Astyle's custom set of
-Makefiles to a CMake build system for simplicity.
-
-```cmake
-list(APPEND ASTYLE_ARGS
-    --style=1tbs
-    --lineend=linux
-    --suffix=none
-    --pad-oper
-    --unpad-paren
-    --break-closing-brackets
-    --align-pointer=name
-    --align-reference=name
-    --indent-preproc-define
-    --indent-switches
-    --indent-col1-comments
-    --keep-one-line-statements
-    --keep-one-line-blocks
-    --pad-header
-    --convert-tabs
-    --min-conditional-indent=0
-    --indent=spaces=4
-    --close-templates
-    --add-brackets
-    --break-after-logical
-    ${CMAKE_SOURCE_DIR}/include/*.h
-    ${CMAKE_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_SOURCE_DIR}/test/*.cpp
-)
-
-if(NOT WIN32 STREQUAL "1")
-    add_custom_target(
-        format
-        COMMAND ${CMAKE_SOURCE_DIR}/bin/astyle ${ASTYLE_ARGS}
-        COMMENT "running astyle"
-    )
-else()
-    add_custom_target(
-        format
-        COMMAND ${CMAKE_SOURCE_DIR}/bin/astyle.exe ${ASTYLE_ARGS}
-        COMMENT "running astyle"
-    )
-endif()
-```
-
-To create our custom astyle make target, we use the above CMake code. This
-points CMake to the resulting astyle binary depending on the platform, and
-provides astyle with the formatting options and source files specific to this
-project.
-
-```yml
-- cmake -DENABLE_ASTYLE=ON -DCMAKE_CXX_COMPILER="g++-6" ..
-- make
-- make format
-- |
-  if [[ -n $(git diff) ]]; then
-    echo "You must run make format before submitting a pull request"
-    echo ""
-    git diff
-    exit -1
-  fi
-```
-
-Finally, to verify on each PR that a code change adheres to our Astyle
-configuration, we add the above code to our Travis CI script. This creates
-our `make format` target and executes it to format the code. If `make format`
-formats the code, a diff will be created which `git diff` can be used to detect.
-If no diff is created, it means all of the source adheres to our Astyle
-configuration, and the test passes.
-
-### Clang Tidy
-
-Clang Tidy provides static analysis. Support for this tool starts by adding the
-following to the CMakeLists.txt:
-
-```cmake
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-```
-
-This tells CMake to record all of the compilation instructions used to compile
-your project including flags and definitions. Clang Tidy will use this
-information to statically analyze your project the same way it was compiled.
-The advantage to this approach is a significant improvement in accuracy. The
-main disadvantage to this approach is Clang Tidy is not good at statically
-analyzing files that do not show up in this compilation database (such as
-header files). For this reason, if you want to analyze a header, it has to
-be included by a source file that is included in the compilation database.
-
-```cmake
-list(APPEND RUN_CLANG_TIDY_BIN_ARGS
-    -clang-tidy-binary ${CLANG_TIDY_BIN}
-    -header-filter=.*
-    -checks=clan*,cert*,misc*,perf*,cppc*,read*,mode*,-cert-err58-cpp,-misc-noexcept-move-constructor
-)
-
-add_custom_target(
-    tidy
-    COMMAND ${RUN_CLANG_TIDY_BIN} ${RUN_CLANG_TIDY_BIN_ARGS}
-    COMMENT "running clang tidy"
-)
-```
-
-Finally, Clang Tidy is given its own make target to simplify its use. Here
-we tell the `run-clang-tidy-4.0.py` script which clang tidy binary to use,
-as well as which checks to perform, and what header files to include, which
-is all of them. We turn off the -cert-err58-cpp test because it triggers
-code from catch.hpp, and -misc-noexcept-move-constructor because it is still
-buggy in 4.0. Note that we choose a specific version of Clang Tidy which is
-important because each new version of Clang Tidy fixes bugs and adds new
-checks, resulting in different results depending on which version you use.
-
-```yml
-- cmake -DENABLE_CLANG_TIDY=ON -DCMAKE_CXX_COMPILER="g++-6" ..
-- make
-- make tidy > output.txt
-- |
-  if [[ -n $(grep "warning: " output.txt) ]] || [[ -n $(grep "error: " output.txt) ]]; then
-      echo "You must pass the clang tidy checks before submitting a pull request"
-      echo ""
-      grep --color -E '^|warning: |error: ' output.txt
-      exit -1;
-  else
-      echo -e "\033[1;32m\xE2\x9C\x93 passed:\033[0m $1";
-  fi
-```
 
 
+## SYNOPSIS
 
 
-## License
+## FOR WHOM
 
+
+## USAGE
+
+
+## LICENSE
 This project is licensed under the MIT License.
+https://github.com/joeunins/bxr_plover/blob/master/LICENSE.md
+
+
+## CONTRIBUTING
