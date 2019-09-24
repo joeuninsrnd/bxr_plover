@@ -10,7 +10,6 @@
     <property name="action">select-folder</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <signal name="current-folder-changed" handler="d_filechooserdialog_current_folder_changed" object="d_filechooserdialog_open_btn" swapped="no"/>
-    <signal name="response" handler="on_d_filechooserdialog_response" object="d_filechooserdialog_open_btn" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -27,6 +26,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="always_show_image">True</property>
+                <signal name="activate" handler="d_filechooserdialog_open_btn_activate" object="d_filechooserdialog" swapped="no"/>
                 <signal name="clicked" handler="d_filechooserdialog_open_btn_clicked" object="d_filechooserdialog" swapped="no"/>
               </object>
               <packing>
@@ -163,7 +163,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="always_show_image">True</property>
-                    <signal name="clicked" handler="d_folder_btn_clicked" object="d_filechooserdialog" swapped="no"/>
+                    <signal name="clicked" handler="d_folder_btn_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="x">440</property>
