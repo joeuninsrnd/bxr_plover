@@ -139,3 +139,4 @@ https://github.com/joeunins/bxr_plover/blob/master/LICENSE.md
 
 
 ## CONTRIBUTING
+https://github.com/jun08111/bxr_plover/blob/master/CONTRIBUTING.md
