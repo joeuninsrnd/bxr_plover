@@ -21,7 +21,7 @@ BXR_PLOVER는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 �
 *&#35;Client&#35;*<br>Debian 10 <br>GTK+ 3.24.10 <br>RabbitMQ 3.7.17 <br><br>
 *&#35;Server&#35;*<br>CentOS 7.6.1810 <br>RabbitMQ 3.7.17 <br>MariaDB 10.4.7 <br><br>
 *&#35;Web&#35;*<br> Tomcat <br>Web/WAS 9.0.21 <br><br>
-*&#35;관리자&#35;*<br>Web Console
+*&#35;Administrator&#35;*<br>Web Console
 
 - [Travis CI](https://travis-ci.org/)
 - [AppVeyor](https://www.appveyor.com/)
