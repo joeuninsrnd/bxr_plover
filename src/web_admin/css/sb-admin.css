@@ -10637,7 +10637,7 @@ body {
   width: 90px !important;
   background-color: #32373a;
   min-height: calc(100vh - 56px);
-  padding-top: 4rem;
+  padding-top: 3.8rem;
 }
 .sidebar-fixed {
   /* position: fixed; */
@@ -10693,7 +10693,7 @@ body {
 
 @media (min-width: 768px) {
   .sidebar {
-    width: 225px !important;
+    width: 220px !important;
   }
   .sidebar .nav-item .nav-link {
     display: block;
@@ -10719,18 +10719,22 @@ body {
     overflow: visible;
     width: 90px !important;
   }
-  .sidebar.toggled .nav-item:last-child {
+  .sidebar.toggled ul li:last-child {
     margin-bottom: 1rem;
   }
-  .sidebar.toggled .nav-item .nav-link {
+  .sidebar.toggled ul li a {
     text-align: center;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1rem !important;
     width: 85px;
+    font-size: 0.6rem !important;
   }
-  .sidebar.toggled .nav-item .nav-link span {
-    margin-left: 0;
-    font-size: 0.65rem;
+  .sidebar.toggled ul li a i {
+    font-size: 0.9rem !important;
+    margin: 0 0 0.25rem 0 !important;
     display: block;
+  }
+  .sidebar.toggled ul li .xi-angle-down {
+    display: none !important;
   }
   .sidebar.toggled .nav-item .dropdown-menu {
     position: absolute !important;
@@ -10755,13 +10759,12 @@ body {
 /* Side Nav (GNB) */
 #gnb {
   position: relative;
-  width: 220px;
   background-color: #343a40;
 }
 #gnb a {text-decoration: none;}
 #gnb i {margin-right: 0.5rem;}
 #gnb > ul {
-  margin: 4rem 0 0 0;
+  margin: 0;
   padding: 0;
 }
 #gnb > ul > li > a {
