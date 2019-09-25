@@ -37,6 +37,7 @@ GFile *file;
 
 void e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data);
 
+void main_window_destroy();
 void m_detect_btn_clicked(GtkButton *m_detect_btn, gpointer *data);
 void m_setting_btn_clicked(GtkButton *d_folder_btn, gpointer *data);
 
@@ -460,7 +461,7 @@ void m_setting_btn_clicked(GtkButton *m_setting_btn, gpointer *data)
 	return;
 }
 
-void main_wnidow_destroy()
+void main_window_destroy()
 {
     gtk_main_quit();
     
@@ -479,12 +480,13 @@ void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data)
 	return;
 }
 
+
 void d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
 {
 	GtkWidget *d_filechooserdialog;
 	
-    d_filechooserdialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_OPEN, 
-			("_열기"), GTK_RESPONSE_ACCEPT, NULL);
+    d_filechooserdialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
+			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
 
     gtk_widget_show_all(d_filechooserdialog);
     
@@ -495,7 +497,10 @@ void d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
 		gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
    	} 
    	
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));;
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
+	
+	gtk_entry_set_text (GTK_ENTRY (data), path);
+
 	
 	gtk_widget_destroy(d_filechooserdialog);
 
@@ -589,7 +594,6 @@ int main(int argc, char *argv[])
     g_signal_connect (detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
     g_signal_connect (setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
-        
     gtk_builder_connect_signals(builder, NULL);
     
     g_object_unref(builder);
