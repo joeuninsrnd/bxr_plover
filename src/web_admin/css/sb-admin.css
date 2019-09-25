@@ -10694,6 +10694,7 @@ body {
 @media (min-width: 768px) {
   .sidebar {
     width: 220px !important;
+    transition: 0.1s all ease;
   }
   .sidebar .nav-item .nav-link {
     display: block;
@@ -10718,6 +10719,7 @@ body {
   .sidebar.toggled {
     overflow: visible;
     width: 90px !important;
+    transition: 0.1s all ease;
   }
   .sidebar.toggled ul li:last-child {
     margin-bottom: 1rem;
