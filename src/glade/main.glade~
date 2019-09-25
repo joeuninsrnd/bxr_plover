@@ -2,64 +2,6 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkFileChooserDialog" id="d_filechooserdialog">
-    <property name="can_focus">False</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="type_hint">dialog</property>
-    <property name="action">select-folder</property>
-    <signal name="close" handler="gtk_widget_hide" swapped="no"/>
-    <signal name="current-folder-changed" handler="d_filechooserdialog_current_folder_changed" object="d_filechooserdialog_open_btn" swapped="no"/>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="d_filechooserdialog_open_btn">
-                <property name="label">열기</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="always_show_image">True</property>
-                <signal name="activate" handler="d_filechooserdialog_open_btn_activate" object="d_filechooserdialog" swapped="no"/>
-                <signal name="clicked" handler="d_filechooserdialog_open_btn_clicked" object="d_filechooserdialog" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="d_filechooserdialog_close_btn">
-                <property name="label" translatable="yes">닫기</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="always_show_image">True</property>
-                <signal name="clicked" handler="d_filechooserdialog_close_btn_clicked" object="d_filechooserdialog" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="detect_result_listbox">
     <columns>
       <!-- column-name 번호 -->
@@ -163,7 +105,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="always_show_image">True</property>
-                    <signal name="clicked" handler="d_folder_btn_clicked" swapped="no"/>
+                    <signal name="clicked" handler="d_folder_btn_clicked" object="d_detect_entry" swapped="no"/>
                   </object>
                   <packing>
                     <property name="x">440</property>
@@ -521,7 +463,7 @@
     <property name="modal">True</property>
     <property name="default_width">680</property>
     <property name="default_height">450</property>
-    <signal name="destroy" handler="main_wnidow_destroy" swapped="no"/>
+    <signal name="destroy" handler="main_window_destroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
