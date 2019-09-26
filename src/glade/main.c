@@ -24,7 +24,7 @@ typedef struct Data_storage
 }data_storage;
 
 int chk_tf; //chk_true false
-int data_flag = 1;
+int data_flag = 1; //어떤종류의 민감정보인지 검출하기위한 flag
 static data_storage ds;
 static gchar *path;
 
@@ -35,35 +35,35 @@ GtkEntry	*d_detect_entry;
 
 GFile *file;
 
-void e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data);
+void e_enroll_btn_clicked	 	(GtkButton *e_enroll_btn, gpointer *data);
 
-void main_window_destroy();
-void m_detect_btn_clicked(GtkButton *m_detect_btn, gpointer *data);
-void m_setting_btn_clicked(GtkButton *d_folder_btn, gpointer *data);
+void main_window_destroy		();
+void m_detect_btn_clicked		(GtkButton *m_detect_btn, gpointer *data);
+void m_setting_btn_clicked	(GtkButton *d_folder_btn, gpointer *data);
 
-void d_detect_btn_clicked	(GtkButton *d_detect_btn, gpointer *data);
-void d_option_btn_clicked	(GtkButton *d_option_btn, gpointer *data);
-void d_folder_btn_clicked	(GtkButton *d_folder_btn, gpointer *data);
-void d_close_btn_clicked	(GtkButton *d_close_btn, gpointer *data);
-void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data);
+void d_detect_btn_clicked		(GtkButton *d_detect_btn, gpointer *data);
+void d_option_btn_clicked		(GtkButton *d_option_btn, gpointer *data);
+void d_folder_btn_clicked		(GtkButton *d_folder_btn, gpointer *data);
+void d_close_btn_clicked		(GtkButton *d_close_btn, gpointer *data);
+void d_detect_entry_activate	(GtkEntry *d_detect_entry, gpointer *data);
 
-void s_cloese_btn_clicked(GtkButton *s_cloese_btn, gpointer *data);
+void s_cloese_btn_clicked		(GtkButton *s_cloese_btn, gpointer *data);
 
 
 
 
 //Compile the regular expression described by "regex_text" into "r"//
-int compile_regex (regex_t * r, const char * regex_text)
+int compile_regex (regex_t *r, const char *regex_text)
 {
-    int status = regcomp (r, regex_text, REG_EXTENDED|REG_NEWLINE);
+    int status = regcomp(r, regex_text, REG_EXTENDED|REG_NEWLINE);
 
     if (status != 0)
     {
     char error_message[MAX_ERROR_MSG];
 
-    regerror (status, r, error_message, MAX_ERROR_MSG);
+    regerror(status, r, error_message, MAX_ERROR_MSG);
 
-    printf ("Regex error compiling '%s': %s\n", regex_text, error_message);
+    printf("Regex error compiling '%s': %s\n", regex_text, error_message);
 
     return 1;
     }
@@ -72,11 +72,11 @@ int compile_regex (regex_t * r, const char * regex_text)
 }
 
 //Match the string in "to_match" against the compiled regular expression in "r"//
-char match_regex (regex_t * r, const char * to_match)
+char match_regex_j (regex_t *r, const char *to_match)
 {
     /* "P" is a pointer into the string which points to the end of the
        previous match. */
-    const char * p = to_match;
+    const char *p = to_match;
     /* "N_matches" is the maximum number of matches allowed. */
     const int n_matches = 100;
     /* "M" contains the matches found. */
@@ -85,11 +85,11 @@ char match_regex (regex_t * r, const char * to_match)
     //버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
     while (1)
     {
-        int nomatch = regexec (r, p, n_matches, m, 0);
+        int nomatch = regexec(r, p, n_matches, m, 0);
 
         if (nomatch)
         {
-            printf ("No more matches.\n");
+            printf("No more matches.\n");
             return 0;
         }
 
@@ -105,7 +105,7 @@ char match_regex (regex_t * r, const char * to_match)
                     break;
                 }
 
-                start  = m[i].rm_so + (p - to_match);
+                start = m[i].rm_so + (p - to_match);
                 //finish = m[i].rm_eo + (p - to_match);
 
                 //주민번호 정규식 검사 통과//
@@ -121,12 +121,12 @@ char match_regex (regex_t * r, const char * to_match)
                     }
 
                     sum = buf_jumin[0]*2 + buf_jumin[1]*3 + buf_jumin[2]*4 + buf_jumin[3]*5 + buf_jumin[4]*6 + buf_jumin[5]*7
-                        + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
+						 + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
 
                     chk = buf_jumin[13];
                     tmp = 11 - (sum % 11);
 
-                    if (tmp >=10)
+                    if (tmp >= 10)
                     {
                         tmp -= 10;
                     }
@@ -145,37 +145,37 @@ char match_regex (regex_t * r, const char * to_match)
 }
 
 //Check kind of data//
-void check_kind_of_data(const char * to_match)
+void check_kind_of_data (const char *to_match)
 {
 	regex_t r;
-	const char * regex_text;
-    const char * find_text;
-	
-	//각 개인정보의 정규식//
-	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
+	const char *regex_text;
 
-	//정규식 컴파일//
-	compile_regex (& r, regex_text);
-	
 	switch(data_flag)
 	{
-		case 1: 
-			match_regex(& r, find_text);
+		case 1:
+			//각 개인정보의 정규식//
+			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
+
+			//정규식 컴파일//
+			compile_regex(&r, regex_text);
+			
+			match_regex_j(&r, to_match);
+			
 			break;
 	}
 }
 
-int scan_dir(const char *path)
+int scan_dir (const char *path)
 {
-    DIR* dp = NULL;
-    struct dirent* file = NULL;
+    DIR *dp = NULL;
+    FILE *fp = NULL;
+    struct dirent *file = NULL;
     struct stat buf;
     char filename[4096];
-    FILE* fp = NULL;
-    const char * find_text;
     char buffer[5000];
+    const char *find_text;
 
-    if ((dp = opendir(path))== NULL)
+    if ((dp = opendir(path)) == NULL)
     {
         printf("폴더를 열수 없습니다.\n");
 
@@ -189,7 +189,7 @@ int scan_dir(const char *path)
         lstat(filename, &buf);
 
         //폴더//
-        if(S_ISDIR(buf.st_mode))
+        if (S_ISDIR(buf.st_mode))
         {
             // .이거하고 ..이거 제외//
             if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
@@ -202,12 +202,12 @@ int scan_dir(const char *path)
         }
 
         //파일//
-        else if(S_ISREG(buf.st_mode))
+        else if (S_ISREG(buf.st_mode))
         {
             printf("File name: %s\n", file->d_name);
             fp = fopen(filename, "r");
 
-            if(NULL == fp)
+            if (NULL == fp)
             {
                 printf("파일을 열수 없습니다.\n");
                 return 1;
@@ -220,7 +220,8 @@ int scan_dir(const char *path)
             {
                 fread(buffer, sizeof(char), sizeof(buffer), fp);
                 find_text = buffer;
-                check_kind_of_data (find_text);
+                check_kind_of_data(find_text);
+                find_text = NULL;
             }
 
             //메모리관리(초기화), 파일닫기//
@@ -228,8 +229,8 @@ int scan_dir(const char *path)
             fclose(fp);
         }
     }
-
     closedir(dp);
+    
     return  0;
 }
 
@@ -295,7 +296,8 @@ int detect_func()
 	amqp_get_rpc_reply(conn);
 	
 	reply_to_queue = amqp_bytes_malloc_dup(r->queue);
-	if (reply_to_queue.bytes == NULL) {
+	if (reply_to_queue.bytes == NULL)
+	{
 	  fprintf(stderr, "Out of memory while copying queue name");
 	  return 1;
 	}
@@ -458,14 +460,14 @@ int chk_user()
 
 
 //main_window_start//
-void m_detect_btn_clicked(GtkButton *m_detect_btn, gpointer *data)
+void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
 	gtk_widget_show(detect_window);
 	
 	return;
 }
 
-void m_setting_btn_clicked(GtkButton *m_setting_btn, gpointer *data)
+void m_setting_btn_clicked (GtkButton *m_setting_btn, gpointer *data)
 {
 	gtk_widget_show(setting_window);
 	
@@ -483,7 +485,7 @@ void main_window_destroy()
 
 
 //detect_window_start//
-void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data)
+void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(d_detect_entry);
 	g_print("선택한 폴더 위치: %s\n", path);
@@ -492,11 +494,11 @@ void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data)
 }
 
 
-void d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
+void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 {
 	GtkWidget *d_filechooserdialog;
 	
-    d_filechooserdialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
+    d_filechooserdialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
 			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
 
     gtk_widget_show_all(d_filechooserdialog);
@@ -510,7 +512,7 @@ void d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
    	
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
 	
-	gtk_entry_set_text (GTK_ENTRY (data), path);
+	gtk_entry_set_text(GTK_ENTRY (data), path);
 
 	
 	gtk_widget_destroy(d_filechooserdialog);
@@ -520,38 +522,38 @@ void d_folder_btn_clicked(GtkButton *d_folder_btn, gpointer *data)
 	return;
 }
 
-void d_detect_btn_clicked(GtkButton *d_detect_btn, gpointer *data)
+void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	detect_func();
 	
 	return;
 }
 
-void d_option_btn_clicked(GtkButton *d_option_btn, gpointer *data)
+void d_option_btn_clicked (GtkButton *d_option_btn, gpointer *data)
 {
 	gtk_widget_show(setting_window);
 	
 	return;
 }
 
-void d_encrypt_btn_clicked(GtkButton *d_encrypt_btn, gpointer *data)//미구현//
+void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현//
 {
 	return;
 }
 
-void d_delete_btn_clicked(GtkButton *d_delete_btn, gpointer *data)//미구현//
+void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)//미구현//
 {
 	return;
 }
 
-void d_close_btn_clicked(GtkButton *d_close_btn, gpointer *data)
+void d_close_btn_clicked (GtkButton *d_close_btn, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
 	
 	return;
 }
 
-void detect_window_destroy(GtkWidget *detect_window, gpointer *data)
+void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 {
     gtk_widget_destroy(GTK_WIDGET(detect_window));
     
@@ -562,7 +564,7 @@ void detect_window_destroy(GtkWidget *detect_window, gpointer *data)
 
 
 //enrollment_window_start//
-void e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data)
+void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
 	
@@ -573,7 +575,7 @@ void e_enroll_btn_clicked(GtkButton *e_enroll_btn, gpointer *data)
 
 
 //setting_setting_start//
-void s_cloese_btn_clicked(GtkButton *setting_window, gpointer *data)
+void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
 	
@@ -584,7 +586,7 @@ void s_cloese_btn_clicked(GtkButton *setting_window, gpointer *data)
 
 
 //main//
-int main(int argc, char *argv[])
+int main (int argc, char *argv[])
 {
     GtkBuilder	*builder;
     GtkWidget		*main_window,
@@ -593,7 +595,7 @@ int main(int argc, char *argv[])
     gtk_init(&argc, &argv);
 	
     builder = gtk_builder_new();
-    gtk_builder_add_from_file (builder, "main.glade", NULL);
+    gtk_builder_add_from_file(builder, "main.glade", NULL);
 
     main_window				= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
     enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
@@ -602,8 +604,8 @@ int main(int argc, char *argv[])
 
     
     //닫기x 버튼을 hide로 바꾸기//
-    g_signal_connect (detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
-    g_signal_connect (setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+    g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+    g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
     gtk_builder_connect_signals(builder, NULL);
     
@@ -611,13 +613,13 @@ int main(int argc, char *argv[])
 
 	chk_user(chk_tf);
 	
-	if(chk_tf == FALSE) //TRUE(1)=있다
+	if (chk_tf == FALSE) //TRUE(1)=있다
 	{
 		gtk_widget_show(enrollment_window);
 		gtk_main();
 	}
 	
-	if(chk_tf == TRUE) 	//FALSE(0)=없다
+	if (chk_tf == TRUE) 	//FALSE(0)=없다
 	{
 		gtk_widget_show(main_window);
 		gtk_main();
