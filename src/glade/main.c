@@ -12,6 +12,7 @@
 #include <amqp_tcp_socket.h>
 #include <assert.h>
 #include <dirent.h>
+
 #define MAX_ERROR_MSG 0x1000
 
 typedef struct Data_storage
@@ -22,7 +23,8 @@ typedef struct Data_storage
 
 }data_storage;
 
-int chk_tf;
+int chk_tf; //chk_true false
+int data_flag = 1;
 static data_storage ds;
 static gchar *path;
 
@@ -30,8 +32,6 @@ GtkWidget	*detect_window,
 			*setting_window;
 			
 GtkEntry	*d_detect_entry;
-
-GtkFileChooser *d_filechooser;
 
 GFile *file;
 
@@ -46,8 +46,6 @@ void d_option_btn_clicked	(GtkButton *d_option_btn, gpointer *data);
 void d_folder_btn_clicked	(GtkButton *d_folder_btn, gpointer *data);
 void d_close_btn_clicked	(GtkButton *d_close_btn, gpointer *data);
 void d_detect_entry_activate(GtkEntry *d_detect_entry, gpointer *data);
-
-void d_filechooserdialog_current_folder_changed(GtkFileChooser *d_filechooser, gpointer *data);
 
 void s_cloese_btn_clicked(GtkButton *s_cloese_btn, gpointer *data);
 
@@ -97,8 +95,7 @@ char match_regex (regex_t * r, const char * to_match)
 
         else
         {
-            int i;
-            for (i = 0; i < n_matches; i++)
+            for (int i = 0; i < n_matches; i++)
             {
                 int start;
                 //int finish;
@@ -114,10 +111,10 @@ char match_regex (regex_t * r, const char * to_match)
                 //주민번호 정규식 검사 통과//
                 if (i == 0)
                 {
-                    int j, chk = 0, tmp = 0, sum = 0;
+                    int chk = 0, tmp = 0, sum = 0;
                     char buf_jumin[15] = {0,};
                     //주민번호 유효성 검사//
-                    for ( j = 0; j < 14; j++)
+                    for (int j = 0; j < 14; j++)
                     {
                         buf_jumin[j] = *(to_match + start + j);
                         buf_jumin[j] -= 48;
@@ -147,6 +144,27 @@ char match_regex (regex_t * r, const char * to_match)
     }
 }
 
+//Check kind of data//
+void check_kind_of_data(const char * to_match)
+{
+	regex_t r;
+	const char * regex_text;
+    const char * find_text;
+	
+	//각 개인정보의 정규식//
+	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
+
+	//정규식 컴파일//
+	compile_regex (& r, regex_text);
+	
+	switch(data_flag)
+	{
+		case 1: 
+			match_regex(& r, find_text);
+			break;
+	}
+}
+
 int scan_dir(const char *path)
 {
     DIR* dp = NULL;
@@ -154,8 +172,6 @@ int scan_dir(const char *path)
     struct stat buf;
     char filename[4096];
     FILE* fp = NULL;
-    regex_t r;
-    const char * regex_text;
     const char * find_text;
     char buffer[5000];
 
@@ -197,23 +213,18 @@ int scan_dir(const char *path)
                 return 1;
             }
 
-            //각 개인정보의 정규식//
-            regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
 
-            //정규식 컴파일//
-            compile_regex (& r, regex_text);
 
             //버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동//
             while (feof(fp) == 0)
             {
                 fread(buffer, sizeof(char), sizeof(buffer), fp);
                 find_text = buffer;
-                match_regex (& r, find_text);
+                check_kind_of_data (find_text);
             }
 
             //메모리관리(초기화), 파일닫기//
             memset(buffer, 0, sizeof(buffer));
-            regfree (& r);
             fclose(fp);
         }
     }
