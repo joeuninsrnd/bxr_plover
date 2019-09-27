@@ -17,15 +17,16 @@
 
 typedef struct Data_storage
 {
-    char jumin;
-    char passport;
-    char driver;
+    char cnt_jumin;
+    char cnt_passport;
+    char cnt_driver;
 
 }data_storage;
 
-int chk_tf; //chk_true false
-int data_flag = 1; //어떤종류의 민감정보인지 검출하기위한 flag
 static data_storage ds;
+
+int chk_tf; //chk_true false
+int data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
 static gchar *path;
 
 GtkWidget	*detect_window,
@@ -33,21 +34,19 @@ GtkWidget	*detect_window,
 			
 GtkEntry	*d_detect_entry;
 
-GFile *file;
+void e_enroll_btn_clicked	 	(GtkButton *e_enroll_btn,	gpointer *data);
 
-void e_enroll_btn_clicked	 	(GtkButton *e_enroll_btn, gpointer *data);
+void m_window_destroy();
+void m_detect_btn_clicked		(GtkButton *m_detect_btn,	gpointer *data);
+void m_setting_btn_clicked	(GtkButton *m_setting_btn,	gpointer *data);
 
-void main_window_destroy		();
-void m_detect_btn_clicked		(GtkButton *m_detect_btn, gpointer *data);
-void m_setting_btn_clicked	(GtkButton *d_folder_btn, gpointer *data);
+void d_detect_btn_clicked		(GtkButton *d_detect_btn,	gpointer *data);
+void d_option_btn_clicked		(GtkButton *d_option_btn,	gpointer *data);
+void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
+void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
+void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
 
-void d_detect_btn_clicked		(GtkButton *d_detect_btn, gpointer *data);
-void d_option_btn_clicked		(GtkButton *d_option_btn, gpointer *data);
-void d_folder_btn_clicked		(GtkButton *d_folder_btn, gpointer *data);
-void d_close_btn_clicked		(GtkButton *d_close_btn, gpointer *data);
-void d_detect_entry_activate	(GtkEntry *d_detect_entry, gpointer *data);
-
-void s_cloese_btn_clicked		(GtkButton *s_cloese_btn, gpointer *data);
+void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
 
 
 
@@ -72,7 +71,7 @@ int compile_regex (regex_t *r, const char *regex_text)
 }
 
 //Match the string in "to_match" against the compiled regular expression in "r"//
-char match_regex_j (regex_t *r, const char *to_match)
+char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
     /* "P" is a pointer into the string which points to the end of the
        previous match. */
@@ -119,7 +118,7 @@ char match_regex_j (regex_t *r, const char *to_match)
                         buf_jumin[j] = *(to_match + start + j);
                         buf_jumin[j] -= 48;
                     }
-
+                    
                     sum = buf_jumin[0]*2 + buf_jumin[1]*3 + buf_jumin[2]*4 + buf_jumin[3]*5 + buf_jumin[4]*6 + buf_jumin[5]*7
 						 + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
 
@@ -134,7 +133,8 @@ char match_regex_j (regex_t *r, const char *to_match)
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-                        ds.jumin++; //검출된 주민등록번호의 수//
+                        ds.cnt_jumin++; //검출된 주민등록번호의 수//
+                        printf("cnt: %d, file_path: %s, file_name: %s, file_size: %ldbyte\n", ds.cnt_jumin, filepath, file->d_name, buf.st_size);
                     }
                 }
             }
@@ -145,7 +145,7 @@ char match_regex_j (regex_t *r, const char *to_match)
 }
 
 //Check kind of data//
-void check_kind_of_data (const char *to_match)
+void check_kind_of_data (const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	regex_t r;
 	const char *regex_text;
@@ -153,25 +153,26 @@ void check_kind_of_data (const char *to_match)
 	switch(data_flag)
 	{
 		case 1:
-			//각 개인정보의 정규식//
-			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
-
-			//정규식 컴파일//
-			compile_regex(&r, regex_text);
-			
-			match_regex_j(&r, to_match);
+			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
+			compile_regex(&r, regex_text); //정규식 컴파일//
+			match_regex_j(&r, to_match, filepath, file, buf);
 			
 			break;
+			
+		case 2:
+			regex_text = "[a-zA-Z]{2}[-~.[:space:]][0-9]{7}"; //여권번호 정규식//
+			compile_regex(&r, regex_text); //정규식 컴파일//
+			//match_regex_j(&r, to_match);
 	}
 }
 
-int scan_dir (const char *path)
+int scan_dir (gchar *path)
 {
     DIR *dp = NULL;
     FILE *fp = NULL;
     struct dirent *file = NULL;
     struct stat buf;
-    char filename[4096];
+    char filepath[4096];
     char buffer[5000];
     const char *find_text;
 
@@ -184,9 +185,9 @@ int scan_dir (const char *path)
 
     while ((file = readdir(dp)) != NULL)
     {
-        //filename에 현재 path넣기//
-        sprintf(filename, "%s/%s", path, file->d_name);
-        lstat(filename, &buf);
+        //filepath에 현재 path넣기//
+        sprintf(filepath, "%s/%s", path, file->d_name);
+        lstat(filepath, &buf);
 
         //폴더//
         if (S_ISDIR(buf.st_mode))
@@ -198,14 +199,13 @@ int scan_dir (const char *path)
             }
 
             //안에 폴더로 재귀함수//
-            scan_dir(filename);
+            scan_dir(filepath);
         }
 
         //파일//
         else if (S_ISREG(buf.st_mode))
         {
-            printf("File name: %s\n", file->d_name);
-            fp = fopen(filename, "r");
+            fp = fopen(filepath, "r");
 
             if (NULL == fp)
             {
@@ -220,7 +220,7 @@ int scan_dir (const char *path)
             {
                 fread(buffer, sizeof(char), sizeof(buffer), fp);
                 find_text = buffer;
-                check_kind_of_data(find_text);
+                check_kind_of_data(find_text, filepath, file, buf);
                 find_text = NULL;
             }
 
@@ -234,7 +234,7 @@ int scan_dir (const char *path)
     return  0;
 }
 
-int detect_func()
+int detect_func(gchar *path)
 {
   char *hostname;
   int port, status;
@@ -330,11 +330,11 @@ int detect_func()
 
 	/*die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 									amqp_cstring_bytes(routingkey), 0, 0,
-									&props, amqp_cstring_bytes(&ds.jumin)), "Publishing"); //구조체 포인터부분
+									&props, amqp_cstring_bytes(&ds.cnt_jumin)), "Publishing"); //구조체 포인터부분
 	*/
 	amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 										amqp_cstring_bytes(routingkey), 0, 0,
-										&props, amqp_cstring_bytes(&ds.jumin));
+										&props, amqp_cstring_bytes(&ds.cnt_jumin));
 
 	amqp_bytes_free(props.reply_to);
   }
@@ -524,7 +524,7 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
-	detect_func();
+	detect_func(path);
 	
 	return;
 }
