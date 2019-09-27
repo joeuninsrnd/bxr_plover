@@ -17,17 +17,20 @@
 
 typedef struct Data_storage
 {
-    char cnt_jumin;
-    char cnt_passport;
-    char cnt_driver;
+    char fdnum;	//파일안 n번째 민감정보
+    char fname[100];	//파일 이름
+    char fpath[4096];	//파일 경로
+    int fsize;	//파일 크기
 
 }data_storage;
 
-static data_storage ds;
+static data_storage ds_j; //j: 주민번호, d: 운전면허
 
+static gchar *path;
 int chk_tf; //chk_true false
 int data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
-static gchar *path;
+
+
 
 GtkWidget	*detect_window,
 			*setting_window;
@@ -97,7 +100,6 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
             for (int i = 0; i < n_matches; i++)
             {
                 int start;
-                //int finish;
 
                 if (m[i].rm_so == -1)
                 {
@@ -105,7 +107,6 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                 }
 
                 start = m[i].rm_so + (p - to_match);
-                //finish = m[i].rm_eo + (p - to_match);
 
                 //주민번호 정규식 검사 통과//
                 if (i == 0)
@@ -133,8 +134,14 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-                        ds.cnt_jumin++; //검출된 주민등록번호의 수//
-                        printf("cnt: %d, file_path: %s, file_name: %s, file_size: %ldbyte\n", ds.cnt_jumin, filepath, file->d_name, buf.st_size);
+                        ds_j.fdnum++; //검출된 주민등록번호의 수//
+                        
+                        //주민번호 구조체에 저장//
+                        strcpy(ds_j.fname, file->d_name);
+                        strcpy(ds_j.fpath, filepath);
+                        ds_j.fsize = buf.st_size;
+
+                        printf("fdnum: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j.fdnum, ds_j.fpath, ds_j.fname, ds_j.fsize);
                     }
                 }
             }
@@ -160,9 +167,9 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 			break;
 			
 		case 2:
-			regex_text = "[a-zA-Z]{2}[-~.[:space:]][0-9]{7}"; //여권번호 정규식//
+			regex_text = "[0-9]{2}[-~.[:space:]][0-9]{6}[-~.[:space:]][0-9]{2}"; //운전면허 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
-			//match_regex_j(&r, to_match);
+			//match_regex_j(&r, to_match, filepath, file, buf);
 	}
 }
 
@@ -330,11 +337,11 @@ int detect_func(gchar *path)
 
 	/*die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 									amqp_cstring_bytes(routingkey), 0, 0,
-									&props, amqp_cstring_bytes(&ds.cnt_jumin)), "Publishing"); //구조체 포인터부분
+									&props, amqp_cstring_bytes(&ds_j.fdnum)), "Publishing"); //구조체 포인터부분
 	*/
 	amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 										amqp_cstring_bytes(routingkey), 0, 0,
-										&props, amqp_cstring_bytes(&ds.cnt_jumin));
+										&props, amqp_cstring_bytes(&ds_j.fdnum));
 
 	amqp_bytes_free(props.reply_to);
   }
