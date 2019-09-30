@@ -13,18 +13,21 @@
 #include <assert.h>
 #include <dirent.h>
 
+#include "/bxr_plover/src/rabbitmq-c/examples/utils.h"
+#include "/bxr_plover/src/rabbitmq-c/examples/utils.c"
+
 #define MAX_ERROR_MSG 0x1000
 
 typedef struct Data_storage
 {
-    char fdnum;	//파일안 n번째 민감정보
-    char fname[100];	//파일 이름
-    char fpath[4096];	//파일 경로
-    int fsize;	//파일 크기
+    char	fpath[1000];	//파일 경로
+    char	fname[50];		//파일 이름
+    int	fsize;			//파일 크기
 
 }data_storage;
 
-static data_storage ds_j; //j: 주민번호, d: 운전면허
+int	jcnt;			//파일안 n번째 민감정보
+data_storage static ds_j[100]; //j: 주민번호, d: 운전면허
 
 static gchar *path;
 int chk_tf; //chk_true false
@@ -134,14 +137,16 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-                        ds_j.fdnum++; //검출된 주민등록번호의 수//
+                        jcnt++; //검출된 주민등록번호의 수//
                         
                         //주민번호 구조체에 저장//
-                        strcpy(ds_j.fname, file->d_name);
-                        strcpy(ds_j.fpath, filepath);
-                        ds_j.fsize = buf.st_size;
+                        strcpy(ds_j[jcnt].fpath, filepath);
+                        strcpy(ds_j[jcnt].fname, file->d_name);
+                        ds_j[jcnt].fsize = buf.st_size;
 
-                        printf("fdnum: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j.fdnum, ds_j.fpath, ds_j.fname, ds_j.fsize);
+                        printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", jcnt, ds_j[jcnt].fpath, ds_j[jcnt].fname, ds_j[jcnt].fsize);
+
+                        //detect_func();
                     }
                 }
             }
@@ -179,7 +184,7 @@ int scan_dir (gchar *path)
     FILE *fp = NULL;
     struct dirent *file = NULL;
     struct stat buf;
-    char filepath[4096];
+    char filepath[1000];
     char buffer[5000];
     const char *find_text;
 
@@ -247,19 +252,19 @@ int detect_func(gchar *path)
   int port, status;
   char *exchange;
   char *routingkey;
+  //char *messagebody;
 
   amqp_socket_t *socket = NULL;
   amqp_connection_state_t conn;
   amqp_bytes_t reply_to_queue;
 
-  scan_dir(path);
-
-
   hostname = "127.0.0.1";
   port = atoi("5672");
   exchange = "aa";
   routingkey = "ka";
+  //messagebody = (char *)&ds_j; //민감정보 구조체의 시작주소
 
+	scan_dir(path);
   /*
 	 establish a channel that is used to connect RabbitMQ server
   */
@@ -268,27 +273,26 @@ int detect_func(gchar *path)
 
   socket = amqp_tcp_socket_new(conn);
   if (!socket) {
-	//die("creating TCP socket");
-	printf("creating TCP socket\n");
+	die("creating TCP socket");
+	
   }
 
   status = amqp_socket_open(socket, hostname, port);
   if (status) {
-	//die("opening TCP socket");
-	printf("opening TCP socket\n");
+	die("opening TCP socket");
+	
   }
 
-/*
+
   die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
 							   "guest", "guest"),
-					"Logging in");*/
-  amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-							   "guest", "guest");
+					"Logging in");
+
 					
   amqp_channel_open(conn, 1);
   
-  //die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
-  amqp_get_rpc_reply(conn);
+  die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
+
 
   /*
 	 create private reply_to queue
@@ -299,8 +303,8 @@ int detect_func(gchar *path)
 		conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
 		
 		
-	//die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
-	amqp_get_rpc_reply(conn);
+	die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
+
 	
 	reply_to_queue = amqp_bytes_malloc_dup(r->queue);
 	if (reply_to_queue.bytes == NULL)
@@ -334,14 +338,14 @@ int detect_func(gchar *path)
 	/*
 	  publish
 	*/
-
-	/*die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-									amqp_cstring_bytes(routingkey), 0, 0,
-									&props, amqp_cstring_bytes(&ds_j.fdnum)), "Publishing"); //구조체 포인터부분
-	*/
-	amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+	for(int i = 1; i <= jcnt; i++)
+	{
+		printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
+		die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 										amqp_cstring_bytes(routingkey), 0, 0,
-										&props, amqp_cstring_bytes(&ds_j.fdnum));
+										&props, amqp_cstring_bytes((char *)&ds_j[i])), "Publishing"); //구조체 포인터부분
+	}
+
 
 	amqp_bytes_free(props.reply_to);
   }
@@ -353,8 +357,8 @@ int detect_func(gchar *path)
   {
 	amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
 					   amqp_empty_table);
-	//die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
-	amqp_bytes_free(reply_to_queue);
+	die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
+
 
 	{
 	  amqp_frame_t frame;
@@ -422,8 +426,8 @@ int detect_func(gchar *path)
 		  body_received += frame.payload.body_fragment.len;
 		  assert(body_received <= body_target);
 
-		  /*amqp_dump(frame.payload.body_fragment.bytes,
-					frame.payload.body_fragment.len);*/
+		  amqp_dump(frame.payload.body_fragment.bytes,
+					frame.payload.body_fragment.len);
 		}
 
 		if (body_received != body_target) {
@@ -442,16 +446,13 @@ int detect_func(gchar *path)
 	 closing
   */
 
-/*
+
   die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),
 					"Closing channel");
   die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS),
 					"Closing connection");
   die_on_error(amqp_destroy_connection(conn), "Ending connection");
-*/
-  amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
+
 
 
   return TRUE;
@@ -531,6 +532,7 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
+	//scan_dir(path);
 	detect_func(path);
 	
 	return;
