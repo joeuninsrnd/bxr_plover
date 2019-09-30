@@ -23,10 +23,10 @@ typedef struct Data_storage
     char	fpath[1000];	//파일 경로
     char	fname[50];		//파일 이름
     int	fsize;			//파일 크기
-
+	int	jcnt;			//파일안 n번째 민감정보
+	
 }data_storage;
 
-int	jcnt;			//파일안 n번째 민감정보
 data_storage static ds_j[100]; //j: 주민번호, d: 운전면허
 
 static gchar *path;
@@ -137,16 +137,15 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-                        jcnt++; //검출된 주민등록번호의 수//
+                        ds_j->jcnt++; //검출된 주민등록번호의 수//
                         
                         //주민번호 구조체에 저장//
-                        strcpy(ds_j[jcnt].fpath, filepath);
-                        strcpy(ds_j[jcnt].fname, file->d_name);
-                        ds_j[jcnt].fsize = buf.st_size;
+                        strcpy(ds_j[ds_j->jcnt].fpath, filepath);
+                        strcpy(ds_j[ds_j->jcnt].fname, file->d_name);
+                        ds_j[ds_j->jcnt].fsize = buf.st_size;
 
-                        printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", jcnt, ds_j[jcnt].fpath, ds_j[jcnt].fname, ds_j[jcnt].fsize);
+                        printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j->jcnt, ds_j[ds_j->jcnt].fpath, ds_j[ds_j->jcnt].fname, ds_j[ds_j->jcnt].fsize);
 
-                        //detect_func();
                     }
                 }
             }
@@ -338,7 +337,7 @@ int detect_func(gchar *path)
 	/*
 	  publish
 	*/
-	for(int i = 1; i <= jcnt; i++)
+	for(int i = 1; i <= ds_j->jcnt; i++)
 	{
 		printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
 		die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
