@@ -23,7 +23,8 @@ typedef struct Data_storage
     char	fpath[1000];	//파일 경로
     char	fname[50];		//파일 이름
     int	fsize;			//파일 크기
-	int	jcnt;			//파일안 n번째 민감정보
+	int	cnt;			//민감정보 개수
+	char	stat;			//파일 상태
 	
 }data_storage;
 
@@ -137,14 +138,14 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-                        ds_j->jcnt++; //검출된 주민등록번호의 수//
+                        ds_j->cnt++; //검출된 주민등록번호의 수//
                         
                         //주민번호 구조체에 저장//
-                        strcpy(ds_j[ds_j->jcnt].fpath, filepath);
-                        strcpy(ds_j[ds_j->jcnt].fname, file->d_name);
-                        ds_j[ds_j->jcnt].fsize = buf.st_size;
+                        strcpy(ds_j[ds_j->cnt].fpath, filepath);
+                        strcpy(ds_j[ds_j->cnt].fname, file->d_name);
+                        ds_j[ds_j->cnt].fsize = buf.st_size;
 
-                        printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j->jcnt, ds_j[ds_j->jcnt].fpath, ds_j[ds_j->jcnt].fname, ds_j[ds_j->jcnt].fsize);
+                        printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j->cnt, ds_j[ds_j->cnt].fpath, ds_j[ds_j->cnt].fname, ds_j[ds_j->cnt].fsize);
 
                     }
                 }
@@ -247,214 +248,228 @@ int scan_dir (gchar *path)
 
 int detect_func(gchar *path)
 {
-  char *hostname;
-  int port, status;
-  char *exchange;
-  char *routingkey;
-  //char *messagebody;
+	char *hostname;
+	int port, status;
+	char *exchange;
+	char *routingkey;
+	//char *messagebody;
 
-  amqp_socket_t *socket = NULL;
-  amqp_connection_state_t conn;
-  amqp_bytes_t reply_to_queue;
+	amqp_socket_t *socket = NULL;
+	amqp_connection_state_t conn;
+	amqp_bytes_t reply_to_queue;
 
-  hostname = "127.0.0.1";
-  port = atoi("5672");
-  exchange = "aa";
-  routingkey = "ka";
-  //messagebody = (char *)&ds_j; //민감정보 구조체의 시작주소
+	hostname = "127.0.0.1";
+	port = atoi("5672");
+	exchange = "aa";
+	routingkey = "ka";
 
 	scan_dir(path);
-  /*
+	
+	/*
 	 establish a channel that is used to connect RabbitMQ server
-  */
+	*/
+	conn = amqp_new_connection();
 
-  conn = amqp_new_connection();
-
-  socket = amqp_tcp_socket_new(conn);
-  if (!socket) {
+	socket = amqp_tcp_socket_new(conn);
+	
+	if (!socket)
+	{
 	die("creating TCP socket");
-	
-  }
+	}
 
-  status = amqp_socket_open(socket, hostname, port);
-  if (status) {
+	status = amqp_socket_open(socket, hostname, port);
+	
+	if (status)
+	{
 	die("opening TCP socket");
-	
-  }
+	}
 
 
-  die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
+	die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
 							   "guest", "guest"),
 					"Logging in");
 
 					
-  amqp_channel_open(conn, 1);
-  
-  die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
+	amqp_channel_open(conn, 1);
+
+	die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
 
 
-  /*
+	/*
 	 create private reply_to queue
-  */
+	*/
 
-  {
-	amqp_queue_declare_ok_t *r = amqp_queue_declare(
-		conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
-		
-		
-	die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
-
-	
-	reply_to_queue = amqp_bytes_malloc_dup(r->queue);
-	if (reply_to_queue.bytes == NULL)
 	{
-	  fprintf(stderr, "Out of memory while copying queue name");
-	  return 1;
+		amqp_queue_declare_ok_t *r = amqp_queue_declare(
+			conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
+			
+			
+		die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
+
+		
+		reply_to_queue = amqp_bytes_malloc_dup(r->queue);
+		if (reply_to_queue.bytes == NULL)
+		{
+			fprintf(stderr, "Out of memory while copying queue name");
+			return 1;
+		}
 	}
-  }
 
-  /*
+	/*
 	 send the message
-  */
-
-  {
+	*/
+	
+	{
 	/*
 	  set properties
 	*/
-	amqp_basic_properties_t props;
-	props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
-				   AMQP_BASIC_DELIVERY_MODE_FLAG | AMQP_BASIC_REPLY_TO_FLAG |
-				   AMQP_BASIC_CORRELATION_ID_FLAG;
-	props.content_type = amqp_cstring_bytes("text/plain");
-	props.delivery_mode = 2; /* persistent delivery mode */
-	props.reply_to = amqp_bytes_malloc_dup(reply_to_queue);
-	if (props.reply_to.bytes == NULL) {
-	  fprintf(stderr, "Out of memory while copying queue name");
-	  return 1;
+		amqp_basic_properties_t props;
+		props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
+					   AMQP_BASIC_DELIVERY_MODE_FLAG | AMQP_BASIC_REPLY_TO_FLAG |
+					   AMQP_BASIC_CORRELATION_ID_FLAG;
+		props.content_type = amqp_cstring_bytes("text/plain");
+		props.delivery_mode = 2; /* persistent delivery mode */
+		props.reply_to = amqp_bytes_malloc_dup(reply_to_queue);
+		if (props.reply_to.bytes == NULL)
+		{
+			fprintf(stderr, "Out of memory while copying queue name");
+			return 1;
+		}
+		props.correlation_id = amqp_cstring_bytes("1");
+
+		/*
+		  publish
+		*/
+		for(int i = 1; i <= ds_j->cnt; i++)
+		{
+			printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
+			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+											amqp_cstring_bytes(routingkey), 0, 0,
+											&props, amqp_cstring_bytes((char *)&ds_j[i])), "Publishing"); //구조체 포인터부분
+		}
+
+
+		amqp_bytes_free(props.reply_to);
 	}
-	props.correlation_id = amqp_cstring_bytes("1");
 
 	/*
-	  publish
-	*/
-	for(int i = 1; i <= ds_j->jcnt; i++)
-	{
-		printf("jcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
-		die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-										amqp_cstring_bytes(routingkey), 0, 0,
-										&props, amqp_cstring_bytes((char *)&ds_j[i])), "Publishing"); //구조체 포인터부분
-	}
-
-
-	amqp_bytes_free(props.reply_to);
-  }
-
-  /*
 	wait an answer
-  */
-
-  {
-	amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
-					   amqp_empty_table);
-	die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
-
+	*/
 
 	{
-	  amqp_frame_t frame;
-	  int result;
+		amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
+						   amqp_empty_table);
+		die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
 
-	  amqp_basic_deliver_t *d;
-	  amqp_basic_properties_t *p;
-	  size_t body_target;
-	  size_t body_received;
 
-	  for (;;) {
-		amqp_maybe_release_buffers(conn);
-		result = amqp_simple_wait_frame(conn, &frame);
-		printf("Result: %d\n", result);
-		if (result < 0) {
-		  break;
+		{
+			amqp_frame_t frame;
+			int result;
+
+			amqp_basic_deliver_t *d;
+			amqp_basic_properties_t *p;
+			size_t body_target;
+			size_t body_received;
+
+			for (;;)
+			{
+				amqp_maybe_release_buffers(conn);
+				result = amqp_simple_wait_frame(conn, &frame);
+				printf("Result: %d\n", result);
+			
+				if (result < 0)
+				{
+					break;
+				}
+
+				printf("Frame type: %u channel: %u\n", frame.frame_type, frame.channel);
+				if (frame.frame_type != AMQP_FRAME_METHOD)
+				{
+					continue;
+				}
+
+				printf("Method: %s\n", amqp_method_name(frame.payload.method.id));
+				if (frame.payload.method.id != AMQP_BASIC_DELIVER_METHOD)
+				{
+					continue;
+				}
+
+				d = (amqp_basic_deliver_t *)frame.payload.method.decoded;
+				printf("Delivery: %u exchange: %.*s routingkey: %.*s\n",
+					   (unsigned)d->delivery_tag, (int)d->exchange.len,
+					   (char *)d->exchange.bytes, (int)d->routing_key.len,
+					   (char *)d->routing_key.bytes);
+
+				result = amqp_simple_wait_frame(conn, &frame);
+				if (result < 0)
+				{
+					break;
+				}
+
+				if (frame.frame_type != AMQP_FRAME_HEADER)
+				{
+					fprintf(stderr, "Expected header!");
+					abort();
+				}
+				p = (amqp_basic_properties_t *)frame.payload.properties.decoded;
+				if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG)
+				{
+					printf("Content-type: %.*s\n", (int)p->content_type.len,
+						 (char *)p->content_type.bytes);
+				}
+				printf("----\n");
+
+				body_target = (size_t)frame.payload.properties.body_size;
+				body_received = 0;
+
+				while (body_received < body_target)
+				{
+					result = amqp_simple_wait_frame(conn, &frame);
+					
+					if (result < 0)
+					{
+						break;
+					}
+
+					if (frame.frame_type != AMQP_FRAME_BODY)
+					{
+						fprintf(stderr, "Expected body!");
+						abort();
+					}
+
+					body_received += frame.payload.body_fragment.len;
+					assert(body_received <= body_target);
+
+					amqp_dump(frame.payload.body_fragment.bytes,
+							frame.payload.body_fragment.len);
+				}
+
+				if (body_received != body_target)
+				{
+				  /* Can only happen when amqp_simple_wait_frame returns <= 0 */
+				  /* We break here to close the connection */
+					break;
+				}
+
+			/* everything was fine, we can quit now because we received the reply */
+				break;
+			}
 		}
-
-		printf("Frame type: %u channel: %u\n", frame.frame_type, frame.channel);
-		if (frame.frame_type != AMQP_FRAME_METHOD) {
-		  continue;
-		}
-
-		printf("Method: %s\n", amqp_method_name(frame.payload.method.id));
-		if (frame.payload.method.id != AMQP_BASIC_DELIVER_METHOD) {
-		  continue;
-		}
-
-		d = (amqp_basic_deliver_t *)frame.payload.method.decoded;
-		printf("Delivery: %u exchange: %.*s routingkey: %.*s\n",
-			   (unsigned)d->delivery_tag, (int)d->exchange.len,
-			   (char *)d->exchange.bytes, (int)d->routing_key.len,
-			   (char *)d->routing_key.bytes);
-
-		result = amqp_simple_wait_frame(conn, &frame);
-		if (result < 0) {
-		  break;
-		}
-
-		if (frame.frame_type != AMQP_FRAME_HEADER) {
-		  fprintf(stderr, "Expected header!");
-		  abort();
-		}
-		p = (amqp_basic_properties_t *)frame.payload.properties.decoded;
-		if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
-		  printf("Content-type: %.*s\n", (int)p->content_type.len,
-				 (char *)p->content_type.bytes);
-		}
-		printf("----\n");
-
-		body_target = (size_t)frame.payload.properties.body_size;
-		body_received = 0;
-
-		while (body_received < body_target) {
-		  result = amqp_simple_wait_frame(conn, &frame);
-		  if (result < 0) {
-			break;
-		  }
-
-		  if (frame.frame_type != AMQP_FRAME_BODY) {
-			fprintf(stderr, "Expected body!");
-			abort();
-		  }
-
-		  body_received += frame.payload.body_fragment.len;
-		  assert(body_received <= body_target);
-
-		  amqp_dump(frame.payload.body_fragment.bytes,
-					frame.payload.body_fragment.len);
-		}
-
-		if (body_received != body_target) {
-		  /* Can only happen when amqp_simple_wait_frame returns <= 0 */
-		  /* We break here to close the connection */
-		  break;
-		}
-
-		/* everything was fine, we can quit now because we received the reply */
-		break;
-	  }
 	}
-  }
 
-  /*
-	 closing
-  */
+/*
+ closing
+*/
 
-
-  die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),
+	die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),
 					"Closing channel");
-  die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS),
+	die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS),
 					"Closing connection");
-  die_on_error(amqp_destroy_connection(conn), "Ending connection");
+	die_on_error(amqp_destroy_connection(conn), "Ending connection");
 
 
 
-  return TRUE;
+	return TRUE;
 }
 
 //계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다//
