@@ -15,21 +15,26 @@
 
 #include "/bxr_plover/src/rabbitmq-c/examples/utils.h"
 #include "/bxr_plover/src/rabbitmq-c/examples/utils.c"
+#include "/bxr_plover/src/glade/b64.h"
+#include "/bxr_plover/src/glade/encode.c"
+#include "/bxr_plover/src/glade/decode.c"
 
 #define MAX_ERROR_MSG 0x1000
+#define MAX_CNT 100
 
 typedef struct Data_storage
 {
-    char	fpath[1000];	//파일 경로
-    char	fname[50];		//파일 이름
-    int	fsize;			//파일 크기
-	int	cnt;			//민감정보 개수
+	int		fsize;			//파일 크기
+    char	fpath[300];	//파일 경로
+    char	fname[30];		//파일 이름
 	char	stat;			//파일 상태
+	int		cnt;			//민감정보 개수
 	
 }data_storage;
 
-data_storage static ds_j[100]; //j: 주민번호, d: 운전면허
+data_storage ds_j[MAX_CNT]; //j: 주민번호, d: 운전면허
 
+static char *enc;
 static gchar *path;
 int chk_tf; //chk_true false
 int data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
@@ -184,7 +189,7 @@ int scan_dir (gchar *path)
     FILE *fp = NULL;
     struct dirent *file = NULL;
     struct stat buf;
-    char filepath[1000];
+    char filepath[300];
     char buffer[5000];
     const char *find_text;
 
@@ -252,8 +257,7 @@ int detect_func(gchar *path)
 	int port, status;
 	char *exchange;
 	char *routingkey;
-	//char *messagebody;
-
+	
 	amqp_socket_t *socket = NULL;
 	amqp_connection_state_t conn;
 	amqp_bytes_t reply_to_queue;
@@ -286,8 +290,8 @@ int detect_func(gchar *path)
 
 
 	die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-							   "guest", "guest"),
-					"Logging in");
+																		"guest", "guest"),
+																		"Logging in");
 
 					
 	amqp_channel_open(conn, 1);
@@ -298,7 +302,6 @@ int detect_func(gchar *path)
 	/*
 	 create private reply_to queue
 	*/
-
 	{
 		amqp_queue_declare_ok_t *r = amqp_queue_declare(
 			conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
@@ -318,11 +321,10 @@ int detect_func(gchar *path)
 	/*
 	 send the message
 	*/
-	
 	{
-	/*
-	  set properties
-	*/
+		/*
+		  set properties
+		*/
 		amqp_basic_properties_t props;
 		props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
 					   AMQP_BASIC_DELIVERY_MODE_FLAG | AMQP_BASIC_REPLY_TO_FLAG |
@@ -330,6 +332,7 @@ int detect_func(gchar *path)
 		props.content_type = amqp_cstring_bytes("text/plain");
 		props.delivery_mode = 2; /* persistent delivery mode */
 		props.reply_to = amqp_bytes_malloc_dup(reply_to_queue);
+		
 		if (props.reply_to.bytes == NULL)
 		{
 			fprintf(stderr, "Out of memory while copying queue name");
@@ -340,25 +343,25 @@ int detect_func(gchar *path)
 		/*
 		  publish
 		*/
-		for(int i = 1; i <= ds_j->cnt; i++)
+		for(int i = 0; i < ds_j->cnt; i++)
 		{
-			printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
+			size_t in_len = sizeof(ds_j);
+			b64_encode((unsigned char *)&ds_j, in_len, enc);
+			printf("enc_data: %s\n", enc);
+			
 			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-											amqp_cstring_bytes(routingkey), 0, 0,
-											&props, amqp_cstring_bytes((char *)&ds_j[i])), "Publishing"); //구조체 포인터부분
+													amqp_cstring_bytes(routingkey), 0, 0,
+													&props, amqp_cstring_bytes(enc)), "Publishing");
 		}
-
-
 		amqp_bytes_free(props.reply_to);
 	}
 
 	/*
 	wait an answer
 	*/
-
 	{
 		amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
-						   amqp_empty_table);
+								amqp_empty_table);
 		die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
 
 
@@ -441,33 +444,32 @@ int detect_func(gchar *path)
 					assert(body_received <= body_target);
 
 					amqp_dump(frame.payload.body_fragment.bytes,
-							frame.payload.body_fragment.len);
+								frame.payload.body_fragment.len);
 				}
 
 				if (body_received != body_target)
 				{
-				  /* Can only happen when amqp_simple_wait_frame returns <= 0 */
-				  /* We break here to close the connection */
+					/* Can only happen when amqp_simple_wait_frame returns <= 0 */
+					/* We break here to close the connection */
 					break;
 				}
 
-			/* everything was fine, we can quit now because we received the reply */
+				/* everything was fine, we can quit now because we received the reply */
 				break;
 			}
 		}
 	}
 
-/*
- closing
-*/
-
+	/*
+	 closing
+	*/
 	die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),
-					"Closing channel");
+															"Closing channel");
+															
 	die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS),
-					"Closing connection");
+															"Closing connection");
+															
 	die_on_error(amqp_destroy_connection(conn), "Ending connection");
-
-
 
 	return TRUE;
 }
