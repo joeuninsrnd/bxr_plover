@@ -87,9 +87,5 @@ b64_encode (const unsigned char *src, size_t len, char *enc) {
   enc = (char *) b64_realloc(enc, size + 1);
   enc[size] = '\0';
 
-  printf("encoding: %s\n", enc);
-  //size_t out_len = ((3 * size) / 4);
-  //b64_decode(enc, out_len);
-
   return enc;
 }

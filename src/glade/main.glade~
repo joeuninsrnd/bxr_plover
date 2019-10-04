@@ -463,7 +463,7 @@
     <property name="modal">True</property>
     <property name="default_width">680</property>
     <property name="default_height">450</property>
-    <signal name="destroy" handler="main_window_destroy" swapped="no"/>
+    <signal name="destroy" handler="m_window_destroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
