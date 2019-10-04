@@ -45,7 +45,7 @@ extern "C" {
  */
 
 char *
-b64_encode (const unsigned char *, size_t, char *enc_data);
+b64_encode (const unsigned char *, size_t, char *enc);
 
 /**
  * Dencode `char *' source with `size_t' size.

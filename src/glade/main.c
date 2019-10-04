@@ -20,21 +20,21 @@
 #include "/bxr_plover/src/glade/decode.c"
 
 #define MAX_ERROR_MSG 0x1000
-#define MAX_CNT 100
+#define MAX_CNT 10
 
 typedef struct Data_storage
 {
-	int		fsize;			//파일 크기
     char	fpath[300];	//파일 경로
-    char	fname[30];		//파일 이름
+    char	fname[20];		//파일 이름
+    int	cnt;			//민감정보 총 개수
+    int	fsize;			//파일 크기
 	char	stat;			//파일 상태
-	int		cnt;			//민감정보 개수
+	
 	
 }data_storage;
 
 data_storage ds_j[MAX_CNT]; //j: 주민번호, d: 운전면허
 
-static char *enc;
 static gchar *path;
 int chk_tf; //chk_true false
 int data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
@@ -60,7 +60,8 @@ void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
 
 void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
 
-
+//Base64 encoding//
+char *b64_encode(const unsigned char *src, size_t len, char *enc);
 
 
 //Compile the regular expression described by "regex_text" into "r"//
@@ -143,15 +144,13 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-                        ds_j->cnt++; //검출된 주민등록번호의 수//
-                        
+						ds_j->cnt++; //검출된 주민등록번호의 수//          
                         //주민번호 구조체에 저장//
                         strcpy(ds_j[ds_j->cnt].fpath, filepath);
                         strcpy(ds_j[ds_j->cnt].fname, file->d_name);
                         ds_j[ds_j->cnt].fsize = buf.st_size;
 
                         printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j->cnt, ds_j[ds_j->cnt].fpath, ds_j[ds_j->cnt].fname, ds_j[ds_j->cnt].fsize);
-
                     }
                 }
             }
@@ -257,6 +256,7 @@ int detect_func(gchar *path)
 	int port, status;
 	char *exchange;
 	char *routingkey;
+	static char *enc;
 	
 	amqp_socket_t *socket = NULL;
 	amqp_connection_state_t conn;
@@ -343,15 +343,21 @@ int detect_func(gchar *path)
 		/*
 		  publish
 		*/
-		for(int i = 0; i < ds_j->cnt; i++)
+		for(int i = 1; i <= ds_j->cnt; i++)
 		{
-			size_t in_len = sizeof(ds_j);
-			b64_encode((unsigned char *)&ds_j, in_len, enc);
+			size_t in_len = sizeof(ds_j[i]);
+			//printf("ds_j[%d]: %ld\n", i ,in_len); //구조체 크기확인
+
+			
+			enc = b64_encode((unsigned char *)&ds_j[i], in_len, enc);
 			printf("enc_data: %s\n", enc);
+			printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
 			
 			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 													amqp_cstring_bytes(routingkey), 0, 0,
 													&props, amqp_cstring_bytes(enc)), "Publishing");
+
+			
 		}
 		amqp_bytes_free(props.reply_to);
 	}
@@ -548,7 +554,6 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
-	//scan_dir(path);
 	detect_func(path);
 	
 	return;
