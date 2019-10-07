@@ -26,7 +26,7 @@ typedef struct Data_storage
 {
     char	fpath[300];	//파일 경로
     char	fname[20];		//파일 이름
-    int	cnt;			//민감정보 총 개수
+    int	cnt;			//민감정보 총 개수(어디다 둬야할까...)
     int	fsize;			//파일 크기
 	char	stat;			//파일 상태
 	
@@ -44,7 +44,15 @@ int data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
 GtkWidget	*detect_window,
 			*setting_window;
 			
+GtkScrolledWindow *d_scrolledwindow;
+			
 GtkEntry	*d_detect_entry;
+
+GtkTreeView d_treeview;
+
+GtkTreeSelection d_treeselection;
+
+GtkListStore *d_liststore;
 
 void e_enroll_btn_clicked	 	(GtkButton *e_enroll_btn,	gpointer *data);
 
@@ -631,6 +639,8 @@ int main (int argc, char *argv[])
     enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
     detect_window			= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
+    d_scrolledwindow		= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+    d_liststore				= GTK_LIST_STORE(gtk_builder_get_object(builder, "d_liststore"));
 
     
     //닫기x 버튼을 hide로 바꾸기//
