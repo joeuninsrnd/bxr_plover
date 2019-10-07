@@ -19,7 +19,7 @@
 
 ## 라이선스
 This project is licensed under the GPL v3.0 License.<br>
-https://github.com/joeuninsrnd/bxr_plover/blob/master/LICENSE<br>
+https://github.com/joeuninsrnd/bxr_plover/blob/master/LICENSE.md<br>
 https://github.com/joeuninsrnd/bxr_plover/wiki/about-LICENSE
 
 ## 참여방법
