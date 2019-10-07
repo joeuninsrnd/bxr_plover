@@ -10,12 +10,14 @@
 설명...아키텍처, 이미지
 
 ## 사용방법
-설치,이용방법...
+다운로드후 bxr_plover실행
 
 ## 개발방법
 1. download
-1. build
-1. run
+2. build
+gcc -o bxr_plover main.c -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+3. run
+./bxr_plover
 
 ## 라이선스
 This project is licensed under the GPL v3.0 License.<br>
