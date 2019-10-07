@@ -13,11 +13,11 @@
 #include <assert.h>
 #include <dirent.h>
 
-#include "/bxr_plover/src/rabbitmq-c/examples/utils.h"
-#include "/bxr_plover/src/rabbitmq-c/examples/utils.c"
-#include "/bxr_plover/src/glade/b64.h"
-#include "/bxr_plover/src/glade/encode.c"
-#include "/bxr_plover/src/glade/decode.c"
+#include "utils.h"
+#include "utils.c"
+#include "b64.h"
+#include "encode.c"
+#include "decode.c"
 
 #define MAX_ERROR_MSG 0x1000
 #define MAX_CNT 10
@@ -26,8 +26,8 @@ typedef struct Data_storage
 {
     char	fpath[300];	//파일 경로
     char	fname[20];		//파일 이름
-    int	cnt;			//민감정보 총 개수(어디다 둬야할까...)
-    int	fsize;			//파일 크기
+    int		cnt;			//민감정보 총 개수(어디다 둬야할까...)
+    int		fsize;			//파일 크기
 	char	stat;			//파일 상태
 	
 	
