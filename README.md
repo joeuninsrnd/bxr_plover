@@ -1,142 +1,29 @@
-[![GitHub version](https://badge.fury.io/gh/ainfosec%2Fci_helloworld.svg)](https://badge.fury.io/gh/ainfosec%2Fci_helloworld)
-[![Build Status](https://travis-ci.org/ainfosec/ci_helloworld.svg?branch=master)](https://travis-ci.org/ainfosec/ci_helloworld)
-[![Build status](https://ci.appveyor.com/api/projects/status/b8ceqhe5n1884ek5/branch/master?svg=true)](https://ci.appveyor.com/project/rianquinn/ci-helloworld/branch/master)
-[![codecov](https://codecov.io/gh/ainfosec/ci_helloworld/branch/master/graph/badge.svg)](https://codecov.io/gh/ainfosec/ci_helloworld)
-[![Coverage Status](https://coveralls.io/repos/github/ainfosec/ci_helloworld/badge.svg?branch=master)](https://coveralls.io/github/ainfosec/ci_helloworld?branch=master)
-<a href="https://scan.coverity.com/projects/ainfosec-ci_helloworld">
-  <img alt="Coverity Scan Build Status"
-       src="https://img.shields.io/coverity/scan/12883.svg"/>
-</a>
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8e0fdf1c93ab47f1ab3bbe5777f747ba)](https://www.codacy.com/app/rianquinn/ci_helloworld?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ainfosec/ci_helloworld&amp;utm_campaign=Badge_Grade)
-[![Join the chat at https://gitter.im/ci_helloworld/Lobby](https://badges.gitter.im/ci_helloworld/Lobby.svg)](https://gitter.im/ci_helloworld/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![GitHub version](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover.svg)](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover)
 
-## Description
-
-BXR_PLOVER는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감정보 검출 및 유출을 방지하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신을 하고 MariaDB, Tomcat을 사용할 예정이다.
-현재 간단한 UI를 통한 Server/Client 구조로 txt파일 형태의 <br>민감정보(주민등록번호) 검출이 가능하며 hwp, pdf 등과 같은 다양한 문서포맷을 검출하는 모듈을 개발중이다.
-<br>(이후에 여권번호, 운전면허번호 등과 같은 다양한 민감정보를 검출하도록 확장할 계획)
-<br>또한 관리자 페이지와 아이콘도 같이 개발 및 디자인 중이다.
-
+## 개요
+ bxr_plover(민감정보 생명주기 관리프로그램)는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감정보 검출 및 유출을 방지하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신을 하고 MariaDB, Tomcat을 사용할 예정이다. 현재 간단한 UI를 통한 Server/Client 구조로 txt파일 형태의 민감정보(주민등록번호) 검출이 가능하며 hwp, pdf 등과 같은 다양한 문서포맷을 검출하는 모듈을 개발중이다. 이후에 여권번호, 운전면허번호 등과 같은 다양한 민감정보를 검출하도록 확장할 계획이며, 관리자 페이지와 아이콘도 같이 개발 및 디자인 중이다.<br><br>
 **&#35;&#35;프로세스 구상도 및 사용 도구&#35;&#35;**<br>Client <=> Server <=> Web <=> Administrator<br><br>
 *&#35;Client&#35;*<br>Debian 10 <br>GTK+ 3.24.10 <br>RabbitMQ 3.7.17 <br><br>
 *&#35;Server&#35;*<br>CentOS 7.6.1810 <br>RabbitMQ 3.7.17 <br>MariaDB 10.4.7 <br><br>
 *&#35;Web&#35;*<br> Tomcat <br>Web/WAS 9.0.21 <br><br>
 *&#35;Administrator&#35;*<br>Web Console
+설명...아키텍처, 이미지
 
-- [Travis CI](https://travis-ci.org/)
-- [AppVeyor](https://www.appveyor.com/)
+## 사용방법
+설치,이용방법...
 
-The following checks are performed:
+## 개발방법
+1. download
+1. build
+1. run
 
-- [Doxygen](www.doxygen.org)
-- [Git Check](https://git-scm.com/docs/git-diff)
-- [Astyle](http://astyle.sourceforge.net/)
-- [Clang Tidy](http://clang.llvm.org/extra/clang-tidy/)
-- [GCC Compiler Tests](https://gcc.gnu.org/)
-- [Clang Compiler Tests](https://clang.llvm.org/)
+## 라이선스
+This project is licensed under the GPL v3.0 License.<br>
+https://github.com/joeuninsrnd/bxr_plover/blob/master/LICENSE<br>
+https://github.com/joeuninsrnd/bxr_plover/wiki/about-LICENSE
 
-The following real world projects use a variety of these techniques as part
-of their SDP:
-
-- [Bareflank Hypervisor](https://github.com/Bareflank/hypervisor)
-- [JSON](https://github.com/nlohmann/json)
-- [Neovim](https://github.com/neovim/neovim)
-
-## Dependencies
-
-Although this repo can be made to run on most systems, the following are the
-supported platforms and their dependencies:
-
-#### Debian 10 (Buster):
-```
-sudo apt-get install git build-essential cmake
-```
-
-
-## Compilation / Testing / Installation
-
-To compile and install this example, use the following instructions:
-
-#### GCC / Clang
-```
-git clone https://github.com/ainfosec/ci_helloworld.git
-
-mkdir ci_helloworld/build
-cd ci_helloworld/build
-
-cmake ..
-
-make
-make test
-```
-
-## Analysis Tools
-
-The following provides a description of all of the analysis tools that have
-been integrated into the CI services used by this project including an
-explanation of how it works.
-
-### Doxygen
-
-The CI is setup to check for missing documentation using doxygen. Unlike most
-of the analysis tools used in this project, there is no make target for
-doxygen, and instead it is run using doxygen manually with the following
-script:
-
-```yml
-- doxygen .doxygen.txt
-- |
-  if [[ -s doxygen_warnings.txt ]]; then
-    echo "You must fix doxygen before submitting a pull request"
-    echo ""
-    cat doxygen_warnings.txt
-    exit -1
-  fi
-```
-
-This script runs doxygen against the source code and any warnings are placed
-into a file called `doxygen_warnings.txt`. If this file is empty, it means that
-the doxygen analysis passed, and all of the code is documented based on the
-settings in the `.doxygen.txt` configuration file. If this files is not
-empty, the test fails, and prints the warnings generated by doxygen.
-
-### Git Check
-
-`git diff --check` provides a simple way to detect when whitespace errors
-has been checked into the repo, as well as checking when end-of-file newlines
-are either missing, or contain too many. More information about this check
-can be found [here](https://git-scm.com/docs/git-diff). This check is extremely
-useful for developers when PRs contain modifications unrelated to their specific
-changes.
-
-```yml
-- |
-  if [[ -n $(git diff --check HEAD^) ]]; then
-    echo "You must remove whitespace before submitting a pull request"
-    echo ""
-    git diff --check HEAD^
-    exit -1
-  fi
-```
-
-This check simply runs `git diff --check`, which returns with an error if the
-check fails. If this occurs, the diff is displayed for the user to see.
-
-
-
-## SYNOPSIS
-
-
-## FOR WHOM
-
-
-## USAGE
-
-
-## LICENSE
-This project is licensed under the MIT License.<br>
-https://github.com/joeunins/bxr_plover/blob/master/LICENSE.md
-
-
-## CONTRIBUTING
-https://github.com/jun08111/bxr_plover/blob/master/CONTRIBUTING.md
+## 참여방법
+https://joeunins.slack.com<br>
+https://joeuninsrnd.github.io<br>
+https://github.com/joeuninsrnd/bxr_plover/blob/master/CONTRIBUTING.md<br>
+old: https://github.com/joeunins/bxr_plover<br>
