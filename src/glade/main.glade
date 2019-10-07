@@ -2,54 +2,24 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkListStore" id="detect_result_listbox">
+  <object class="GtkListStore" id="d_liststore">
     <columns>
       <!-- column-name 번호 -->
-      <column type="gint"/>
-      <!-- column-name 종류 -->
-      <column type="gchar"/>
-      <!-- column-name 개수 -->
-      <column type="gint"/>
+      <column type="번호"/>
+      <!-- column-name 파일 이름 -->
+      <column type="파일 이름"/>
+      <!-- column-name 민감정보 종류 -->
+      <column type="민감정보 종류"/>
       <!-- column-name 위치 -->
-      <column type="gchararray"/>
+      <column type="위치"/>
+      <!-- column-name 상태 -->
+      <column type="상태"/>
+      <!-- column-name 파일 크기 -->
+      <column type="파일 크기"/>
     </columns>
     <data>
-      <row>
-        <col id="0">1</col>
-        <col id="1"/>
-        <col id="2">0</col>
-        <col id="3" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">2</col>
-        <col id="1"/>
-        <col id="2">0</col>
-        <col id="3" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">3</col>
-        <col id="1"/>
-        <col id="2">0</col>
-        <col id="3" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">4</col>
-        <col id="1"/>
-        <col id="2">0</col>
-        <col id="3" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">5</col>
-        <col id="1"/>
-        <col id="2">0</col>
-        <col id="3" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">0</col>
-        <col id="1"/>
-        <col id="2">0</col>
-        <col id="3" translatable="yes"/>
-      </row>
+      <row/>
+      <row/>
     </data>
   </object>
   <object class="GtkWindow" id="detect_window">
@@ -156,13 +126,27 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkTreeView" id="d_treeview">
+                  <object class="GtkScrolledWindow" id="d_scrolledwindow">
                     <property name="width_request">640</property>
                     <property name="height_request">230</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection"/>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="d_treeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">d_liststore</property>
+                        <property name="enable_search">False</property>
+                        <property name="search_column">20</property>
+                        <property name="show_expanders">False</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="d_treeselection">
+                            <signal name="changed" handler="d_treeselection_changed" object="d_liststore" swapped="no"/>
+                            <signal name="notify" handler="d_treeselection_notify" object="d_liststore" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
                     </child>
                   </object>
                   <packing>
