@@ -36,8 +36,8 @@ typedef struct Data_storage
 data_storage ds_j[MAX_CNT]; //j: 주민번호, d: 운전면허
 
 static gchar *path;
-int chk_tf; //chk_true false
-int data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
+int 	chk_tf; //chk_true false
+int 	data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
 
 
 
@@ -48,22 +48,34 @@ GtkScrolledWindow *d_scrolledwindow;
 			
 GtkEntry	*d_detect_entry;
 
-GtkTreeView d_treeview;
-
-GtkTreeSelection d_treeselection;
-
 GtkListStore *d_liststore;
 
-void e_enroll_btn_clicked	 	(GtkButton *e_enroll_btn,	gpointer *data);
+GtkTreeIter iter;
+
+GtkTreeSelection	*d_treeselection;
+
+/*
+GtkTreeViewColumn *d_treeview_num;
+GtkTreeViewColumn *d_treeview_type;
+GtkTreeViewColumn *d_treeview_filename;
+GtkTreeViewColumn *d_treeview_filelocation;
+GtkTreeViewColumn *d_treeview_cnt;
+GtkTreeViewColumn *d_treeview_stat;
+GtkTreeViewColumn *d_treeview_size;
+*/
+
+
+
+void e_enroll_btn_clicked		(GtkButton *e_enroll_btn,	gpointer *data);
 
 void m_window_destroy();
 void m_detect_btn_clicked		(GtkButton *m_detect_btn,	gpointer *data);
-void m_setting_btn_clicked	(GtkButton *m_setting_btn,	gpointer *data);
+void m_setting_btn_clicked		(GtkButton *m_setting_btn,	gpointer *data);
 
-void d_detect_btn_clicked		(GtkButton *d_detect_btn,	gpointer *data);
+void d_detect_btn_clicked		(GtkButton *d_detect_btn,	GtkListStore *d_liststore);
 void d_option_btn_clicked		(GtkButton *d_option_btn,	gpointer *data);
 void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
-void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
+void d_close_btn_clicked			(GtkButton *d_close_btn,		gpointer *data);
 void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
 
 void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
@@ -560,9 +572,47 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 	return;
 }
 
-void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
+enum
 {
-	detect_func(path);
+	d_treeview_num,
+	d_treeview_type,
+	d_treeview_filename,
+	d_treeview_filelocation,
+	d_treeview_cnt,
+	d_treeview_stat,
+	d_treeview_size,
+	NUM_COLS
+};
+
+
+static GtkTreeModel *model (void)
+{
+  d_liststore = gtk_list_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT);
+
+  /* Append a row and fill in some data */
+  gtk_list_store_append (d_liststore, &iter);
+  gtk_list_store_set (d_liststore, &iter,
+                      d_treeview_num, 1,
+                      d_treeview_type, "주민번호",
+                      d_treeview_filename, "test.txt",
+                      d_treeview_filelocation, "/home/joeun/test",
+                      d_treeview_cnt, 1,
+                      d_treeview_stat, "이동",
+                      d_treeview_size, "135",
+                      -1);
+  
+  
+  return GTK_TREE_MODEL (d_liststore);
+}
+
+static GtkWidget *d_treeview (void)
+{
+	
+}
+
+void d_detect_btn_clicked (GtkButton *d_detect_btn, GtkListStore *d_liststore)
+{
+	//detect_func(path);
 	
 	return;
 }
@@ -626,7 +676,7 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 //main//
 int main (int argc, char *argv[])
 {
-    GtkBuilder	*builder;
+    GtkBuilder		*builder;
     GtkWidget		*main_window,
 					*enrollment_window;
 					
@@ -636,11 +686,24 @@ int main (int argc, char *argv[])
     gtk_builder_add_from_file(builder, "main.glade", NULL);
 
     main_window				= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-    enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
-    detect_window			= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
+    enrollment_window			= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
+    detect_window				= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
-    d_scrolledwindow		= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
-    d_liststore				= GTK_LIST_STORE(gtk_builder_get_object(builder, "d_liststore"));
+    d_scrolledwindow			= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+    
+    d_treeview					= GTK_WIDGET(gtk_builder_get_object(builder, "d_treeview"));
+    //d_treeselection			= GTK_TREE_SELECTION(gtk_builder_get_object(builder, "d_treeselection"));
+    
+    /*
+    d_treeview_num			= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_num"));
+	d_treeview_type			= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_type"));
+	d_treeview_filename		= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_filename"));
+	d_treeview_filelocation	= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_filelocation"));	
+	d_treeview_cnt			= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_cnt"));
+	d_treeview_stat			= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_stat"));
+	d_treeview_size			= GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "d_treeview_size"));
+	*/
+	
 
     
     //닫기x 버튼을 hide로 바꾸기//

@@ -4,23 +4,21 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkListStore" id="d_liststore">
     <columns>
-      <!-- column-name 번호 -->
-      <column type="번호"/>
-      <!-- column-name 파일 이름 -->
-      <column type="파일 이름"/>
-      <!-- column-name 민감정보 종류 -->
-      <column type="민감정보 종류"/>
-      <!-- column-name 위치 -->
-      <column type="위치"/>
-      <!-- column-name 상태 -->
-      <column type="상태"/>
-      <!-- column-name 파일 크기 -->
-      <column type="파일 크기"/>
+      <!-- column-name guint1 -->
+      <column type="guint"/>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray2 -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray3 -->
+      <column type="gchararray"/>
+      <!-- column-name guint2 -->
+      <column type="guint"/>
+      <!-- column-name gchararray4 -->
+      <column type="gchararray"/>
+      <!-- column-name guint3 -->
+      <column type="guint"/>
     </columns>
-    <data>
-      <row/>
-      <row/>
-    </data>
   </object>
   <object class="GtkWindow" id="detect_window">
     <property name="width_request">680</property>
@@ -90,7 +88,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="clicked" handler="d_detect_btn_clicked" swapped="no"/>
+                    <signal name="clicked" handler="d_detect_btn_clicked" object="d_liststore" swapped="no"/>
                   </object>
                   <packing>
                     <property name="x">520</property>
@@ -137,12 +135,81 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="model">d_liststore</property>
+                        <property name="enable_search">False</property>
                         <property name="search_column">20</property>
                         <property name="show_expanders">False</property>
                         <child internal-child="selection">
-                          <object class="GtkTreeSelection" id="d_treeselection">
-                            <signal name="changed" handler="d_treeselection_changed" object="d_liststore" swapped="no"/>
-                            <signal name="notify" handler="d_treeselection_notify" object="d_liststore" swapped="no"/>
+                          <object class="GtkTreeSelection"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_num">
+                            <property name="sizing">fixed</property>
+                            <property name="fixed_width">40</property>
+                            <property name="title" translatable="yes">번호</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_type">
+                            <property name="sizing">fixed</property>
+                            <property name="title" translatable="yes">민감정보 종류</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_filename">
+                            <property name="min_width">80</property>
+                            <property name="title" translatable="yes">파일 이름</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_filelocation">
+                            <property name="min_width">240</property>
+                            <property name="title" translatable="yes">파일 위치</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_cnt">
+                            <property name="title" translatable="yes">개수</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_stat">
+                            <property name="fixed_width">80</property>
+                            <property name="title" translatable="yes">상태</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="d_treeview_size">
+                            <property name="fixed_width">40</property>
+                            <property name="max_width">40</property>
+                            <property name="title" translatable="yes">크기</property>
+                            <property name="alignment">0.5</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
                           </object>
                         </child>
                       </object>
