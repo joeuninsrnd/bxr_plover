@@ -14,9 +14,9 @@
 
 ## 개발방법
 1. download
-2. build
+2. build</br>
 gcc -o bxr_plover main.c -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
-3. run
+3. run</br>
 ./bxr_plover
 
 ## 라이선스
