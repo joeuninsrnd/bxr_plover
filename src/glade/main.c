@@ -20,7 +20,7 @@
 #include "decode.c"
 
 #define MAX_ERROR_MSG 0x1000
-#define MAX_CNT 10
+#define MAX_CNT 50
 
 typedef struct Data_storage
 {
@@ -349,7 +349,8 @@ int detect_func(gchar *path)
 		{
 			size_t in_len = sizeof(ds_j[i]);
 			//printf("ds_j[%d]: %ld\n", i ,in_len); //구조체 크기확인
-
+			
+			ds_j[i].cnt++;
 			
 			enc = b64_encode((unsigned char *)&ds_j[i], in_len, enc);
 			printf("enc_data: %s\n", enc);
@@ -755,8 +756,7 @@ int main (int argc, char *argv[])
 {
     GtkBuilder		*builder;
     GtkWidget		*main_window,
-					*enrollment_window,
-					*view;
+					*enrollment_window;
 					
     gtk_init(&argc, &argv);
 	
