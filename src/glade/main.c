@@ -20,22 +20,24 @@
 #include "decode.c"
 
 #define MAX_ERROR_MSG 0x1000
-#define MAX_CNT 50
+#define MAX_FCNT 50
 
 typedef struct Data_storage
 {
     char	fpath[300];	//파일 경로
     char	fname[20];		//파일 이름
-    uint	cnt;			//민감정보 총 개수
+    uint	dcnt;			//민감정보 총 개수
     uint	fsize;			//파일 크기
 	char	stat;			//파일 상태
 	
 	
 }data_storage;
 
-data_storage ds_j[MAX_CNT]; //j: 주민번호, d: 운전면허
+data_storage ds[MAX_FCNT]; //파일기준의 data구조체
 
 static gchar *path;
+static int fcnt = 0;
+static	char chkfname[20];
 int 	chk_tf; //chk_true false
 uint 	data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
 
@@ -64,6 +66,7 @@ void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
 
 //Base64 encoding//
 char *b64_encode(const unsigned char *src, size_t len, char *enc);
+
 
 
 //Compile the regular expression described by "regex_text" into "r"//
@@ -119,7 +122,7 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                 }
 
                 start = m[i].rm_so + (p - to_match);
-
+                
                 //주민번호 정규식 검사 통과//
                 if (i == 0)
                 {
@@ -134,7 +137,7 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     
                     sum = buf_jumin[0]*2 + buf_jumin[1]*3 + buf_jumin[2]*4 + buf_jumin[3]*5 + buf_jumin[4]*6 + buf_jumin[5]*7
 						 + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
-
+	
                     chk = buf_jumin[13];
                     tmp = 11 - (sum % 11);
 
@@ -142,17 +145,29 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
                     {
                         tmp -= 10;
                     }
-
+                    
                     //주민번호 유효성 통과//
                     if (tmp == chk)
                     {
-						ds_j->cnt++; //검출된 주민등록번호의 수//          
+						int res = strcmp(chkfname, file->d_name); //같은파일 = 0
+						
+						if (res != 0)
+						{
+							fcnt++;
+						}
+						
+						//읽고있는중인 파일 이름 저장
+						strcpy(chkfname, file->d_name);
+						
+						//검출된 주민등록번호의 수//
+						ds[fcnt].dcnt++;
+						
                         //주민번호 구조체에 저장//
-                        strcpy(ds_j[ds_j->cnt].fpath, filepath);
-                        strcpy(ds_j[ds_j->cnt].fname, file->d_name);
-                        ds_j[ds_j->cnt].fsize = buf.st_size;
+                        strcpy(ds[fcnt].fpath, filepath);
+                        strcpy(ds[fcnt].fname, file->d_name);
+                        ds[fcnt].fsize = buf.st_size;
 
-                        printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", ds_j->cnt, ds_j[ds_j->cnt].fpath, ds_j[ds_j->cnt].fname, ds_j[ds_j->cnt].fsize);
+                        printf("num: %d, cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", fcnt, ds[fcnt].dcnt, ds[fcnt].fpath, ds[fcnt].fname, ds[fcnt].fsize);
                     }
                 }
             }
@@ -220,11 +235,12 @@ int scan_dir (gchar *path)
             scan_dir(filepath);
         }
 
+
         //파일//
         else if (S_ISREG(buf.st_mode))
         {
             fp = fopen(filepath, "r");
-
+            
             if (NULL == fp)
             {
                 printf("파일을 열수 없습니다.\n");
@@ -245,9 +261,13 @@ int scan_dir (gchar *path)
             //메모리관리(초기화), 파일닫기//
             memset(buffer, 0, sizeof(buffer));
             fclose(fp);
+            printf("Close FILE\n");
+            chkfname[0] = 0; //초기화
         }
     }
     closedir(dp);
+
+    printf("Close DIR\n");
     
     return  0;
 }
@@ -345,16 +365,14 @@ int detect_func(gchar *path)
 		/*
 		  publish
 		*/
-		for(int i = 1; i <= ds_j->cnt; i++)
+		for(int i = 1; i <= fcnt; i++)
 		{
-			size_t in_len = sizeof(ds_j[i]);
-			//printf("ds_j[%d]: %ld\n", i ,in_len); //구조체 크기확인
+			size_t in_len = sizeof(ds[i]);
+			//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인	
 			
-			ds_j[i].cnt++;
-			
-			enc = b64_encode((unsigned char *)&ds_j[i], in_len, enc);
+			enc = b64_encode((unsigned char *)&ds[i], in_len, enc);
 			printf("enc_data: %s\n", enc);
-			printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds_j[i].fpath, ds_j[i].fname, ds_j[i].fsize);
+			printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds[i].fpath, ds[i].fname, ds[i].fsize);
 			
 			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 													amqp_cstring_bytes(routingkey), 0, 0,
@@ -578,17 +596,17 @@ create_and_fill_model (void)
 
 	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT);
 	
-	for(int i = 1; i <= ds_j->cnt; i++)
+	for(int i = 1; i <= fcnt; i++)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
 						  d_treeview_num, i,
 						  d_treeview_type, "data_flag",
-						  d_treeview_filename, ds_j[i].fname,
-						  d_treeview_filelocation, ds_j[i].fpath,
-						  d_treeview_cnt, ds_j[i].cnt,
+						  d_treeview_filename, ds[i].fname,
+						  d_treeview_filelocation, ds[i].fpath,
+						  d_treeview_cnt, ds[i].dcnt,
 						  d_treeview_stat, "have to define",
-						  d_treeview_size, ds_j[i].fsize,
+						  d_treeview_size, ds[i].fsize,
 						  -1);
 	}
 

@@ -193,7 +193,7 @@
   </object>
   <object class="GtkWindow" id="enrollment_window">
     <property name="width_request">420</property>
-    <property name="height_request">520</property>
+    <property name="height_request">480</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">신규 사용자 등록</property>
     <property name="resizable">False</property>
@@ -207,51 +207,42 @@
     <child>
       <object class="GtkFixed" id="e_main_fixed">
         <property name="width_request">420</property>
-        <property name="height_request">520</property>
+        <property name="height_request">480</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
           <object class="GtkBox">
             <property name="width_request">420</property>
-            <property name="height_request">520</property>
+            <property name="height_request">480</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkFixed" id="e_fixed1">
                 <property name="width_request">420</property>
-                <property name="height_request">80</property>
+                <property name="height_request">186</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="e_header_label">
-                    <property name="width_request">420</property>
-                    <property name="height_request">60</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Plover</property>
-                    <attributes>
-                      <attribute name="font-desc" value="DejaVu Sans Bold 10"/>
-                      <attribute name="style" value="normal"/>
-                      <attribute name="weight" value="ultraheavy"/>
-                      <attribute name="scale" value="3.5"/>
-                    </attributes>
-                  </object>
-                </child>
-                <child>
                   <object class="GtkLabel" id="Ver.   1.0.0.1">
-                    <property name="width_request">100</property>
-                    <property name="height_request">80</property>
+                    <property name="width_request">46</property>
+                    <property name="height_request">14</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Ver.   1.0.0.1</property>
+                    <property name="margin_right">35</property>
+                    <property name="label" translatable="yes">v1.0.0.1</property>
                     <attributes>
                       <attribute name="font-desc" value="Dingbats Bold 10"/>
                       <attribute name="style" value="normal"/>
                       <attribute name="weight" value="bold"/>
                       <attribute name="scale" value="1"/>
+                      <attribute name="foreground" value="#d3d3d7d7cfcf"/>
                     </attributes>
                   </object>
+                  <packing>
+                    <property name="x">187</property>
+                    <property name="y">127</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -263,7 +254,7 @@
             <child>
               <object class="GtkFixed" id="e_fixed2">
                 <property name="width_request">420</property>
-                <property name="height_request">200</property>
+                <property name="height_request">180</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -369,7 +360,7 @@
             <child>
               <object class="GtkFixed" id="e_fixed3">
                 <property name="width_request">420</property>
-                <property name="height_request">64</property>
+                <property name="height_request">124</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -382,6 +373,9 @@
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="e_enroll_btn_clicked" object="enrollment_window" swapped="no"/>
                   </object>
+                  <packing>
+                    <property name="y">60</property>
+                  </packing>
                 </child>
               </object>
               <packing>
