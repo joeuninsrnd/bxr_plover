@@ -26,7 +26,8 @@ typedef struct Data_storage
 {
     char	fpath[300];	//파일 경로
     char	fname[20];		//파일 이름
-    uint	dcnt;			//민감정보 총 개수
+    uint	jcnt;			//주민번호 개수
+    uint	dcnt;			//운전면허 개수
     uint	fsize;			//파일 크기
 	char	stat;			//파일 상태
 	
@@ -39,7 +40,7 @@ static gchar *path;
 static int fcnt = 0;
 static	char chkfname[20];
 int 	chk_tf; //chk_true false
-uint 	data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
+//uint 	data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
 
 
 GtkWidget	*detect_window,
@@ -160,15 +161,76 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
 						strcpy(chkfname, file->d_name);
 						
 						//검출된 주민등록번호의 수//
-						ds[fcnt].dcnt++;
+						ds[fcnt].jcnt++;
 						
-                        //주민번호 구조체에 저장//
+                        //data 구조체에 저장//
                         strcpy(ds[fcnt].fpath, filepath);
                         strcpy(ds[fcnt].fname, file->d_name);
                         ds[fcnt].fsize = buf.st_size;
 
-                        printf("num: %d, cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", fcnt, ds[fcnt].dcnt, ds[fcnt].fpath, ds[fcnt].fname, ds[fcnt].fsize);
+                        printf("num: %d, jcnt: %d, dcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", fcnt, ds[fcnt].jcnt, ds[fcnt].dcnt, ds[fcnt].fpath, ds[fcnt].fname, ds[fcnt].fsize);
                     }
+                }
+            }
+        }
+
+        p += m[0].rm_eo;
+    }
+}
+
+//Match the string in "to_match" against the compiled regular expression in "r"//
+char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+{
+    /* "P" is a pointer into the string which points to the end of the
+       previous match. */
+    const char *p = to_match;
+    /* "N_matches" is the maximum number of matches allowed. */
+    const int n_matches = 100;
+    /* "M" contains the matches found. */
+    regmatch_t m[n_matches];
+
+    //버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
+    while (1)
+    {
+        int nomatch = regexec(r, p, n_matches, m, 0);
+
+        if (nomatch)
+        {
+            printf("No more matches.\n");
+            return 0;
+        }
+
+        else
+        {
+            for (int i = 0; i < n_matches; i++)
+            {
+                if (m[i].rm_so == -1)
+                {
+                    break;
+                }
+
+                //운전면허 정규식 검사 통과//
+                if (i == 0)
+                {
+					int res = strcmp(chkfname, file->d_name); //같은파일 = 0
+						
+					if (res != 0)
+					{
+						fcnt++;
+					}
+					
+					//읽고있는중인 파일 이름 저장
+					strcpy(chkfname, file->d_name);
+					
+					//검출된 운전면허의 수//
+					ds[fcnt].dcnt++;
+					
+					//data 구조체에 저장//
+					strcpy(ds[fcnt].fpath, filepath);
+					strcpy(ds[fcnt].fname, file->d_name);
+					ds[fcnt].fsize = buf.st_size;
+
+					printf("num: %d, jcnt: %d, dcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", fcnt, ds[fcnt].jcnt, ds[fcnt].dcnt, ds[fcnt].fpath, ds[fcnt].fname, ds[fcnt].fsize);
                 }
             }
         }
@@ -183,7 +245,8 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	regex_t r;
 	const char *regex_text;
 
-	switch(data_flag)
+/*
+	switch(data_flag) //나중에 민감정보 종류 선택 검출 할 때 사용
 	{
 		case 1:
 			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
@@ -195,8 +258,17 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 		case 2:
 			regex_text = "[0-9]{2}[-~.[:space:]][0-9]{6}[-~.[:space:]][0-9]{2}"; //운전면허 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
-			//match_regex_j(&r, to_match, filepath, file, buf);
+			//match_regex_d(&r, to_match, filepath, file, buf);
 	}
+*/
+
+	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
+	compile_regex(&r, regex_text); //정규식 컴파일//
+	match_regex_j(&r, to_match, filepath, file, buf);
+	
+	regex_text = "[0-9]{2}[-~.[:space:]][0-9]{6}[-~.[:space:]][0-9]{2}"; //운전면허 정규식//
+	compile_regex(&r, regex_text); //정규식 컴파일//
+	match_regex_d(&r, to_match, filepath, file, buf);
 }
 
 int scan_dir (gchar *path)
@@ -579,12 +651,12 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 enum
 {
 	d_treeview_num = 0,
-	d_treeview_type,
 	d_treeview_filename,
-	d_treeview_filelocation,
-	d_treeview_cnt,
+	d_treeview_jcnt,
+	d_treeview_dcnt,
 	d_treeview_stat,
 	d_treeview_size,
+	d_treeview_filelocation,
 	NUM_COLS
 } ;
 
@@ -594,19 +666,19 @@ create_and_fill_model (void)
 	GtkTreeStore	*treestore;
 	GtkTreeIter	iter;
 
-	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT);
+	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
 	for(int i = 1; i <= fcnt; i++)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
 						  d_treeview_num, i,
-						  d_treeview_type, "data_flag",
 						  d_treeview_filename, ds[i].fname,
-						  d_treeview_filelocation, ds[i].fpath,
-						  d_treeview_cnt, ds[i].dcnt,
+						  d_treeview_jcnt, ds[i].jcnt,
+						  d_treeview_dcnt, ds[i].dcnt,
 						  d_treeview_stat, "have to define",
 						  d_treeview_size, ds[i].fsize,
+						  d_treeview_filelocation, ds[i].fpath,
 						  -1);
 	}
 
@@ -638,14 +710,6 @@ create_view_and_model (void)
 	
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_num);
 
-	/* --- Column #민감정보 종류 --- */
-	col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(col, "민감정보 종류");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_type);
-
 	/* --- Column #파일 이름 --- */
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "파일 이름");
@@ -654,21 +718,21 @@ create_view_and_model (void)
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filename);
 
-	/* --- Column #파일 위치 --- */
+	/* --- Column #주민번호 개수 --- */
 	col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(col, "파일 위치");
+	gtk_tree_view_column_set_title(col, "주민번호");
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filelocation);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_jcnt);
 
-	/* --- Column #민감정보 개수 --- */
+	/* --- Column #운전면허 개수 --- */
 	col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(col, "민감정보 개수");
+	gtk_tree_view_column_set_title(col, "운전면허");
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_cnt);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_dcnt);
 
 	/* --- Column #상태 --- */
 	col = gtk_tree_view_column_new();
@@ -685,6 +749,14 @@ create_view_and_model (void)
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_size);
+	
+	/* --- Column #파일 위치 --- */
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(col, "파일 위치");
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filelocation);
 
 	model = create_and_fill_model();
 
