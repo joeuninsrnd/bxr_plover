@@ -266,7 +266,7 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	compile_regex(&r, regex_text); //정규식 컴파일//
 	match_regex_j(&r, to_match, filepath, file, buf);
 	
-	regex_text = "[0-9]{2}[-~.[:space:]][0-9]{6}[-~.[:space:]][0-9]{2}"; //운전면허 정규식//
+	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
 	compile_regex(&r, regex_text); //정규식 컴파일//
 	match_regex_d(&r, to_match, filepath, file, buf);
 }
