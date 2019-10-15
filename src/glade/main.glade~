@@ -212,8 +212,6 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkImage" id="e_window_image">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="pixbuf">resource/bg-login.svg</property>
@@ -369,14 +367,31 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkButton" id="e_enroll_btn">
-                    <property name="label" translatable="yes">등 록</property>
+                  <object class="GtkImage">
                     <property name="width_request">420</property>
                     <property name="height_request">64</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn-login-nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="y">50</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="e_enroll_btn">
+                    <property name="width_request">420</property>
+                    <property name="height_request">64</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="relief">none</property>
+                    <property name="always_show_image">True</property>
                     <signal name="clicked" handler="e_enroll_btn_clicked" object="enrollment_window" swapped="no"/>
+                    <child>
+                      <placeholder/>
+                    </child>
                   </object>
                   <packing>
                     <property name="y">50</property>
@@ -394,8 +409,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkEntryBuffer" id="entrybuffer1"/>
-  <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkWindow" id="main_window">
     <property name="width_request">680</property>
     <property name="height_request">450</property>

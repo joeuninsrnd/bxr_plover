@@ -29,6 +29,7 @@ typedef struct Data_storage
     uint	jcnt;			//주민번호 개수
     uint	dcnt;			//운전면허 개수
     uint	fgcnt;			//외국인등록번호 개수
+    uint	pcnt;			//여권번호 개수
     uint	fsize;			//파일 크기
 	char	stat;			//파일 상태
 	
@@ -689,6 +690,7 @@ enum
 	d_treeview_jcnt,
 	d_treeview_dcnt,
 	d_treeview_fgcnt,
+	d_treeview_pcnt,
 	d_treeview_stat,
 	d_treeview_size,
 	d_treeview_filelocation,
@@ -701,7 +703,7 @@ create_and_fill_model (void)
 	GtkTreeStore	*treestore;
 	GtkTreeIter	iter;
 
-	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
+	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
 	for(int i = 1; i <= cntf; i++)
 	{
@@ -712,6 +714,7 @@ create_and_fill_model (void)
 						  d_treeview_jcnt, ds[i].jcnt,
 						  d_treeview_dcnt, ds[i].dcnt,
 						  d_treeview_fgcnt, ds[i].fgcnt,
+						  d_treeview_pcnt, ds[i]. pcnt,
 						  d_treeview_stat, "soon",
 						  d_treeview_size, ds[i].fsize,
 						  d_treeview_filelocation, ds[i].fpath,
@@ -777,6 +780,14 @@ create_view_and_model (void)
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fgcnt);
+	
+	/* --- Column #여권번호 개수 --- */
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(col, "여권번호");
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_pcnt);
 
 	/* --- Column #상태 --- */
 	col = gtk_tree_view_column_new();
