@@ -20,7 +20,7 @@
 #include "decode.c"
 
 #define MAX_ERROR_MSG 0x1000
-#define MAX_FCNT 50
+#define MAX_CNTF 50
 
 typedef struct Data_storage
 {
@@ -28,16 +28,17 @@ typedef struct Data_storage
     char	fname[20];		//파일 이름
     uint	jcnt;			//주민번호 개수
     uint	dcnt;			//운전면허 개수
+    uint	fgcnt;			//외국인등록번호 개수
     uint	fsize;			//파일 크기
 	char	stat;			//파일 상태
 	
 	
 }data_storage;
 
-data_storage ds[MAX_FCNT]; //파일기준의 data구조체
+data_storage ds[MAX_CNTF]; //파일기준의 data구조체
 
 static gchar *path;
-static int fcnt = 0;
+static int cntf = 0;
 static	char chkfname[20];
 int 	chk_tf; //chk_true false
 //uint 	data_flag = 1; //어떤종류의 민감정보인지 확인하기위한 flag
@@ -90,7 +91,7 @@ int compile_regex (regex_t *r, const char *regex_text)
 }
 
 //Match the string in "to_match" against the compiled regular expression in "r"//
-char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
     /* "P" is a pointer into the string which points to the end of the
        previous match. */
@@ -124,51 +125,83 @@ char match_regex_j (regex_t *r, const char *to_match, char *filepath, struct dir
 
                 start = m[i].rm_so + (p - to_match);
                 
-                //주민번호 정규식 검사 통과//
+                //주민번호, 외국인등록번호 정규식 검사 통과//
                 if (i == 0)
                 {
-                    int chk = 0, tmp = 0, sum = 0;
-                    char buf_jumin[15] = {0,};
-                    //주민번호 유효성 검사//
+                    int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
+                    char buf_tmp[15] = {0,};
+                    //주민번호, 외국인등록번호 유효성 검사//
                     for (int j = 0; j < 14; j++)
                     {
-                        buf_jumin[j] = *(to_match + start + j);
-                        buf_jumin[j] -= 48;
+                        buf_tmp[j] = *(to_match + start + j);
+                        buf_tmp[j] -= 48;
                     }
                     
-                    sum = buf_jumin[0]*2 + buf_jumin[1]*3 + buf_jumin[2]*4 + buf_jumin[3]*5 + buf_jumin[4]*6 + buf_jumin[5]*7
-						 + buf_jumin[7]*8 + buf_jumin[8]*9 + buf_jumin[9]*2 + buf_jumin[10]*3 + buf_jumin[11]*4 + buf_jumin[12]*5;
+                    sum = buf_tmp[0]*2 + buf_tmp[1]*3 + buf_tmp[2]*4 + buf_tmp[3]*5 + buf_tmp[4]*6 + buf_tmp[5]*7
+						 + buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
 	
-                    chk = buf_jumin[13];
-                    tmp = 11 - (sum % 11);
+                    chk = buf_tmp[13];
+                    jtmp = 11 - (sum % 11); //주민번호
+                    fgtmp = 13 - (sum % 11); //외국인번호
 
-                    if (tmp >= 10)
+                    if (jtmp >= 10)
                     {
-                        tmp -= 10;
+                        jtmp -= 10;
+                    }
+                    
+                    if (fgtmp >= 10)
+                    {
+                        fgtmp -= 10;
                     }
                     
                     //주민번호 유효성 통과//
-                    if (tmp == chk)
+                    if (jtmp == chk)
                     {
 						int res = strcmp(chkfname, file->d_name); //같은파일 = 0
 						
 						if (res != 0)
 						{
-							fcnt++;
+							cntf++;
 						}
 						
 						//읽고있는중인 파일 이름 저장
 						strcpy(chkfname, file->d_name);
 						
 						//검출된 주민등록번호의 수//
-						ds[fcnt].jcnt++;
+						ds[cntf].jcnt++;
 						
                         //data 구조체에 저장//
-                        strcpy(ds[fcnt].fpath, filepath);
-                        strcpy(ds[fcnt].fname, file->d_name);
-                        ds[fcnt].fsize = buf.st_size;
+                        strcpy(ds[cntf].fpath, filepath);
+                        strcpy(ds[cntf].fname, file->d_name);
+                        ds[cntf].fsize = buf.st_size;
 
-                        printf("num: %d, jcnt: %d, dcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", fcnt, ds[fcnt].jcnt, ds[fcnt].dcnt, ds[fcnt].fpath, ds[fcnt].fname, ds[fcnt].fsize);
+                        printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
+								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+                    }
+                    
+                    //외국인등록번호 유효성 통과//
+                    if (fgtmp == chk)
+                    {
+						int res = strcmp(chkfname, file->d_name); //같은파일 = 0
+						
+						if (res != 0)
+						{
+							cntf++;
+						}
+						
+						//읽고있는중인 파일 이름 저장
+						strcpy(chkfname, file->d_name);
+						
+						//검출된 외국인등록번호의 수//
+						ds[cntf].fgcnt++;
+						
+                        //data 구조체에 저장//
+                        strcpy(ds[cntf].fpath, filepath);
+                        strcpy(ds[cntf].fname, file->d_name);
+                        ds[cntf].fsize = buf.st_size;
+
+                        printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
+								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
                     }
                 }
             }
@@ -216,21 +249,22 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 						
 					if (res != 0)
 					{
-						fcnt++;
+						cntf++;
 					}
 					
 					//읽고있는중인 파일 이름 저장
 					strcpy(chkfname, file->d_name);
 					
 					//검출된 운전면허의 수//
-					ds[fcnt].dcnt++;
+					ds[cntf].dcnt++;
 					
 					//data 구조체에 저장//
-					strcpy(ds[fcnt].fpath, filepath);
-					strcpy(ds[fcnt].fname, file->d_name);
-					ds[fcnt].fsize = buf.st_size;
+					strcpy(ds[cntf].fpath, filepath);
+					strcpy(ds[cntf].fname, file->d_name);
+					ds[cntf].fsize = buf.st_size;
 
-					printf("num: %d, jcnt: %d, dcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n", fcnt, ds[fcnt].jcnt, ds[fcnt].dcnt, ds[fcnt].fpath, ds[fcnt].fname, ds[fcnt].fsize);
+					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
+								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
                 }
             }
         }
@@ -256,15 +290,15 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 			break;
 			
 		case 2:
-			regex_text = "[0-9]{2}[-~.[:space:]][0-9]{6}[-~.[:space:]][0-9]{2}"; //운전면허 정규식//
+			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
 			//match_regex_d(&r, to_match, filepath, file, buf);
 	}
 */
 
-	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
+	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호, 외국인등록번호 정규식//
 	compile_regex(&r, regex_text); //정규식 컴파일//
-	match_regex_j(&r, to_match, filepath, file, buf);
+	match_regex_jnfg(&r, to_match, filepath, file, buf);
 	
 	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
 	compile_regex(&r, regex_text); //정규식 컴파일//
@@ -437,7 +471,7 @@ int detect_func(gchar *path)
 		/*
 		  publish
 		*/
-		for(int i = 1; i <= fcnt; i++)
+		for(int i = 1; i <= cntf; i++)
 		{
 			size_t in_len = sizeof(ds[i]);
 			//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인	
@@ -654,6 +688,7 @@ enum
 	d_treeview_filename,
 	d_treeview_jcnt,
 	d_treeview_dcnt,
+	d_treeview_fgcnt,
 	d_treeview_stat,
 	d_treeview_size,
 	d_treeview_filelocation,
@@ -666,9 +701,9 @@ create_and_fill_model (void)
 	GtkTreeStore	*treestore;
 	GtkTreeIter	iter;
 
-	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
+	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
-	for(int i = 1; i <= fcnt; i++)
+	for(int i = 1; i <= cntf; i++)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
@@ -676,7 +711,8 @@ create_and_fill_model (void)
 						  d_treeview_filename, ds[i].fname,
 						  d_treeview_jcnt, ds[i].jcnt,
 						  d_treeview_dcnt, ds[i].dcnt,
-						  d_treeview_stat, "have to define",
+						  d_treeview_fgcnt, ds[i].fgcnt,
+						  d_treeview_stat, "soon",
 						  d_treeview_size, ds[i].fsize,
 						  d_treeview_filelocation, ds[i].fpath,
 						  -1);
@@ -733,6 +769,14 @@ create_view_and_model (void)
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_dcnt);
+	
+	/* --- Column #외국인등록번호 개수 --- */
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(col, "외국인등록");
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fgcnt);
 
 	/* --- Column #상태 --- */
 	col = gtk_tree_view_column_new();
