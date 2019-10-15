@@ -903,9 +903,6 @@ int main (int argc, char *argv[])
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
     d_scrolledwindow			= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
 
-
-
-    
     //닫기x 버튼을 hide로 바꾸기//
     g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
     g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
@@ -913,7 +910,7 @@ int main (int argc, char *argv[])
     gtk_builder_connect_signals(builder, NULL);
     
     g_object_unref(builder);
-
+	
 	chk_user(chk_tf);
 	
 	if (chk_tf == FALSE) //TRUE(1)=있다
