@@ -216,7 +216,7 @@
             <property name="height_request">80</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="pixbuf">resource/bg-login.png</property>
+            <property name="pixbuf">resource/bg-login.svg</property>
           </object>
         </child>
         <child>
@@ -280,6 +280,10 @@
                         <property name="height_request">50</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="has_frame">False</property>
+                        <property name="invisible_char"> </property>
+                        <property name="shadow_type">none</property>
+                        <property name="placeholder_text" translatable="yes">이름을 입력하세요...</property>
                         <signal name="activate" handler="e_name_entry_activate" swapped="no"/>
                       </object>
                       <packing>
@@ -295,12 +299,20 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="active">4</property>
+                        <property name="has_frame">False</property>
+                        <property name="has_entry">True</property>
                         <items>
                           <item translatable="yes">a</item>
                           <item translatable="yes">b</item>
                           <item translatable="yes">c</item>
                           <item translatable="yes">d</item>
                         </items>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="can_focus">False</property>
+                            <property name="has_frame">False</property>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -314,13 +326,22 @@
                         <property name="height_request">50</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="focus_on_click">False</property>
                         <property name="active">4</property>
+                        <property name="has_frame">False</property>
+                        <property name="has_entry">True</property>
                         <items>
                           <item translatable="yes">a</item>
                           <item translatable="yes">b</item>
                           <item translatable="yes">c</item>
                           <item translatable="yes">d</item>
                         </items>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="can_focus">False</property>
+                            <property name="has_frame">False</property>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -373,6 +394,8 @@
       </object>
     </child>
   </object>
+  <object class="GtkEntryBuffer" id="entrybuffer1"/>
+  <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkWindow" id="main_window">
     <property name="width_request">680</property>
     <property name="height_request">450</property>
