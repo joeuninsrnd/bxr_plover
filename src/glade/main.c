@@ -612,7 +612,7 @@ int detect_func(gchar *path)
 //계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다//
 int chk_user()
 {
-	chk_tf = TRUE;
+	chk_tf = FALSE;
 	
 	return chk_tf;
 }
