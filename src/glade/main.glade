@@ -231,7 +231,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="Ver.   1.0.0.1">
+                  <object class="GtkLabel" id="e_verion">
                     <property name="width_request">46</property>
                     <property name="height_request">14</property>
                     <property name="visible">True</property>
@@ -383,8 +383,9 @@
                     <property name="width_request">420</property>
                     <property name="height_request">64</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="opacity">0.10000000000000001</property>
                     <property name="relief">none</property>
                     <property name="always_show_image">True</property>
                     <signal name="clicked" handler="e_enroll_btn_clicked" object="enrollment_window" swapped="no"/>
@@ -409,53 +410,62 @@
     </child>
   </object>
   <object class="GtkWindow" id="main_window">
-    <property name="width_request">680</property>
-    <property name="height_request">450</property>
+    <property name="width_request">420</property>
+    <property name="height_request">480</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">메인</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="default_width">680</property>
-    <property name="default_height">450</property>
+    <property name="default_width">420</property>
+    <property name="default_height">480</property>
     <signal name="destroy" handler="m_window_destroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
     <child>
       <object class="GtkFixed" id="m_main_fixed">
-        <property name="width_request">680</property>
-        <property name="height_request">450</property>
+        <property name="width_request">420</property>
+        <property name="height_request">480</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
+          <object class="GtkImage" id="m_window_image">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">resource/bg-login.svg</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkBox">
-            <property name="width_request">680</property>
-            <property name="height_request">450</property>
+            <property name="width_request">420</property>
+            <property name="height_request">480</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkFixed" id="m_fixed1">
-                <property name="width_request">680</property>
-                <property name="height_request">100</property>
+                <property name="width_request">420</property>
+                <property name="height_request">186</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="m_header_label">
-                    <property name="width_request">680</property>
-                    <property name="height_request">60</property>
+                  <object class="GtkLabel" id="m_verion">
+                    <property name="width_request">46</property>
+                    <property name="height_request">14</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Blue X-ray  Plover</property>
+                    <property name="label" translatable="yes">v1.0.0.1</property>
                     <attributes>
-                      <attribute name="font-desc" value="Dingbats Bold Italic 10"/>
+                      <attribute name="font-desc" value="Dingbats Bold 10"/>
                       <attribute name="style" value="normal"/>
-                      <attribute name="weight" value="ultraheavy"/>
-                      <attribute name="scale" value="3.5"/>
+                      <attribute name="weight" value="bold"/>
+                      <attribute name="scale" value="1"/>
+                      <attribute name="foreground" value="#bababdbdb6b6"/>
                     </attributes>
                   </object>
                   <packing>
-                    <property name="y">40</property>
+                    <property name="x">187</property>
+                    <property name="y">127</property>
                   </packing>
                 </child>
               </object>
@@ -467,39 +477,20 @@
             </child>
             <child>
               <object class="GtkFixed" id="m_fixed2">
-                <property name="width_request">680</property>
-                <property name="height_request">250</property>
+                <property name="width_request">420</property>
+                <property name="height_request">180</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkButton" id="m_detect_btn">
                     <property name="label" translatable="yes">민감정보 검사</property>
-                    <property name="width_request">130</property>
-                    <property name="height_request">100</property>
+                    <property name="width_request">150</property>
+                    <property name="height_request">150</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="m_detect_btn_clicked" object="detect_window" swapped="no"/>
                   </object>
-                  <packing>
-                    <property name="x">180</property>
-                    <property name="y">50</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="m_setting_btn">
-                    <property name="label" translatable="yes">환경 설정</property>
-                    <property name="width_request">130</property>
-                    <property name="height_request">100</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <signal name="clicked" handler="m_setting_btn_clicked" object="setting_window" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="x">380</property>
-                    <property name="y">50</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -510,23 +501,19 @@
             </child>
             <child>
               <object class="GtkFixed" id="m_fixed3">
-                <property name="width_request">680</property>
-                <property name="height_request">100</property>
+                <property name="width_request">420</property>
+                <property name="height_request">144</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="m_version_lavel">
-                    <property name="width_request">680</property>
-                    <property name="height_request">40</property>
+                  <object class="GtkButton" id="m_setting_btn">
+                    <property name="label" translatable="yes">환경 설정</property>
+                    <property name="width_request">100</property>
+                    <property name="height_request">50</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Ver.   1.0.0.1</property>
-                    <attributes>
-                      <attribute name="font-desc" value="DejaVu Sans Bold Oblique 10"/>
-                      <attribute name="style" value="normal"/>
-                      <attribute name="weight" value="bold"/>
-                      <attribute name="scale" value="1"/>
-                    </attributes>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="m_setting_btn_clicked" object="setting_window" swapped="no"/>
                   </object>
                 </child>
               </object>
