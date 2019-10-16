@@ -197,7 +197,6 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">신규 사용자 등록</property>
     <property name="resizable">False</property>
-    <property name="modal">True</property>
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <child type="titlebar">
@@ -248,7 +247,7 @@
                   </object>
                   <packing>
                     <property name="x">187</property>
-                    <property name="y">127</property>
+                    <property name="y">137</property>
                   </packing>
                 </child>
               </object>
@@ -419,7 +418,7 @@
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <signal name="destroy" handler="m_window_destroy" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
@@ -430,8 +429,6 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkImage" id="m_window_image">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="pixbuf">resource/bg-login.svg</property>
@@ -456,6 +453,7 @@
                     <property name="height_request">14</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_bottom">43</property>
                     <property name="label" translatable="yes">v1.0.0.1</property>
                     <attributes>
                       <attribute name="font-desc" value="Dingbats Bold 10"/>
@@ -467,7 +465,7 @@
                   </object>
                   <packing>
                     <property name="x">187</property>
-                    <property name="y">127</property>
+                    <property name="y">137</property>
                   </packing>
                 </child>
               </object>
@@ -486,13 +484,17 @@
                 <child>
                   <object class="GtkButton" id="m_detect_btn">
                     <property name="label" translatable="yes">민감정보 검사</property>
-                    <property name="width_request">150</property>
-                    <property name="height_request">150</property>
+                    <property name="width_request">170</property>
+                    <property name="height_request">170</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="m_detect_btn_clicked" object="detect_window" swapped="no"/>
                   </object>
+                  <packing>
+                    <property name="x">125</property>
+                    <property name="y">10</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -504,19 +506,23 @@
             <child>
               <object class="GtkFixed" id="m_fixed3">
                 <property name="width_request">420</property>
-                <property name="height_request">144</property>
+                <property name="height_request">114</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkButton" id="m_setting_btn">
                     <property name="label" translatable="yes">환경 설정</property>
-                    <property name="width_request">100</property>
-                    <property name="height_request">50</property>
+                    <property name="width_request">114</property>
+                    <property name="height_request">40</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="m_setting_btn_clicked" object="setting_window" swapped="no"/>
                   </object>
+                  <packing>
+                    <property name="x">286</property>
+                    <property name="y">54</property>
+                  </packing>
                 </child>
               </object>
               <packing>
