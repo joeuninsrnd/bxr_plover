@@ -982,6 +982,7 @@ int main (int argc, char *argv[])
     detect_window				= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
     d_scrolledwindow			= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+    gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
 
     // 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
     g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
