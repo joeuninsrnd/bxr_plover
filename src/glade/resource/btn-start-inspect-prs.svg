@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="114" height="40" viewBox="0 0 114 40">
+    <defs>
+        <linearGradient id="a" x1="0%" y1="43.844%" y2="56.156%">
+            <stop offset="0%" stop-color="#00BAE8"/>
+            <stop offset="100%" stop-color="#0063F2"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <rect width="114" height="40" fill="url(#a)" rx="6"/>
+        <rect width="114" height="40" fill="#000" fill-opacity=".15" rx="6"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-Bold, Apple SD Gothic Neo" font-size="14" font-weight="bold" letter-spacing="-.25">
+            <tspan x="45.28" y="25">검사시작</tspan>
+        </text>
+        <path fill="#FFF" fill-rule="nonzero" stroke="#FFF" stroke-width=".5" d="M35.756 26.825l-3.874-4.029a6.55 6.55 0 0 0 1.542-4.225A6.579 6.579 0 0 0 26.853 12a6.579 6.579 0 0 0-6.572 6.571 6.579 6.579 0 0 0 6.572 6.572c1.36 0 2.656-.41 3.764-1.19l3.904 4.06a.85.85 0 0 0 .617.263.858.858 0 0 0 .618-1.451zm-8.903-13.11a4.863 4.863 0 0 1 4.857 4.856 4.863 4.863 0 0 1-4.857 4.858 4.863 4.863 0 0 1-4.858-4.858 4.863 4.863 0 0 1 4.858-4.857z"/>
+    </g>
+</svg>

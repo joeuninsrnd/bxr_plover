@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="241" height="240" viewBox="0 0 241 240">
+    <defs>
+        <linearGradient id="c" x1="0%" y1="0%" y2="100%">
+            <stop offset="0%" stop-color="#00BAE8"/>
+            <stop offset="100%" stop-color="#0063F2"/>
+        </linearGradient>
+        <rect id="b" width="200" height="200" rx="100"/>
+        <filter id="a" width="133%" height="133%" x="-16.5%" y="-13.5%" filterUnits="objectBoundingBox">
+            <feOffset dy="6" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="10"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0.580392157 0 0 0 0 0.925490196 0 0 0 0.7 0"/>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(21 20)">
+            <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+            <use fill="url(#c)" xlink:href="#b"/>
+        </g>
+        <path fill="#FFF" fill-rule="nonzero" d="M129.354 107.819a16.141 16.141 0 0 0 3.146-9.569c0-8.96-7.29-16.25-16.25-16.25S100 89.29 100 98.25s7.29 16.25 16.25 16.25c3.58 0 6.881-1.177 9.57-3.146l9.23 9.232a2 2 0 0 0 2.83 0l.706-.707a2 2 0 0 0 0-2.828l-9.232-9.232c-1.312 1.792-1.312 1.792 0 0zm-13.104 2.514c-6.663 0-12.083-5.42-12.083-12.083s5.42-12.083 12.083-12.083 12.083 5.42 12.083 12.083-5.42 12.083-12.083 12.083z"/>
+        <text fill="#FFF" font-family="SpoqaHanSans-Bold, SpoqaHanSans" font-size="15" font-weight="bold" letter-spacing="-.268" transform="translate(21 20)">
+            <tspan x="58.335" y="132">민감정보 검사</tspan>
+        </text>
+    </g>
+</svg>

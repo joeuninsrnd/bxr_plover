@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40" viewBox="0 0 100 40">
+    <g fill="none" fill-rule="evenodd">
+        <rect width="99" height="39" x=".5" y=".5" fill="#F8F9FA" stroke="#DEE2E6" rx="4"/>
+        <text fill="#343A40" font-family="AppleSDGothicNeo-Bold, Apple SD Gothic Neo" font-size="14" font-weight="bold" letter-spacing="-.25">
+            <tspan x="39.28" y="25">폴더선택</tspan>
+        </text>
+        <g fill="#E0CE00" fill-rule="nonzero">
+            <path d="M16.733 18.822a.151.151 0 0 0-.145.111l-3.055 7.623v.266c0 .196-.012.267.151.267H25.62c.308 0 .58-.208.653-.484L29 19.09v-.267H16.733z"/>
+            <path d="M16.395 17.4H27.4v-1.671a.73.73 0 0 0-.729-.729h-6.6l-1.334-1.867H13.73a.73.73 0 0 0-.729.729v11.145l2.742-7.124a.677.677 0 0 1 .653-.483z"/>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="114" height="40" viewBox="0 0 114 40">
+    <g fill="none" fill-rule="evenodd">
+        <rect width="114" height="40" fill="#343A40" rx="6"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-Bold, Apple SD Gothic Neo" font-size="14" font-weight="bold" letter-spacing="-.25">
+            <tspan x="54.14" y="25">닫기</tspan>
+        </text>
+        <g stroke="#FFF" stroke-linecap="round" stroke-width="2">
+            <path d="M35 24.757L44.757 15M44.879 24.757L35.12 15"/>
+        </g>
+    </g>
+</svg>
