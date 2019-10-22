@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="610" viewBox="0 0 660 610">
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#FFF" d="M0 0h660v610H0z"/>
+        <text fill="#343A40" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="30" font-weight="600" letter-spacing="-.536">
+            <tspan x="250.08" y="87">민감정보 검사</tspan>
+        </text>
+        <text fill="#868E96" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="14" font-weight="600" letter-spacing="-.25">
+            <tspan x="176.245" y="115">파일을 선택하여 암호화하거나 완전히 삭제할 수 있습니다.</tspan>
+        </text>
+        <rect width="267" height="40" x="125" y="154" fill="#DEE2E6" rx="6"/>
+    </g>
+</svg>
