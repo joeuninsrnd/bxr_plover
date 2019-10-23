@@ -1,26 +1,29 @@
-#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <regex.h>
 #include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
 #include <assert.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
+#include <gtk/gtk.h>
+
+#include <regex.h>
+
+#include <amqp.h>
+#include <amqp_tcp_socket.h>
 #include "utils.h"
 #include "utils.c"
+
 #include "b64.h"
 #include "encode.c"
 #include "decode.c"
 
 #define MAX_ERROR_MSG 0x1000
-#define MAX_CNTF 50
+#define MAX_CNTF 50					// 최대 검출 파일 개수 //
 
 typedef struct Data_storage
 {
@@ -36,13 +39,13 @@ typedef struct Data_storage
 
 }data_storage;
 
-data_storage ds[MAX_CNTF];	// 파일기준의 data구조체 //
+data_storage ds[MAX_CNTF];			// 파일기준의 data구조체 //
 
-static gchar *path;			// 파일경로 //
-static int	cntf = 0;		// 파일개수 cnt //
+static gchar *path;					// 파일경로 //
+static int	cntf = 0;				// 파일개수 cnt //
 static char	chkfname[20];
-int chk_tf;					// chk_true or false //
-//uint 	data_flag = 1;	// 어떤종류의 민감정보인지 확인하기위한 flag //
+static int	chk_tf;				// chk_true or false //
+//uint 	data_flag = 1;			// 어떤종류의 민감정보인지 확인하기위한 flag //
 
 
 GtkWidget				*detect_window,
@@ -704,9 +707,9 @@ int chk_user()
 	
 	return chk_tf;
 }
-/* end of  */
+/* end of chk_user(); */
 
-// main_window //
+// main_window function //
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
 	gtk_widget_show(detect_window);
@@ -727,11 +730,11 @@ void main_window_destroy()
     
     return;
 }
-/* end of main_window */
+/* end of main_window function */
 
 
 
-// detect_window //
+// detect_window function //
 void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(d_detect_entry);
@@ -769,7 +772,7 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 	return;
 }
 
-	// treeview //
+	// treeview function//
 enum
 {
 	d_treeview_num = 0,
@@ -783,6 +786,38 @@ enum
 	d_treeview_filelocation,
 	NUM_COLS
 } ;
+
+gboolean
+view_selection_func 	(GtkTreeSelection *selection,
+							GtkTreeModel     *model,
+							GtkTreePath      *path,
+							gboolean          path_currently_selected,
+							gpointer          userdata)
+{
+	GtkTreeIter iter;
+
+	if (gtk_tree_model_get_iter(model, &iter, path))
+	{
+		gchar *name;
+
+		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &name, -1);
+
+		if (!path_currently_selected)
+		{
+			g_print ("%s is going to be selected.\n", name);
+		}
+		
+		else
+		{
+			g_print ("%s is going to be unselected.\n", name);
+		}
+
+		g_free(name);
+	}
+
+	return TRUE; /* allow selection state to change */
+}
+
 
 static GtkTreeModel *
 create_and_fill_model (void)
@@ -814,10 +849,11 @@ create_and_fill_model (void)
 static GtkWidget *
 create_view_and_model (void)
 {
-	GtkTreeViewColumn		*col;
+	GtkTreeViewColumn	*col;
 	GtkCellRenderer		*renderer;
 	GtkWidget				*view;
 	GtkTreeModel			*model;
+	GtkTreeSelection	*selection;
 	
 	view = gtk_tree_view_new();
 
@@ -899,6 +935,12 @@ create_view_and_model (void)
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filelocation);
+	
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	
+	gtk_tree_selection_set_select_function(selection, view_selection_func, NULL, NULL);
+
+
 
 	model = create_and_fill_model();
 
@@ -907,11 +949,11 @@ create_view_and_model (void)
 	g_object_unref(model); // destroy model automatically with view //
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
-							  GTK_SELECTION_NONE);
+							  GTK_SELECTION_MULTIPLE);
 
 	return view;
 }
-	/* end of treeview */
+	/* end of treeview function */
 
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
@@ -957,11 +999,11 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
     
     return;
 }
-/* end of detect_window */
+/* end of detect_window function */
 
 
 
-// enrollment_window //
+// enrollment_window function //
 void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
@@ -972,14 +1014,14 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 
 
 
-// setting_setting //
+// setting_window function //
 void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
 	
 	return;
 }
-/* end of setting_setting */
+/* end of setting_window function */
 
 
 
@@ -1009,11 +1051,11 @@ int main (int argc, char *argv[])
     gtk_builder_connect_signals(builder, NULL);
     
     g_object_unref(builder);
-	
-	chk_user(chk_tf);
-	
-	if (chk_tf == FALSE) // TRUE(1)=있다 //
-	{
+    
+    chk_user(chk_tf);
+    
+    if (chk_tf == FALSE) // TRUE(1)=있다 //
+    {
 		gtk_widget_show(enrollment_window);
 		gtk_main();
 	}
