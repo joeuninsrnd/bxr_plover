@@ -99,7 +99,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="opacity">0.10000000000000001</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="d_option_btn_clicked" object="setting_window" swapped="no"/>
                     <child>
@@ -367,15 +366,38 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="width_request">290</property>
-                    <property name="height_request">170</property>
+                  <object class="GtkImage" id="e_jobtitle_cbxtext_image">
+                    <property name="width_request">50</property>
+                    <property name="height_request">50</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
+                    <property name="pixbuf">resource/btn-dropdown-nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">335</property>
+                    <property name="y">70</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage" id="e_department_cbxtext_image">
+                    <property name="width_request">50</property>
+                    <property name="height_request">50</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn-add-nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">335</property>
+                    <property name="y">130</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="width_request">300</property>
+                    <property name="height_request">50</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
-                    <property name="spacing">10</property>
                     <child>
                       <object class="GtkEntry" id="e_name_entry">
                         <property name="width_request">290</property>
@@ -394,6 +416,22 @@
                         <property name="position">0</property>
                       </packing>
                     </child>
+                  </object>
+                  <packing>
+                    <property name="x">84</property>
+                    <property name="y">10</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="width_request">290</property>
+                    <property name="height_request">110</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">10</property>
                     <child>
                       <object class="GtkComboBoxText" id="e_jobtitle_cbxtext">
                         <property name="width_request">290</property>
@@ -455,33 +493,7 @@
                   </object>
                   <packing>
                     <property name="x">84</property>
-                    <property name="y">10</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage" id="e_jobtitle_cbxtext_image">
-                    <property name="width_request">50</property>
-                    <property name="height_request">50</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="pixbuf">resource/btn-dropdown-nor.svg</property>
-                  </object>
-                  <packing>
-                    <property name="x">335</property>
                     <property name="y">70</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage" id="e_department_cbxtext_image">
-                    <property name="width_request">50</property>
-                    <property name="height_request">50</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="pixbuf">resource/btn-add-nor.svg</property>
-                  </object>
-                  <packing>
-                    <property name="x">335</property>
-                    <property name="y">130</property>
                   </packing>
                 </child>
               </object>
