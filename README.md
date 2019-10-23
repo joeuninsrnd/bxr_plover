@@ -22,13 +22,6 @@ gcc -o bxr_plover main.c -lrabbitmq -Wall `pkg-config --cflags --libs gtk+-3.0` 
 </br>
 다운로드후 bxr_plover실행
 
-## 개발방법
-1. download
-2. build</br>
-gcc -o bxr_plover main.c -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
-3. run</br>
-./bxr_plove
-
 ## 라이선스
 This project is licensed under the GPL v3.0 License.<br>
 https://github.com/joeuninsrnd/bxr_plover/blob/master/LICENSE.md<br>
