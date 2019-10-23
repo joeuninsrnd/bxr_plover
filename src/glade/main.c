@@ -71,6 +71,15 @@ void d_option_btn_clicked		(GtkButton *d_option_btn,	gpointer *data);
 void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
+
+gboolean	view_selection_func 	(GtkTreeSelection *selection,
+										GtkTreeModel     *model,
+										GtkTreePath      *path,
+										gboolean          path_currently_selected,
+										gpointer          userdata);
+										
+static GtkTreeModel		*create_and_fill_model (void);
+static GtkWidget		*create_view_and_model (void);
 /* end of detect_window */
 
 // setting_window //
@@ -703,7 +712,7 @@ int detect_func(gchar *path)
 // 계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다 //
 int chk_user()
 {
-	chk_tf = FALSE;
+	chk_tf = TRUE;
 	
 	return chk_tf;
 }
