@@ -10,12 +10,16 @@
 설명...아키텍처, 이미지
 
 ## 사용방법
-설치,이용방법...
+설치후 실행
 
 ## 개발방법
 1. download
 1. build
+gcc -o bxr_plover main.c -lrabbitmq -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic</br>
+/usr/include 위치에 사용하는 rabbitmq의 *.h 파일들을 넣으면 링크오류 해결.</br>
 1. run
+./bxr_plover
+</br>
 
 ## 라이선스
 This project is licensed under the GPL v3.0 License.<br>
