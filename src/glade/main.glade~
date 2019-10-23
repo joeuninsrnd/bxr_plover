@@ -8,7 +8,6 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">검사</property>
     <property name="resizable">False</property>
-    <property name="modal">True</property>
     <property name="default_width">660</property>
     <property name="default_height">610</property>
     <child>
@@ -100,6 +99,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="opacity">0.10000000000000001</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="d_option_btn_clicked" object="setting_window" swapped="no"/>
                     <child>
@@ -253,7 +253,7 @@
                   </object>
                   <packing>
                     <property name="x">150</property>
-                    <property name="y">1</property>
+                    <property name="y">2</property>
                   </packing>
                 </child>
                 <child>
@@ -266,7 +266,7 @@
                   </object>
                   <packing>
                     <property name="x">274</property>
-                    <property name="y">1</property>
+                    <property name="y">2</property>
                   </packing>
                 </child>
                 <child>
@@ -279,7 +279,7 @@
                   </object>
                   <packing>
                     <property name="x">398</property>
-                    <property name="y">1</property>
+                    <property name="y">2</property>
                   </packing>
                 </child>
               </object>
@@ -546,7 +546,6 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">메인</property>
     <property name="resizable">False</property>
-    <property name="modal">True</property>
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <signal name="destroy" handler="m_window_destroy" swapped="no"/>
@@ -614,8 +613,8 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkButton" id="m_detect_btn">
-                    <property name="width_request">180</property>
-                    <property name="height_request">180</property>
+                    <property name="width_request">200</property>
+                    <property name="height_request">200</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -627,8 +626,8 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="x">120</property>
-                    <property name="y">30</property>
+                    <property name="x">110</property>
+                    <property name="y">20</property>
                   </packing>
                 </child>
                 <child>
@@ -720,7 +719,6 @@
     <property name="height_request">450</property>
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
-    <property name="modal">True</property>
     <property name="default_width">680</property>
     <property name="default_height">450</property>
     <child type="titlebar">

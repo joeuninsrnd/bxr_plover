@@ -30,47 +30,53 @@ typedef struct Data_storage
     uint	fgcnt;			// 외국인등록번호 개수 //
     uint	pcnt;			// 여권번호 개수 //
     uint	fsize;			// 파일 크기 //
-	char	stat;			// 파일 상태 //
-	char	fpath[300];	// 파일 경로 //
-	
-	
+    char	stat;			// 파일 상태 //
+    char	fpath[300];	// 파일 경로 //
+
+
 }data_storage;
 
 data_storage ds[MAX_CNTF];	// 파일기준의 data구조체 //
 
-static gchar *path;
-static int cntf = 0;
-static	char chkfname[20];
-int 	chk_tf;				// chk_true or false //
-//uint 	data_flag = 1;		// 어떤종류의 민감정보인지 확인하기위한 flag //
+static gchar *path;			// 파일경로 //
+static int	cntf = 0;		// 파일개수 cnt //
+static char	chkfname[20];
+int chk_tf;					// chk_true or false //
+//uint 	data_flag = 1;	// 어떤종류의 민감정보인지 확인하기위한 flag //
 
 
-GtkWidget	*detect_window,
-			*setting_window;
-			
-GtkScrolledWindow *d_scrolledwindow;
-			
-GtkEntry	*d_detect_entry;
+GtkWidget				*detect_window,
+						*setting_window;
+						
+GtkEntry				*d_detect_entry;
 
+GtkScrolledWindow	*d_scrolledwindow;
 
+// enrollment_window //
 void e_enroll_btn_clicked		(GtkButton *e_enroll_btn,	gpointer *data);
+/* end of enrollment_window */
 
+// main_window //
 void m_window_destroy();
 void m_detect_btn_clicked		(GtkButton *m_detect_btn,	gpointer *data);
-void m_setting_btn_clicked		(GtkButton *m_setting_btn,	gpointer *data);
+void m_setting_btn_clicked	(GtkButton *m_setting_btn,	gpointer *data);
+/* end of main_window */
 
+// detect_window //
 void d_detect_btn_clicked		(GtkButton *d_detect_btn,	gpointer *data);
 void d_option_btn_clicked		(GtkButton *d_option_btn,	gpointer *data);
 void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
-void d_close_btn_clicked		(GtkButton *d_close_btn,		gpointer *data);
+void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
+/* end of detect_window */
 
+// setting_window //
 void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
+/* end of setting_window */
 
 // Base64 encoding //
 char *b64_encode(const unsigned char *src, size_t len, char *enc);
-
-
+/* end of char *b64_encode(); */
 
 //Compile the regular expression described by "regex_text" into "r"//
 int compile_regex (regex_t *r, const char *regex_text)
@@ -90,6 +96,8 @@ int compile_regex (regex_t *r, const char *regex_text)
 
     return 0;
 }
+/* end of compile_regex(); */
+
 
 //Match the string in "to_match" against the compiled regular expression in "r"//
 // 주민등록번호, 외국인등록번호 정규식 //
@@ -212,6 +220,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
         p += m[0].rm_eo;
     }
 }
+/* end of match_regex_jnfg(); */
 
 // 운전면허 정규식 //
 char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
@@ -274,6 +283,8 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
         p += m[0].rm_eo;
     }
 }
+/* end of match_regex_d(); */
+
 
 // 여권번호 정규식 //
 char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
@@ -336,7 +347,9 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
         p += m[0].rm_eo;
     }
 }
+/* end of match_regex_p(); */
 
+// data 종류 확인 //
 void check_kind_of_data (const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	regex_t r;
@@ -374,7 +387,9 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	compile_regex(&r, regex_text); // 정규식 컴파일 //
 	match_regex_p(&r, to_match, filepath, file, buf);
 }
+/* end of check_kind_of_data(); */
 
+// 폴더, 파일 스캔 //
 int scan_dir (gchar *path)
 {
     DIR *dp = NULL;
@@ -447,7 +462,9 @@ int scan_dir (gchar *path)
     
     return  0;
 }
+/* end of scan_dir(); */
 
+// 검출, 전송 //
 int detect_func(gchar *path)
 {
 	char *hostname;
@@ -678,6 +695,7 @@ int detect_func(gchar *path)
 
 	return TRUE;
 }
+/* end of detect_func(); */
 
 // 계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다 //
 int chk_user()
@@ -686,9 +704,9 @@ int chk_user()
 	
 	return chk_tf;
 }
+/* end of  */
 
-
-// main_window_start //
+// main_window //
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
 	gtk_widget_show(detect_window);
@@ -709,11 +727,11 @@ void main_window_destroy()
     
     return;
 }
-// main_window_end //
+/* end of main_window */
 
 
 
-// detect_window_start //
+// detect_window //
 void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(d_detect_entry);
@@ -751,7 +769,7 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 	return;
 }
 
-// treeview start //
+	// treeview //
 enum
 {
 	d_treeview_num = 0,
@@ -893,7 +911,7 @@ create_view_and_model (void)
 
 	return view;
 }
-// treeview end //
+	/* end of treeview */
 
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
@@ -939,29 +957,29 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
     
     return;
 }
-// detect_window_end //
+/* end of detect_window */
 
 
 
-// enrollment_window_start //
+// enrollment_window //
 void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
 	
 	return;
 }
-// enrollment_window_end //
+/* end of enrollment_window */
 
 
 
-// setting_setting_start //
+// setting_setting //
 void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
 	
 	return;
 }
-// setting_setting_end //
+/* end of setting_setting */
 
 
 
