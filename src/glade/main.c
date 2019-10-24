@@ -23,29 +23,30 @@
 #include "decode.c"
 
 #define MAX_ERROR_MSG 0x1000
-#define MAX_CNTF 50					// 최대 검출 파일 개수 //
+#define MAX_CNTF 50				// 최대 검출 파일 개수 //
 
 typedef struct Data_storage
 {
-    char	fname[20];		// 파일 이름 //
-    uint	jcnt;			// 주민번호 개수 //
-    uint	dcnt;			// 운전면허 개수 //
-    uint	fgcnt;			// 외국인등록번호 개수 //
-    uint	pcnt;			// 여권번호 개수 //
-    uint	fsize;			// 파일 크기 //
-    char	stat;			// 파일 상태 //
-    char	fpath[300];	// 파일 경로 //
+    char	fname[20];				// 파일 이름 //
+    uint	jcnt;					// 주민번호 개수 //
+    uint	dcnt;					// 운전면허 개수 //
+    uint	fgcnt;					// 외국인등록번호 개수 //
+    uint	pcnt;					// 여권번호 개수 //
+    uint	fsize;					// 파일 크기 //
+    char	stat;					// 파일 상태 //
+    char	fpath[300];			// 파일 경로 //
 
 
 }data_storage;
 
-data_storage ds[MAX_CNTF];			// 파일기준의 data구조체 //
+data_storage ds[MAX_CNTF];		// 파일기준의 data구조체 //
 
-static gchar *path;					// 파일경로 //
-static int	cntf = 0;				// 파일개수 cnt //
-static char	chkfname[20];
-static int	chk_tf;				// chk_true or false //
-//uint 	data_flag = 1;			// 어떤종류의 민감정보인지 확인하기위한 flag //
+static gchar *path;				// 검사 파일경로 //
+static gchar *vsf_path;		// 검사결과 리스트 선택 파일경로 //
+static int	cntf = 0;			// 파일개수 cnt //
+static char	chk_fname[20];	// 정규식돌고있는 파일이름 //
+static int	chk_tf;			// chk_true or false //
+//uint 	data_flag = 1;		// 민감정보 종류 확인 flag //
 
 
 GtkWidget				*detect_window,
@@ -72,11 +73,11 @@ void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
 
-gboolean	view_selection_func 	(GtkTreeSelection *selection,
-										GtkTreeModel     *model,
-										GtkTreePath      *path,
-										gboolean          path_currently_selected,
-										gpointer          userdata);
+gboolean	view_selection_func (GtkTreeSelection *selection,
+									GtkTreeModel     *model,
+									GtkTreePath      *path,
+									gboolean          path_currently_selected,
+									gpointer          userdata);
 										
 static GtkTreeModel		*create_and_fill_model (void);
 static GtkWidget		*create_view_and_model (void);
@@ -179,7 +180,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                     // 주민번호 유효성 통과 //
                     if (jtmp == chk)
                     {
-						int res = strcmp(chkfname, file->d_name); // 같은파일 = 0 //
+						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
 						
 						if (res != 0)
 						{
@@ -187,7 +188,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 						}
 						
 						// 읽고있는중인 파일 이름 저장 //
-						strcpy(chkfname, file->d_name);
+						strcpy(chk_fname, file->d_name);
 						
 						// 검출된 주민등록번호의 수 //
 						ds[cntf].jcnt++;
@@ -204,7 +205,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                     // 외국인등록번호 유효성 통과 //
                     if (fgtmp == chk)
                     {
-						int res = strcmp(chkfname, file->d_name); // 같은파일 = 0 //
+						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
 						
 						if (res != 0)
 						{
@@ -212,7 +213,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 						}
 						
 						// 읽고있는중인 파일 이름 저장 //
-						strcpy(chkfname, file->d_name);
+						strcpy(chk_fname, file->d_name);
 						
 						// 검출된 외국인등록번호의 수 //
 						ds[cntf].fgcnt++;
@@ -268,7 +269,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
                 //운전면허 정규식 검사 통과//
                 if (i == 0)
                 {
-					int res = strcmp(chkfname, file->d_name); //같은파일 = 0 //
+					int res = strcmp(chk_fname, file->d_name); //같은파일 = 0 //
 						
 					if (res != 0)
 					{
@@ -276,7 +277,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					}
 					
 					// 읽고있는중인 파일 이름 저장 //
-					strcpy(chkfname, file->d_name);
+					strcpy(chk_fname, file->d_name);
 					
 					// 검출된 운전면허의 수 //
 					ds[cntf].dcnt++;
@@ -332,7 +333,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
                 // 운전면허 정규식 검사 통과 //
                 if (i == 0)
                 {
-					int res = strcmp(chkfname, file->d_name); // 같은파일 = 0 //
+					int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
 						
 					if (res != 0)
 					{
@@ -340,7 +341,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					}
 					
 					// 읽고있는중인 파일 이름 저장 //
-					strcpy(chkfname, file->d_name);
+					strcpy(chk_fname, file->d_name);
 					
 					// 검출된 운전면허의 수 //
 					ds[cntf].pcnt++;
@@ -465,7 +466,7 @@ int scan_dir (gchar *path)
             memset(buffer, 0, sizeof(buffer));
             fclose(fp);
             printf("Close FILE\n");
-            chkfname[0] = 0; // 초기화 //
+            chk_fname[0] = 0; // 초기화 //
         }
     }
     closedir(dp);
@@ -807,21 +808,19 @@ view_selection_func 	(GtkTreeSelection *selection,
 
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
-		gchar *name;
-
-		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &name, -1);
+		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &vsf_path, -1);
 
 		if (!path_currently_selected)
 		{
-			g_print ("%s is going to be selected.\n", name);
+			g_print ("%s 선택.\n", vsf_path);
 		}
 		
 		else
 		{
-			g_print ("%s is going to be unselected.\n", name);
+			g_print ("%s 선택 해제.\n", vsf_path);
 		}
 
-		g_free(name);
+		g_free(vsf_path);
 	}
 
 	return TRUE; /* allow selection state to change */
