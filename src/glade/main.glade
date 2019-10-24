@@ -41,7 +41,7 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkEntry" id="d_detect_entry">
-                    <property name="width_request">272</property>
+                    <property name="width_request">267</property>
                     <property name="height_request">40</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -50,7 +50,7 @@
                     <signal name="activate" handler="d_detect_entry_activate" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="x">120</property>
+                    <property name="x">125</property>
                     <property name="y">154</property>
                   </packing>
                 </child>
@@ -168,6 +168,7 @@
                     <property name="height_request">270</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="margin_bottom">36</property>
                     <property name="shadow_type">in</property>
                     <child>
                       <placeholder/>
@@ -176,6 +177,19 @@
                   <packing>
                     <property name="x">20</property>
                     <property name="y">10</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkProgressBar" id="d_progressbar">
+                    <property name="width_request">620</property>
+                    <property name="height_request">30</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="show_text">True</property>
+                  </object>
+                  <packing>
+                    <property name="x">20</property>
+                    <property name="y">280</property>
                   </packing>
                 </child>
               </object>
@@ -206,6 +220,7 @@
                   </object>
                   <packing>
                     <property name="x">148</property>
+                    <property name="y">9</property>
                   </packing>
                 </child>
                 <child>
@@ -223,6 +238,7 @@
                   </object>
                   <packing>
                     <property name="x">272</property>
+                    <property name="y">9</property>
                   </packing>
                 </child>
                 <child>
@@ -240,6 +256,7 @@
                   </object>
                   <packing>
                     <property name="x">396</property>
+                    <property name="y">9</property>
                   </packing>
                 </child>
                 <child>
@@ -252,7 +269,7 @@
                   </object>
                   <packing>
                     <property name="x">150</property>
-                    <property name="y">2</property>
+                    <property name="y">10</property>
                   </packing>
                 </child>
                 <child>
@@ -265,7 +282,7 @@
                   </object>
                   <packing>
                     <property name="x">274</property>
-                    <property name="y">2</property>
+                    <property name="y">10</property>
                   </packing>
                 </child>
                 <child>
@@ -278,7 +295,7 @@
                   </object>
                   <packing>
                     <property name="x">398</property>
-                    <property name="y">2</property>
+                    <property name="y">10</property>
                   </packing>
                 </child>
               </object>
