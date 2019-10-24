@@ -50,7 +50,9 @@ static int	chk_tf;			// chk_true or false //
 
 
 GtkWidget				*detect_window,
-						*setting_window;
+						*setting_window,
+						*d_progressbar_status,
+						*d_progressbar;
 						
 GtkEntry				*d_detect_entry;
 
@@ -967,12 +969,21 @@ create_view_and_model (void)
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	GtkWidget *view;
+	char message[1024];
+	gdouble percent = 0.0;
 	
 	detect_func(path);
 	
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 0 );
+	
 	view = create_view_and_model();
-	gtk_container_add(GTK_CONTAINER(d_scrolledwindow), view);
-	gtk_widget_show_all((GtkWidget *)d_scrolledwindow);
+	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
+	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+	
+	memset( message, 0x00, strlen(message));
+	sprintf( message, "%.0f%% Complete", percent);
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR(d_progressbar), percent / 100.0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 	
 	return;
 }
@@ -1051,6 +1062,7 @@ int main (int argc, char *argv[])
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
     d_scrolledwindow			= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
     gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
+    d_progressbar = GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
 
     // 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
     g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
