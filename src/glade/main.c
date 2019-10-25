@@ -24,6 +24,8 @@
 
 #define MAX_ERROR_MSG 0x1000
 #define MAX_CNTF 50				// 최대 검출 파일 개수 //
+#define	ERASER_SIZE		512	//1k
+#define	ERASER_ENC_SIZE		896	//1k
 
 typedef struct Data_storage
 {
@@ -42,9 +44,11 @@ typedef struct Data_storage
 data_storage ds[MAX_CNTF];		// 파일기준의 data구조체 //
 
 static gchar *path;				// 검사 파일경로 //
-static gchar *vsf_path;		// 검사결과 리스트 선택 파일경로 //
+
 static int	cntf = 0;			// 파일개수 cnt //
 static char	chk_fname[20];	// 정규식돌고있는 파일이름 //
+static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
+static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
 static int	chk_tf;			// chk_true or false //
 //uint 	data_flag = 1;		// 민감정보 종류 확인 flag //
 
@@ -52,7 +56,8 @@ static int	chk_tf;			// chk_true or false //
 GtkWidget				*detect_window,
 						*setting_window,
 						*d_progressbar_status,
-						*d_progressbar;
+						*d_progressbar,
+						*window;
 						
 GtkEntry				*d_detect_entry;
 
@@ -712,6 +717,126 @@ int detect_func(gchar *path)
 }
 /* end of detect_func(); */
 
+// gtk_dialog_modal
+int func_gtk_dialog_modal(int type, GtkWidget *widget, char *message)
+{
+	GtkWidget *dialog, *label, *content_area;
+	GtkDialogFlags flags = GTK_DIALOG_MODAL;
+	int	rtn = GTK_RESPONSE_REJECT;
+
+	switch(type)
+	{
+		case 0 :
+			dialog = gtk_dialog_new_with_buttons("Dialog", GTK_WINDOW(widget), flags, 
+						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
+			break;
+
+		case 1 :
+			dialog = gtk_dialog_new_with_buttons("Dialog", GTK_WINDOW(widget), flags,
+						("_OK"), GTK_RESPONSE_ACCEPT, 
+						("_Cancel"), GTK_RESPONSE_REJECT, NULL );
+			break;
+
+		default :
+			break;
+	}
+
+	label=gtk_label_new(message);
+	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	gtk_container_add (GTK_CONTAINER (content_area), label);
+	gtk_widget_show_all(dialog);
+
+	rtn = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+	return(rtn);	
+}
+
+// 삭제 //
+int func_file_eraser(int type)
+{
+	FILE *fp;
+	int mode = R_OK | W_OK;
+	char MsgTmp[5];
+	gdouble size = 0.0;
+	char *msize;
+
+	if( access( chk_fpath, mode ) != 0 )
+	{
+		func_gtk_dialog_modal(0, window, "\n    파일이 삭제 가능한 상태가 아닙니다.    \n");
+	}
+	
+	else
+	{
+		msize = malloc(ERASER_SIZE);
+		fp = fopen(chk_fpath, "w");
+		
+		for( int i=0 ; i < type ; i++ )
+		{
+			size = 0;
+
+			while (size<chk_fsize)
+			{   
+				switch(i)
+				{
+					case 0 :
+						MsgTmp[0] = 'A';
+						memset( msize, MsgTmp[0], ERASER_SIZE );
+						break;
+						
+					case 1 :
+						MsgTmp[0] = '^';
+						memset( msize, MsgTmp[0], ERASER_SIZE );
+						break;
+						
+					case 2 :
+						srand(time(NULL));
+						if( size < ERASER_SIZE )
+							for( int j=0 ; j < ERASER_SIZE ; j++ )
+								msize[j] = 'A' + (random() % 26);
+						break;
+						
+					case 3 :
+						MsgTmp[0] = 'Z';
+						memset( msize, MsgTmp[0], ERASER_SIZE );
+						break;
+						
+					case 4 :
+						MsgTmp[0] = 'A';
+						memset( msize, MsgTmp[0], ERASER_SIZE );
+						break;
+						
+					case 5 :
+						MsgTmp[0] = '^';
+						memset( msize, MsgTmp[0], ERASER_SIZE );
+						break;
+						
+					case 6 :
+						srand(time(NULL));
+						if( size < ERASER_SIZE )
+							for( int j=0 ; j < ERASER_SIZE ; j++ )
+								msize[j] = 'A' + (random() % 26);
+						break;
+						
+					default :
+						break;
+				}
+			}
+			
+			fseek( fp, 0L, SEEK_SET );
+		}
+		
+		fclose(fp);
+		free(msize);
+	}
+
+	remove( chk_fpath );
+	func_gtk_dialog_modal(0, window, "\n    삭제가 완료되었습니다.    \n");
+	
+	return( TRUE );
+}
+// end of func_file_eraser(); //
+
+
 // 계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다 //
 int chk_user()
 {
@@ -807,22 +932,29 @@ view_selection_func 	(GtkTreeSelection *selection,
 							gpointer          userdata)
 {
 	GtkTreeIter iter;
-
+	gchar *vs_fpath;
+	guint vs_fsize = 0;
+	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
-		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &vsf_path, -1);
+		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &vs_fpath, -1);
+		gtk_tree_model_get(model, &iter, d_treeview_size, vs_fsize, -1);
 
 		if (!path_currently_selected)
 		{
-			g_print ("%s 선택.\n", vsf_path);
+			g_print ("%s 선택.\n", vs_fpath);
 		}
 		
 		else
 		{
-			g_print ("%s 선택 해제.\n", vsf_path);
+			g_print ("%s 선택 해제.\n", vs_fpath);
 		}
-
-		g_free(vsf_path);
+		
+		strcpy(chk_fpath ,vs_fpath);
+		chk_fsize = vs_fsize;
+		
+		g_free(vs_fpath);
+		vs_fsize = 0;
 	}
 
 	return TRUE; /* allow selection state to change */
@@ -1003,8 +1135,29 @@ void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현
 	return;
 }
 
-void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)//미구현//
+void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 {
+	char	message[1024];
+	
+	if( chk_fpath[0] == 0x00 )
+	{
+		func_gtk_dialog_modal(0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
+	}
+	else
+	{
+		sprintf( message, 
+			"\n    삭제 후에 복구가 불가능 합니다.\n    아래 파일을 삭제하시겠습니까?\n    [ %s ]    \n", chk_fpath);
+    
+		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
+		{
+			func_file_eraser(3);
+		}
+		else
+		{
+			printf("취소 되었습니다.\n");
+		}
+	}
+	
 	return;
 }
 
@@ -1050,7 +1203,7 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 // main //
 int main (int argc, char *argv[])
 {
-    GtkBuilder		*builder;
+    GtkBuilder	*builder;
     GtkWidget		*main_window,
 					*enrollment_window;
 					
@@ -1089,6 +1242,8 @@ int main (int argc, char *argv[])
 		gtk_widget_show(main_window);
 		gtk_main();
 	}
+	
+	gtk_widget_show(window); 
 
     return 0;
 }
