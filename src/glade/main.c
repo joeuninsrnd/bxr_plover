@@ -972,19 +972,22 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	char message[1024];
 	gdouble percent = 0.0;
 	
-	detect_func(path);
-	
+	memset( message, 0x00, strlen(message));
+	sprintf( message, "%.0f%% Complete", percent);
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 0 );
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+	
+	detect_func(path);
 	
 	view = create_view_and_model();
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
 	
-	memset( message, 0x00, strlen(message));
-	sprintf( message, "%.0f%% Complete", percent);
-	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR(d_progressbar), percent / 100.0);
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 	
+	sprintf( message, "%.0f%% Complete", 100.0);
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+
 	return;
 }
 
@@ -1057,12 +1060,13 @@ int main (int argc, char *argv[])
     gtk_builder_add_from_file(builder, "main.glade", NULL);
 
     main_window				= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-    enrollment_window			= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
-    detect_window				= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
+    enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
+    detect_window			= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
     setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
-    d_scrolledwindow			= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
-    gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
-    d_progressbar = GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
+    d_progressbar 			= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
+    d_scrolledwindow		= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+
+	gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
 
     // 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
     g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
