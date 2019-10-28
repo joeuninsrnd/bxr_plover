@@ -22,22 +22,21 @@
 #include "encode.c"
 #include "decode.c"
 
-#define MAX_ERROR_MSG 0x1000
-#define MAX_CNTF 50				// 최대 검출 파일 개수 //
-#define	ERASER_SIZE		512	//1k
+#define	MAX_ERROR_MSG 0x1000
+#define	MAX_CNTF 50				// 최대 검출 파일 개수 //
+#define	ERASER_SIZE		512		//1k
 #define	ERASER_ENC_SIZE		896	//1k
 
 typedef struct Data_storage
 {
-    char	fname[20];				// 파일 이름 //
+    char	fname[100];				// 파일 이름 //
     uint	jcnt;					// 주민번호 개수 //
     uint	dcnt;					// 운전면허 개수 //
     uint	fgcnt;					// 외국인등록번호 개수 //
     uint	pcnt;					// 여권번호 개수 //
     uint	fsize;					// 파일 크기 //
-    char	stat;					// 파일 상태 //
+    char	stat[20];				// 파일 상태 //
     char	fpath[300];			// 파일 경로 //
-
 
 }data_storage;
 
@@ -204,6 +203,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                         strcpy(ds[cntf].fpath, filepath);
                         strcpy(ds[cntf].fname, file->d_name);
                         ds[cntf].fsize = buf.st_size;
+                        strcpy(ds[cntf].stat, "일반");
 
                         printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
 								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
@@ -229,6 +229,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                         strcpy(ds[cntf].fpath, filepath);
                         strcpy(ds[cntf].fname, file->d_name);
                         ds[cntf].fsize = buf.st_size;
+                        strcpy(ds[cntf].stat, "일반");
 
                        printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
 								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
@@ -293,6 +294,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(ds[cntf].fpath, filepath);
 					strcpy(ds[cntf].fname, file->d_name);
 					ds[cntf].fsize = buf.st_size;
+					strcpy(ds[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
 								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
@@ -357,6 +359,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(ds[cntf].fpath, filepath);
 					strcpy(ds[cntf].fname, file->d_name);
 					ds[cntf].fsize = buf.st_size;
+					strcpy(ds[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
 								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
@@ -920,7 +923,7 @@ enum
 	d_treeview_pcnt,
 	d_treeview_stat,
 	d_treeview_size,
-	d_treeview_filelocation,
+	d_treeview_fileloca,
 	NUM_COLS
 } ;
 
@@ -937,7 +940,7 @@ view_selection_func 	(GtkTreeSelection *selection,
 	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
-		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &vs_fpath, -1);
+		gtk_tree_model_get(model, &iter, d_treeview_fileloca, &vs_fpath, -1);
 		gtk_tree_model_get(model, &iter, d_treeview_size, vs_fsize, -1);
 
 		if (!path_currently_selected)
@@ -974,14 +977,14 @@ create_and_fill_model (void)
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
 						  d_treeview_num, i,
-						  d_treeview_filename, ds[i].fname,
-						  d_treeview_jcnt, ds[i].jcnt,
-						  d_treeview_dcnt, ds[i].dcnt,
-						  d_treeview_fgcnt, ds[i].fgcnt,
-						  d_treeview_pcnt, ds[i]. pcnt,
-						  d_treeview_stat, "soon",
-						  d_treeview_size, ds[i].fsize,
-						  d_treeview_filelocation, ds[i].fpath,
+						  d_treeview_filename,	ds[i].fname,
+						  d_treeview_jcnt,		ds[i].jcnt,
+						  d_treeview_dcnt,		ds[i].dcnt,
+						  d_treeview_fgcnt,		ds[i].fgcnt,
+						  d_treeview_pcnt,		ds[i]. pcnt,
+						  d_treeview_stat,		ds[i].stat,
+						  d_treeview_size,		ds[i].fsize,
+						  d_treeview_fileloca,	ds[i].fpath,
 						  -1);
 	}
 
@@ -1076,7 +1079,7 @@ create_view_and_model (void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filelocation);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fileloca);
 	
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	
@@ -1115,10 +1118,11 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
 	
-	
 	sprintf( message, "%.0f%% Complete", 100.0);
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+	
+	//strcpy(ds[cntf].stat, "일반");
 
 	return;
 }
