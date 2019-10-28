@@ -22,10 +22,10 @@
 #include "encode.c"
 #include "decode.c"
 
-#define MAX_ERROR_MSG 0x1000
+#define MAX_ERROR_MSG	0x1000
+#define	ERASER_SIZE	512		//1k
+#define	ERASER_ENC_SIZE 896		//1k
 #define MAX_CNTF 50			// 최대 검출 파일 개수 //
-#define	ERASER_SIZE		512	//1k
-#define	ERASER_ENC_SIZE		896	//1k
 
 typedef struct Data_storage
 {
