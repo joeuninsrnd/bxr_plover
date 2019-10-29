@@ -955,7 +955,7 @@ enum
 } ;
 
 gboolean
-view_selection_func 	(GtkTreeSelection *selection,
+d_view_selection_func 	(GtkTreeSelection *selection,
 							GtkTreeModel     *model,
 							GtkTreePath      *path,
 							gboolean          path_currently_selected,
@@ -1129,7 +1129,7 @@ d_create_view_and_model (void)
 	
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	
-	gtk_tree_selection_set_select_function(selection, view_selection_func, NULL, NULL);
+	gtk_tree_selection_set_select_function(selection, d_view_selection_func, NULL, NULL);
 
 
 
@@ -1224,6 +1224,38 @@ enum
 	e_treeview_col,
 	NUM_COL
 } ;
+
+gboolean
+e_view_selection_func 	(GtkTreeSelection *selection,
+							GtkTreeModel     *model,
+							GtkTreePath      *path,
+							gboolean          path_currently_selected,
+							gpointer          userdata)
+{
+	GtkTreeIter iter;
+	gchar *vs_dept;
+	
+	if (gtk_tree_model_get_iter(model, &iter, path))
+	{
+		gtk_tree_model_get(model, &iter, e_treeview_col, &vs_dept, -1);
+
+		if (!path_currently_selected)
+		{
+			g_print ("%s 선택.\n", vs_dept);
+		}
+		
+		else
+		{
+			g_print ("%s 선택 해제.\n", vs_dept);
+		}
+		
+		//strcpy(chk_fpath ,vs_dept);
+
+		g_free(vs_dept);
+	}
+
+	return TRUE; /* allow selection state to change */
+}
 
 static GtkTreeModel *
 e_create_and_fill_model (void)
@@ -1331,6 +1363,7 @@ e_create_view_and_model (void)
 	GtkCellRenderer		*e_renderer;
 	GtkWidget				*e_view;
 	GtkTreeModel			*e_model;
+	GtkTreeSelection	*e_selection;
 	
 	e_view = gtk_tree_view_new();
 
@@ -1344,7 +1377,11 @@ e_create_view_and_model (void)
 	gtk_tree_view_column_pack_start(e_col, e_renderer, TRUE);
 	
 	gtk_tree_view_column_add_attribute(e_col, e_renderer, "text", e_treeview_col);
-
+	
+	e_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(e_view));
+	
+	gtk_tree_selection_set_select_function(e_selection, e_view_selection_func, NULL, NULL);
+	
 	e_model = e_create_and_fill_model();
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(e_view), e_model);
