@@ -22,77 +22,94 @@
 #include "encode.c"
 #include "decode.c"
 
-#define MAX_ERROR_MSG	0x1000
-#define	ERASER_SIZE	512		//1k
-#define	ERASER_ENC_SIZE 896		//1k
-#define MAX_CNTF 50			// 최대 검출 파일 개수 //
+#define	MAX_ERROR_MSG   0x1000
+#define	MAX_CNTF        50			// 최대 검출 파일 개수 //
+#define	ERASER_SIZE		  512		  //1k
+#define	ERASER_ENC_SIZE	896	    //1k
 
 typedef struct Data_storage
 {
-    char	fname[20];		// 파일 이름 //
-    uint	jcnt;			// 주민번호 개수 //
-    uint	dcnt;			// 운전면허 개수 //
-    uint	fgcnt;			// 외국인등록번호 개수 //
-    uint	pcnt;			// 여권번호 개수 //
-    uint	fsize;			// 파일 크기 //
-    char	stat;			// 파일 상태 //
-    char	fpath[300];		// 파일 경로 //
-
+    char	fname[100];			  	// 파일 이름 //
+    uint	jcnt;					      // 주민번호 개수 //
+    uint	dcnt;				      	// 운전면허 개수 //
+    uint	fgcnt;				    	// 외국인등록번호 개수 //
+    uint	pcnt;				       	// 여권번호 개수 //
+    uint	fsize;				    	// 파일 크기 //
+    char	stat[20];			    	// 파일 상태 //
+    char	fpath[300];			    // 파일 경로 //
 
 }data_storage;
 
 data_storage ds[MAX_CNTF];		// 파일기준의 data구조체 //
 
-static gchar *path;			// 검사 파일경로 //
+static gchar *path;			      // 검사 파일경로 //
 
-static int	cntf = 0;		// 파일개수 cnt //
+static int	cntf = 0;		      // 파일개수 cnt //
 static char	chk_fname[20];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
-static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
-static int	chk_tf;			// chk_true or false //
-//uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
+static uint	chk_fsize;		    // 검출 결과에서 선택한 파일크기 //
+static int	chk_tf;			      // chk_true or false //
+//uint 	data_flag = 1;		   	// 민감정보 종류 확인 flag //
 
 
-GtkWidget		*detect_window,
-			*setting_window,
-			*d_progressbar_status,
-			*d_progressbar,
-			*window;
+GtkWidget		      *main_window,
+                  *enrollment_window,
+                  *detect_window,
+                  *setting_window,
+                  *department_window,
+                  *d_progressbar_status,
+                  *d_progressbar,
+                  *window;
 						
-GtkEntr			*d_detect_entry;
+GtkEntr			      *d_detect_entry;
 
-GtkScrolledWindow	*d_scrolledwindow;
+GtkScrolledWindow	*d_scrolledwindow,
+						      *dept_scrolledwindow;
+
+int func_send();
 
 // enrollment_window //
-void e_enroll_btn_clicked		(GtkButton *e_enroll_btn,	gpointer *data);
+void e_enroll_btn_clicked		  (GtkButton *e_enroll_btn,			gpointer *data);
+void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data);
 /* end of enrollment_window */
 
 // main_window //
 void m_window_destroy();
-void m_detect_btn_clicked		(GtkButton *m_detect_btn,	gpointer *data);
+void m_detect_btn_clicked		  (GtkButton *m_detect_btn,	gpointer *data);
 void m_setting_btn_clicked		(GtkButton *m_setting_btn,	gpointer *data);
 /* end of main_window */
 
 // detect_window //
-void d_detect_btn_clicked		(GtkButton *d_detect_btn,	gpointer *data);
-void d_option_btn_clicked		(GtkButton *d_option_btn,	gpointer *data);
-void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
-void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
-void d_detect_entry_activate		(GtkEntry  *d_detect_entry,	gpointer *data);
+void d_detect_btn_clicked		  (GtkButton *d_detect_btn,	gpointer *data);
+void d_option_btn_clicked		  (GtkButton *d_option_btn,	gpointer *data);
+void d_folder_btn_clicked		  (GtkButton *d_folder_btn,	gpointer *data);
+void d_close_btn_clicked		  (GtkButton *d_close_btn,	gpointer *data);
+void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
 gboolean	view_selection_func	(GtkTreeSelection *selection,
-									GtkTreeModel     *model,
-									GtkTreePath      *path,
-									gboolean          path_currently_selected,
-									gpointer          userdata);
+                               GtkTreeModel     *model,
+                               GtkTreePath      *path,
+                               gboolean          path_currently_selected,
+                               gpointer          userdata);
 										
 static GtkTreeModel		*create_and_fill_model (void);
-static GtkWidget		*create_view_and_model (void);
+static GtkWidget		  *create_view_and_model (void);
 /* end of detect_window */
 
 // setting_window //
 void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
 /* end of setting_window */
+
+
+// 계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다 //
+int func_chk_user()
+{
+	chk_tf = FALSE;
+	
+	return chk_tf;
+}
+/* end of func_chk_user(); */
+
 
 // Base64 encoding //
 char *b64_encode(const unsigned char *src, size_t len, char *enc);
@@ -168,7 +185,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                     }
                     
                     sum = buf_tmp[0]*2 + buf_tmp[1]*3 + buf_tmp[2]*4 + buf_tmp[3]*5 + buf_tmp[4]*6 + buf_tmp[5]*7
-			+ buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
+			                  + buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
 	
                     chk = buf_tmp[13];
                     jtmp = 11 - (sum % 11); // 주민번호 //
@@ -204,9 +221,11 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                         strcpy(ds[cntf].fpath, filepath);
                         strcpy(ds[cntf].fname, file->d_name);
                         ds[cntf].fsize = buf.st_size;
+                        strcpy(ds[cntf].stat, "일반");
 
                         printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-				cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+				                        cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt,
+                                      ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
                     }
                     
                     // 외국인등록번호 유효성 통과 //
@@ -229,10 +248,11 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
                         strcpy(ds[cntf].fpath, filepath);
                         strcpy(ds[cntf].fname, file->d_name);
                         ds[cntf].fsize = buf.st_size;
+                        strcpy(ds[cntf].stat, "일반");
 
                        printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-									cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt,
-									ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+									            cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt,
+									                  ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
                     }
                 }
             }
@@ -277,15 +297,25 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
                 //운전면허 정규식 검사 통과//
                 if (i == 0)
                 {
-			int res = strcmp(chk_fname, file->d_name); //같은파일 = 0 //
 
-			if (res != 0)
-			{
-				cntf++;
-			}
-
-			// 읽고있는중인 파일 이름 저장 //
-			strcpy(chk_fname, file->d_name);
+					int res = strcmp(chk_fname, file->d_name); //같은파일 = 0 //
+						
+					if (res != 0)
+					{
+						cntf++;
+					}
+					
+					// 읽고있는중인 파일 이름 저장 //
+					strcpy(chk_fname, file->d_name);
+					
+					// 검출된 운전면허의 수 //
+					ds[cntf].dcnt++;
+					
+					// data 구조체에 저장 //
+					strcpy(ds[cntf].fpath, filepath);
+					strcpy(ds[cntf].fname, file->d_name);
+					ds[cntf].fsize = buf.st_size;
+					strcpy(ds[cntf].stat, "일반");
 
 			// 검출된 운전면허의 수 //
 			ds[cntf].dcnt++;
@@ -297,7 +327,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 
 			printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
 						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt,
-							ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+							    ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
                 }
             }
         }
@@ -342,12 +372,25 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
                 // 운전면허 정규식 검사 통과 //
                 if (i == 0)
                 {
-			int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
 
-			if (res != 0)
-			{
-				cntf++;
-			}
+					int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
+						
+					if (res != 0)
+					{
+						cntf++;
+					}
+					
+					// 읽고있는중인 파일 이름 저장 //
+					strcpy(chk_fname, file->d_name);
+					
+					// 검출된 운전면허의 수 //
+					ds[cntf].pcnt++;
+					
+					// data 구조체에 저장 //
+					strcpy(ds[cntf].fpath, filepath);
+					strcpy(ds[cntf].fname, file->d_name);
+					ds[cntf].fsize = buf.st_size;
+					strcpy(ds[cntf].stat, "일반");
 
 			// 읽고있는중인 파일 이름 저장 //
 			strcpy(chk_fname, file->d_name);
@@ -412,8 +455,8 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 }
 /* end of check_kind_of_data(); */
 
-// 폴더, 파일 스캔 //
-int scan_dir (gchar *path)
+// 폴더, 파일 스캔 후 검출 //
+int func_detect (gchar *path)
 {
     DIR *dp = NULL;
     FILE *fp = NULL;
@@ -446,7 +489,7 @@ int scan_dir (gchar *path)
             }
 
             // 안에 폴더로 재귀함수 //
-            scan_dir(filepath);
+            func_detect(filepath);
         }
 
 
@@ -483,12 +526,14 @@ int scan_dir (gchar *path)
 
     printf("Close DIR\n");
     
+    func_send();
+    
     return  0;
 }
-/* end of scan_dir(); */
+/* end of func_detect(); */
 
-// 검출, 전송 //
-int detect_func(gchar *path)
+// 전송 //
+int func_send()
 {
 	char *hostname;
 	int port, status;
@@ -504,8 +549,6 @@ int detect_func(gchar *path)
 	port = atoi("5672");
 	exchange = "aa";
 	routingkey = "ka";
-
-	scan_dir(path);
 	
 	/*
 	 establish a channel that is used to connect RabbitMQ server
@@ -526,12 +569,10 @@ int detect_func(gchar *path)
 	die("opening TCP socket");
 	}
 
-
 	die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-																		"guest", "guest"),
-																		"Logging in");
+                                                             "guest", "guest"),
+                                                             "Logging in");
 
-					
 	amqp_channel_open(conn, 1);
 
 	die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
@@ -581,20 +622,28 @@ int detect_func(gchar *path)
 		/*
 		  publish
 		*/
-		for(int i = 1; i <= cntf; i++)
+		if(chk_tf == 1)
 		{
-			size_t in_len = sizeof(ds[i]);
-			//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인	
-			
-			enc = b64_encode((unsigned char *)&ds[i], in_len, enc);
-			printf("enc_data: %s\n", enc);
-			printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds[i].fpath, ds[i].fname, ds[i].fsize);
-			
-			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-							amqp_cstring_bytes(routingkey), 0, 0,
-							&props, amqp_cstring_bytes(enc)), "Publishing");
+			for(int i = 1; i <= cntf; i++)
+			{
+				size_t in_len = sizeof(ds[i]);
+				//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인	
+				
+				enc = b64_encode((unsigned char *)&ds[i], in_len, enc);
+				printf("enc_data: %s\n", enc);
+				printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds[i].fpath, ds[i].fname, ds[i].fsize);
 
-			
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+                                         amqp_cstring_bytes(routingkey), 0, 0,
+                                             &props, amqp_cstring_bytes(enc)), "Publishing");
+			}
+		}
+		
+		else
+		{
+			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+                                       amqp_cstring_bytes(routingkey), 0, 0,
+                                           &props, amqp_cstring_bytes(enc)), "Publishing");
 		}
 		amqp_bytes_free(props.reply_to);
 	}
@@ -718,7 +767,7 @@ int detect_func(gchar *path)
 
 	return TRUE;
 }
-/* end of detect_func(); */
+/* end of func_send(); */
 
 // gtk_dialog_modal
 int func_gtk_dialog_modal(int type, GtkWidget *widget, char *message)
@@ -839,16 +888,6 @@ int func_file_eraser(int type)
 }
 // end of func_file_eraser(); //
 
-
-// 계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다 //
-int chk_user()
-{
-	chk_tf = TRUE;
-	
-	return chk_tf;
-}
-/* end of chk_user(); */
-
 // main_window function //
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
@@ -923,7 +962,7 @@ enum
 	d_treeview_pcnt,
 	d_treeview_stat,
 	d_treeview_size,
-	d_treeview_filelocation,
+	d_treeview_fileloca,
 	NUM_COLS
 } ;
 
@@ -940,7 +979,7 @@ view_selection_func 	(GtkTreeSelection *selection,
 	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
-		gtk_tree_model_get(model, &iter, d_treeview_filelocation, &vs_fpath, -1);
+		gtk_tree_model_get(model, &iter, d_treeview_fileloca, &vs_fpath, -1);
 		gtk_tree_model_get(model, &iter, d_treeview_size, vs_fsize, -1);
 
 		if (!path_currently_selected)
@@ -963,12 +1002,30 @@ view_selection_func 	(GtkTreeSelection *selection,
 	return TRUE; /* allow selection state to change */
 }
 
+// 아직안함 //
+gboolean
+chg_stat_func 	(GtkTreeSelection *selection,
+                  GtkTreeModel     *model,
+                  GtkTreePath      *path,
+                  gboolean          path_currently_selected,
+                  gpointer          userdata)
+{
+	GtkTreeIter iter;
+	
+	if (gtk_tree_model_get_iter(model, &iter, path))
+	{
+		gtk_tree_model_get(model, &iter, d_treeview_stat, "삭제", -1);
+
+	}
+	return TRUE; /* allow selection state to change */
+}
+
 
 static GtkTreeModel *
-create_and_fill_model (void)
+d_create_and_fill_model (void)
 {
 	GtkTreeStore	*treestore;
-	GtkTreeIter	iter;
+	GtkTreeIter 	iter;
 
 	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
@@ -976,23 +1033,23 @@ create_and_fill_model (void)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
-					  d_treeview_num, i,
-					  d_treeview_filename, ds[i].fname,
-					  d_treeview_jcnt, ds[i].jcnt,
-					  d_treeview_dcnt, ds[i].dcnt,
-					  d_treeview_fgcnt, ds[i].fgcnt,
-					  d_treeview_pcnt, ds[i]. pcnt,
-					  d_treeview_stat, "soon",
-					  d_treeview_size, ds[i].fsize,
-					  d_treeview_filelocation, ds[i].fpath,
-					  -1);
+                        d_treeview_num, i,
+                        d_treeview_filename,	ds[i].fname,
+                        d_treeview_jcnt,		ds[i].jcnt,
+                        d_treeview_dcnt,		ds[i].dcnt,
+                        d_treeview_fgcnt,		ds[i].fgcnt,
+                        d_treeview_pcnt,		ds[i]. pcnt,
+                        d_treeview_stat,		ds[i].stat,
+                        d_treeview_size,		ds[i].fsize,
+                        d_treeview_fileloca,	ds[i].fpath,
+                        -1);
 	}
 
 	return GTK_TREE_MODEL(treestore);
 }
 
 static GtkWidget *
-create_view_and_model (void)
+d_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*col;
 	GtkCellRenderer		*renderer;
@@ -1079,7 +1136,7 @@ create_view_and_model (void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filelocation);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fileloca);
 	
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	
@@ -1087,7 +1144,7 @@ create_view_and_model (void)
 
 
 
-	model = create_and_fill_model();
+	model = d_create_and_fill_model();
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
 
@@ -1112,16 +1169,17 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 0 );
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 	
-	detect_func(path);
+	func_detect(path);
 	
-	view = create_view_and_model();
+	view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
-	
 	
 	sprintf( message, "%.0f%% Complete", 100.0);
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+
+	//strcpy(ds[cntf].stat, "일반");
 
 	return;
 }
@@ -1182,12 +1240,164 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 
 
 // enrollment_window function //
+
+enum
+{
+  e_treeview_col,
+  NUM_COL
+} ;
+
+static GtkTreeModel *
+create_and_fill_model (void)
+{
+	GtkTreeStore  *treestore;
+	GtkTreeIter    parent, child1;
+
+	treestore = gtk_tree_store_new (NUM_COL, G_TYPE_STRING);
+
+	/*대표이사 0*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "대표이사",
+					 -1);
+
+	/*임원실 1*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "임원실",
+					 -1);
+
+	/*대전지사 2*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "대전지사",
+					 -1);
+					 
+	/*경영혁신팀 3*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "경영혁신팀",
+					 -1);
+
+	/*솔루션사업부 4*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "솔루션사업부",
+					 -1);
+		/*솔루션사업부 영업팀 8*/
+		gtk_tree_store_append(treestore, &parent, e_treeview_col);
+		gtk_tree_store_set(treestore, &parent,
+						 e_treeview_col, "솔루션사업부 영업팀",
+						 -1);
+		/*솔루션사업부 사업팀 9*/
+		gtk_tree_store_append(treestore, &parent, e_treeview_col);
+		gtk_tree_store_set(treestore, &parent,
+						 e_treeview_col, "솔루션사업부 기술팀",
+						 -1);
+
+	/*보안인프라사업부 5*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "보안인프라사업부",
+					 -1);
+		/*보안인프라사업부 영업팀 10*/
+		gtk_tree_store_append(treestore, &child1, &parent);
+		gtk_tree_store_set(treestore, &child1,
+						 e_treeview_col, "보안인프라사업부 영업팀",
+						 -1);
+		/*보안인프라사업부 기술팀 11*/
+		gtk_tree_store_append(treestore, &child1, &parent);
+		gtk_tree_store_set(treestore, &child1,
+						 e_treeview_col, "보안인프라사업부 기술팀",
+						 -1);
+
+	/*부설연구소 6*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "부설연구소",
+					 -1);
+		/*부설연구소 개발1팀 12*/
+		gtk_tree_store_append(treestore, &child1, &parent);
+		gtk_tree_store_set(treestore, &child1,
+						 e_treeview_col, "부설연구소 개발1팀",
+						 -1);
+		/*부설연구소 개발2팀 13*/
+		gtk_tree_store_append(treestore, &child1, &parent);
+		gtk_tree_store_set(treestore, &child1,
+						 e_treeview_col, "부설연구소 개발2팀",
+						 -1);
+
+	/*특수사업부 7*/
+	gtk_tree_store_append(treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(treestore, &parent,
+					 e_treeview_col, "특수사업부",
+					 -1);
+		/*특수사업부 자사품 TF팀 14*/
+		gtk_tree_store_append(treestore, &child1, &parent);
+		gtk_tree_store_set(treestore, &child1,
+						 e_treeview_col, "특수사업부 자사품 TF팀",
+						 -1);
+		/*특수사업부 컨설팅팀 15*/
+		gtk_tree_store_append(treestore, &child1, &parent);
+		gtk_tree_store_set(treestore, &child1,
+						 e_treeview_col, "특수사업부 컨설팅팀",
+						 -1);
+                     
+  return GTK_TREE_MODEL(treestore);
+}
+
+static GtkWidget *
+create_view_and_model (void)
+{
+	GtkTreeViewColumn	*col;
+	GtkCellRenderer		*renderer;
+	GtkWidget				*view;
+	GtkTreeModel			*model;
+	
+	view = gtk_tree_view_new();
+
+	// Column #부서 //
+	col = gtk_tree_view_column_new();
+
+	gtk_tree_view_column_set_title(col, "(주)조은아이앤에스 조직도");
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+	
+	gtk_tree_view_column_add_attribute(col, renderer, "text", e_treeview_col);
+
+	model = create_and_fill_model();
+
+	gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
+
+	g_object_unref(model); // destroy model automatically with view //
+	
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
+                              GTK_SELECTION_SINGLE);
+
+	return view;
+}
+
+void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
+{
+	GtkWidget *view;
+	
+	view = create_view_and_model();
+	gtk_container_add (GTK_CONTAINER(dept_scrolledwindow), view);
+	gtk_widget_show_all ((GtkWidget *)department_window);
+}
+
 void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
-	gtk_widget_hide(GTK_WIDGET(data));
+	gtk_widget_hide(enrollment_window);
+	gtk_widget_show(main_window);
+	gtk_main();
 	
 	return;
 }
+
+
 /* end of enrollment_window */
 
 
@@ -1206,47 +1416,47 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 // main //
 int main (int argc, char *argv[])
 {
-	GtkBuilder	*builder;
-	GtkWidget	*main_window,
-			*enrollment_window;
+  GtkBuilder	*builder;
 
-	gtk_init(&argc, &argv);
+  gtk_init(&argc, &argv);
+	
+  builder = gtk_builder_new();
+  gtk_builder_add_from_file(builder, "main.glade", NULL);
 
-	builder = gtk_builder_new();
-	gtk_builder_add_from_file(builder, "main.glade", NULL);
-
-	main_window		= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-	enrollment_window	= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
-	detect_window		= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
-	setting_window		= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
-	d_progressbar 		= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
-	d_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+  main_window				= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+  enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
+  department_window		= GTK_WIDGET(gtk_builder_get_object(builder, "department_window"));
+  detect_window			= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
+  setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
+  d_progressbar 			= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
+  d_scrolledwindow		= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+  dept_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "dept_scrolledwindow"));
 
 	gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
 
-	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
-	g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
-	g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+  // 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
+  g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+  g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
-	gtk_builder_connect_signals(builder, NULL);
+  gtk_builder_connect_signals(builder, NULL);
 
-	g_object_unref(builder);
+  g_object_unref(builder);
 
-	chk_user(chk_tf);
+  func_chk_user(chk_tf);
 
-	if (chk_tf == FALSE) // TRUE(1)=있다 //
-	{
-		gtk_widget_show(enrollment_window);
-		gtk_main();
-	}
+  if (chk_tf == FALSE) // TRUE(1)=있다 //
+  {
+    gtk_widget_show(enrollment_window);
+    gtk_main();
+  }
 
-	if (chk_tf == TRUE) 	// FALSE(0)=없다 //
-	{
-		gtk_widget_show(main_window);
-		gtk_main();
-	}
+  if (chk_tf == TRUE) 	// FALSE(0)=없다 //
+  {
+    gtk_widget_show(main_window);
+    gtk_main();
+  }
 
-	gtk_widget_show(window); 
+  gtk_widget_show(window); 
 
-	return 0;
+  return 0;
 }
