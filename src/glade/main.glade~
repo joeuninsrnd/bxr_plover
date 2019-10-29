@@ -32,7 +32,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="dept_ok_btn_clicked" swapped="no"/>
+            <signal name="clicked" handler="dept_ok_btn_clicked" object="department_window" swapped="no"/>
             <child>
               <placeholder/>
             </child>
@@ -50,7 +50,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="dept_close_btn_clicked" swapped="no"/>
+            <signal name="clicked" handler="dept_close_btn_clicked" object="department_window" swapped="no"/>
             <child>
               <placeholder/>
             </child>
@@ -433,6 +433,8 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkImage" id="e_window_image">
+            <property name="width_request">420</property>
+            <property name="height_request">480</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="pixbuf">resource/bg-login.svg</property>
