@@ -22,82 +22,82 @@
 #include "encode.c"
 #include "decode.c"
 
-#define	MAX_ERROR_MSG 0x1000
-#define	MAX_CNTF 50				// 최대 검출 파일 개수 //
-#define	ERASER_SIZE		512		//1k
-#define	ERASER_ENC_SIZE		896	//1k
+#define	MAX_ERROR_MSG	0x1000
+#define	MAX_CNTF	50	// 최대 검출 파일 개수 //
+#define	ERASER_SIZE	512	//1k
+#define	ERASER_ENC_SIZE	896	//1k
 
 typedef struct Data_storage
 {
-    char	fname[100];			// 파일 이름 //
-    uint	jcnt;					// 주민번호 개수 //
-    uint	dcnt;					// 운전면허 개수 //
-    uint	fgcnt;					// 외국인등록번호 개수 //
-    uint	pcnt;					// 여권번호 개수 //
-    uint	fsize;					// 파일 크기 //
-    char	stat[20];				// 파일 상태 //
-    char	fpath[300];			// 파일 경로 //
+    char fname[100];		// 파일 이름 //
+    uint jcnt;			// 주민번호 개수 //
+    uint dcnt;			// 운전면허 개수 //
+    uint fgcnt;			// 외국인등록번호 개수 //
+    uint pcnt;			// 여권번호 개수 //
+    uint fsize;			// 파일 크기 //
+    char stat[20];		// 파일 상태 //
+    char fpath[300];		// 파일 경로 //
 
 }data_storage;
 
 data_storage ds[MAX_CNTF];		// 파일기준의 data구조체 //
 
-static gchar *path;				// 검사 파일경로 //
+static gchar *path;			// 검사 파일경로 //
 
-static int	cntf = 0;			// 파일개수 cnt //
-static char	chk_fname[20];	// 정규식돌고있는 파일이름 //
+static int	cntf = 0;		// 파일개수 cnt //
+static char	chk_fname[20];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
 static int	chk_tf;			// chk_true or false //
-//uint 	data_flag = 1;		// 민감정보 종류 확인 flag //
+//uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
 
 
-GtkWidget				*main_window,
-						*enrollment_window,
-						*detect_window,
-						*setting_window,
-						*department_window,
-						*d_progressbar_status,
-						*d_progressbar,
-						*window;
+GtkWidget		*main_window,
+			*enrollment_window,
+			*detect_window,
+			*setting_window,
+			*department_window,
+			*d_progressbar_status,
+			*d_progressbar,
+			*window;
 						
-GtkEntry				*d_detect_entry;
+GtkEntry		*d_detect_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
-						*dept_scrolledwindow;
+			*dept_scrolledwindow;
 
 int func_send();
 
 // enrollment_window //
-void e_enroll_btn_clicked		 (GtkButton *e_enroll_btn,			gpointer *data);
-void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data);
+void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
+void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
 /* end of enrollment_window */
 
 // main_window //
 void m_window_destroy();
-void m_detect_btn_clicked		(GtkButton *m_detect_btn,	gpointer *data);
+void m_detect_btn_clicked	(GtkButton *m_detect_btn,	gpointer *data);
 void m_setting_btn_clicked	(GtkButton *m_setting_btn,	gpointer *data);
 /* end of main_window */
 
 // detect_window //
-void d_detect_btn_clicked		(GtkButton *d_detect_btn,	gpointer *data);
-void d_option_btn_clicked		(GtkButton *d_option_btn,	gpointer *data);
-void d_folder_btn_clicked		(GtkButton *d_folder_btn,	gpointer *data);
-void d_close_btn_clicked		(GtkButton *d_close_btn,	gpointer *data);
-void d_detect_entry_activate	(GtkEntry	*d_detect_entry,	gpointer *data);
+void d_detect_btn_clicked	(GtkButton *d_detect_btn,	gpointer *data);
+void d_option_btn_clicked	(GtkButton *d_option_btn,	gpointer *data);
+void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
+void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
+void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
 gboolean	view_selection_func (GtkTreeSelection 	*selection,
-										GtkTreeModel     *model,
-										GtkTreePath      *path,
-										gboolean          path_currently_selected,
-										gpointer          userdata);
+					GtkTreeModel    *model,
+					GtkTreePath     *path,
+					gboolean         path_currently_selected,
+					gpointer         userdata);
 										
-static GtkTreeModel		*create_and_fill_model (void);
-static GtkWidget		*create_view_and_model (void);
+static GtkTreeModel	*create_and_fill_model (void);
+static GtkWidget	*create_view_and_model (void);
 /* end of detect_window */
 
 // setting_window //
-void s_cloese_btn_clicked		(GtkButton *s_cloese_btn,	gpointer *data);
+void s_cloese_btn_clicked	(GtkButton *s_cloese_btn,	gpointer *data);
 /* end of setting_window */
 
 
@@ -112,26 +112,26 @@ int func_chk_user()
 
 
 // Base64 encoding //
-char *b64_encode(const unsigned char *src, size_t len, char *enc);
+char *b64_encode (const unsigned char *src, size_t len, char *enc);
 /* end of char *b64_encode(); */
 
 //Compile the regular expression described by "regex_text" into "r"//
 int compile_regex (regex_t *r, const char *regex_text)
 {
-    int status = regcomp(r, regex_text, REG_EXTENDED|REG_NEWLINE);
+	int status = regcomp(r, regex_text, REG_EXTENDED|REG_NEWLINE);
 
-    if (status != 0)
-    {
-    char error_message[MAX_ERROR_MSG];
+	if (status != 0)
+	{
+	char error_message[MAX_ERROR_MSG];
 
-    regerror(status, r, error_message, MAX_ERROR_MSG);
+	regerror(status, r, error_message, MAX_ERROR_MSG);
 
-    printf("Regex error compiling '%s': %s\n", regex_text, error_message);
+	printf("Regex error compiling '%s': %s\n", regex_text, error_message);
 
-    return 1;
-    }
+	return 1;
+	}
 
-    return 0;
+	return 0;
 }
 /* end of compile_regex(); */
 
@@ -140,174 +140,110 @@ int compile_regex (regex_t *r, const char *regex_text)
 // 주민등록번호, 외국인등록번호 정규식 //
 char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
-    /* "P" is a pointer into the string which points to the end of the
-       previous match. */
-    const char *p = to_match;
-    /* "N_matches" is the maximum number of matches allowed. */
-    const int n_matches = 100;
-    /* "M" contains the matches found. */
-    regmatch_t m[n_matches];
+	/* "P" is a pointer into the string which points to the end of the
+	previous match. */
+	const char *p = to_match;
+	/* "N_matches" is the maximum number of matches allowed. */
+	const int n_matches = 100;
+	/* "M" contains the matches found. */
+	regmatch_t m[n_matches];
 
-    // 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
-    while (1)
-    {
-        int nomatch = regexec(r, p, n_matches, m, 0);
+	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
+	while (1)
+	{
+		int nomatch = regexec(r, p, n_matches, m, 0);
 
-        if (nomatch)
-        {
-            printf("No more matches.\n");
-            return 0;
-        }
+		if (nomatch)
+		{
+			printf("No more matches.\n");
+			return 0;
+		}
 
-        else
-        {
-            for (int i = 0; i < n_matches; i++)
-            {
-                int start;
+		else
+		{
+			for (int i = 0; i < n_matches; i++)
+			{
+				int start;
 
-                if (m[i].rm_so == -1)
-                {
-                    break;
-                }
+				if (m[i].rm_so == -1)
+				{
+					break;
+				}
 
-                start = m[i].rm_so + (p - to_match);
-                
-                // 주민번호, 외국인등록번호 정규식 검사 통과 //
-                if (i == 0)
-                {
-                    int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
-                    char buf_tmp[15] = {0,};
-                    // 주민번호, 외국인등록번호 유효성 검사 //
-                    for (int j = 0; j < 14; j++)
-                    {
-                        buf_tmp[j] = *(to_match + start + j);
-                        buf_tmp[j] -= 48;
-                    }
-                    
-                    sum = buf_tmp[0]*2 + buf_tmp[1]*3 + buf_tmp[2]*4 + buf_tmp[3]*5 + buf_tmp[4]*6 + buf_tmp[5]*7
-						 + buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
-	
-                    chk = buf_tmp[13];
-                    jtmp = 11 - (sum % 11); // 주민번호 //
-                    fgtmp = 13 - (sum % 11); // 외국인번호 //
+				start = m[i].rm_so + (p - to_match);
 
-                    if (jtmp >= 10)
-                    {
-                        jtmp -= 10;
-                    }
-                    
-                    if (fgtmp >= 10)
-                    {
-                        fgtmp -= 10;
-                    }
-                    
-                    // 주민번호 유효성 통과 //
-                    if (jtmp == chk)
-                    {
+				// 주민번호, 외국인등록번호 정규식 검사 통과 //
+				if (i == 0)
+				{
+					int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
+					char buf_tmp[15] = {0,};
+
+					// 주민번호, 외국인등록번호 유효성 검사 //
+					for (int j = 0; j < 14; j++)
+					{
+						buf_tmp[j] = *(to_match + start + j);
+						buf_tmp[j] -= 48;
+					}
+
+					sum = buf_tmp[0]*2 + buf_tmp[1]*3 + buf_tmp[2]*4 + buf_tmp[3]*5 + buf_tmp[4]*6 + buf_tmp[5]*7
+					+ buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
+
+					chk = buf_tmp[13];
+					jtmp = 11 - (sum % 11); // 주민번호 //
+					fgtmp = 13 - (sum % 11); // 외국인번호 //
+
+					if (jtmp >= 10)
+					{
+					jtmp -= 10;
+					}
+
+					if (fgtmp >= 10)
+					{
+					fgtmp -= 10;
+					}
+
+					// 주민번호 유효성 통과 //
+					if (jtmp == chk)
+					{
 						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
-						
-						if (res != 0)
-						{
-							cntf++;
-						}
-						
-						// 읽고있는중인 파일 이름 저장 //
-						strcpy(chk_fname, file->d_name);
-						
-						// 검출된 주민등록번호의 수 //
-						ds[cntf].jcnt++;
-						
-                        // data 구조체에 저장 //
-                        strcpy(ds[cntf].fpath, filepath);
-                        strcpy(ds[cntf].fname, file->d_name);
-                        ds[cntf].fsize = buf.st_size;
-                        strcpy(ds[cntf].stat, "일반");
 
-                        printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
-                    }
-                    
-                    // 외국인등록번호 유효성 통과 //
-                    if (fgtmp == chk)
-                    {
-						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
-						
-						if (res != 0)
-						{
-							cntf++;
-						}
-						
-						// 읽고있는중인 파일 이름 저장 //
-						strcpy(chk_fname, file->d_name);
-						
-						// 검출된 외국인등록번호의 수 //
-						ds[cntf].fgcnt++;
-						
-                        // data 구조체에 저장 //
-                        strcpy(ds[cntf].fpath, filepath);
-                        strcpy(ds[cntf].fname, file->d_name);
-                        ds[cntf].fsize = buf.st_size;
-                        strcpy(ds[cntf].stat, "일반");
-
-                       printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-								cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
-                    }
-                }
-            }
-        }
-
-        p += m[0].rm_eo;
-    }
-}
-/* end of match_regex_jnfg(); */
-
-// 운전면허 정규식 //
-char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
-{
-    /* "P" is a pointer into the string which points to the end of the
-       previous match. */
-    const char *p = to_match;
-    /* "N_matches" is the maximum number of matches allowed. */
-    const int n_matches = 100;
-    /* "M" contains the matches found. */
-    regmatch_t m[n_matches];
-
-    //버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
-    while (1)
-    {
-        int nomatch = regexec(r, p, n_matches, m, 0);
-
-        if (nomatch)
-        {
-            printf("No more matches.\n");
-            return 0;
-        }
-
-        else
-        {
-            for (int i = 0; i < n_matches; i++)
-            {
-                if (m[i].rm_so == -1)
-                {
-                    break;
-                }
-
-                //운전면허 정규식 검사 통과//
-                if (i == 0)
-                {
-					int res = strcmp(chk_fname, file->d_name); //같은파일 = 0 //
-						
 					if (res != 0)
 					{
 						cntf++;
 					}
-					
+
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
-					
-					// 검출된 운전면허의 수 //
-					ds[cntf].dcnt++;
-					
+
+					// 검출된 주민등록번호의 수 //
+					ds[cntf].jcnt++;
+
+					// data 구조체에 저장 //
+					strcpy(ds[cntf].fpath, filepath);
+					strcpy(ds[cntf].fname, file->d_name);
+					ds[cntf].fsize = buf.st_size;
+					strcpy(ds[cntf].stat, "일반");
+
+					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
+						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+					}
+
+					// 외국인등록번호 유효성 통과 //
+					if (fgtmp == chk)
+					{
+					int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
+
+					if (res != 0)
+					{
+						cntf++;
+					}
+
+					// 읽고있는중인 파일 이름 저장 //
+					strcpy(chk_fname, file->d_name);
+
+					// 검출된 외국인등록번호의 수 //
+					ds[cntf].fgcnt++;
+
 					// data 구조체에 저장 //
 					strcpy(ds[cntf].fpath, filepath);
 					strcpy(ds[cntf].fname, file->d_name);
@@ -315,13 +251,78 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(ds[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-							cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
-                }
-            }
-        }
+						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+					}
+				}
+			}
+		}
 
-        p += m[0].rm_eo;
-    }
+		p += m[0].rm_eo;
+	}
+}
+/* end of match_regex_jnfg(); */
+
+// 운전면허 정규식 //
+char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+{
+	/* "P" is a pointer into the string which points to the end of the
+	previous match. */
+	const char *p = to_match;
+	/* "N_matches" is the maximum number of matches allowed. */
+	const int n_matches = 100;
+	/* "M" contains the matches found. */
+	regmatch_t m[n_matches];
+
+	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
+	while (1)
+	{
+		int nomatch = regexec(r, p, n_matches, m, 0);
+
+		if (nomatch)
+		{
+			printf("No more matches.\n");
+			return 0;
+		}
+
+		else
+		{
+			for (int i = 0; i < n_matches; i++)
+			{
+				if (m[i].rm_so == -1)
+				{
+				    break;
+				}
+
+				//운전면허 정규식 검사 통과//
+				if (i == 0)
+				{
+					int res = strcmp(chk_fname, file->d_name); //같은파일 = 0 //
+
+					if (res != 0)
+					{
+						cntf++;
+					}
+
+					// 읽고있는중인 파일 이름 저장 //
+					strcpy(chk_fname, file->d_name);
+
+					// 검출된 운전면허의 수 //
+					ds[cntf].dcnt++;
+
+					// data 구조체에 저장 //
+					strcpy(ds[cntf].fpath, filepath);
+					strcpy(ds[cntf].fname, file->d_name);
+					ds[cntf].fsize = buf.st_size;
+					strcpy(ds[cntf].stat, "일반");
+
+					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
+						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+				}
+			}
+		}
+
+		p += m[0].rm_eo;
+	}
 }
 /* end of match_regex_d(); */
 
@@ -329,50 +330,50 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 // 여권번호 정규식 //
 char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
-    /* "P" is a pointer into the string which points to the end of the
-       previous match. */
-    const char *p = to_match;
-    /* "N_matches" is the maximum number of matches allowed. */
-    const int n_matches = 100;
-    /* "M" contains the matches found. */
-    regmatch_t m[n_matches];
+	/* "P" is a pointer into the string which points to the end of the
+	previous match. */
+	const char *p = to_match;
+	/* "N_matches" is the maximum number of matches allowed. */
+	const int n_matches = 100;
+	/* "M" contains the matches found. */
+	regmatch_t m[n_matches];
 
-    // 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
-    while (1)
-    {
-        int nomatch = regexec(r, p, n_matches, m, 0);
+	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
+	while (1)
+	{
+		int nomatch = regexec(r, p, n_matches, m, 0);
 
-        if (nomatch)
-        {
-            printf("No more matches.\n");
-            return 0;
-        }
+		if (nomatch)
+		{
+			printf("No more matches.\n");
+			return 0;
+		}
 
-        else
-        {
-            for (int i = 0; i < n_matches; i++)
-            {
-                if (m[i].rm_so == -1)
-                {
-                    break;
-                }
+		else
+		{
+			for (int i = 0; i < n_matches; i++)
+			{
+				if (m[i].rm_so == -1)
+				{
+					break;
+				}
 
-                // 운전면허 정규식 검사 통과 //
-                if (i == 0)
-                {
+				// 운전면허 정규식 검사 통과 //
+				if (i == 0)
+				{
 					int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
-						
+
 					if (res != 0)
 					{
 						cntf++;
 					}
-					
+
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
-					
+
 					// 검출된 운전면허의 수 //
 					ds[cntf].pcnt++;
-					
+
 					// data 구조체에 저장 //
 					strcpy(ds[cntf].fpath, filepath);
 					strcpy(ds[cntf].fname, file->d_name);
@@ -380,13 +381,13 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(ds[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-							cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
-                }
-            }
-        }
+						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+				}
+			}
+		}
 
-        p += m[0].rm_eo;
-    }
+		p += m[0].rm_eo;
+	}
 }
 /* end of match_regex_p(); */
 
@@ -396,33 +397,33 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	regex_t r;
 	const char *regex_text;
 
-/*
+	/*
 	switch(data_flag) //나중에 민감정보 종류 선택 검출 할 때 사용
 	{
 		case 1:
 			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
 			match_regex_j(&r, to_match, filepath, file, buf);
-			
+
 			break;
-			
+
 		case 2:
 			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
 			//match_regex_d(&r, to_match, filepath, file, buf);
 	}
-*/
+	*/
 
 	// 주민번호, 외국인등록번호 정규식 //
 	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
 	compile_regex(&r, regex_text); // 정규식 컴파일 //
 	match_regex_jnfg(&r, to_match, filepath, file, buf);
-	
+
 	// 운전면허 정규식 //
 	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
 	compile_regex(&r, regex_text); // 정규식 컴파일 //
 	match_regex_d(&r, to_match, filepath, file, buf);
-	
+
 	// 여권번호 정규식 //
 	regex_text = "[a-zA-Z]{2}[0-9]{7}";
 	compile_regex(&r, regex_text); // 정규식 컴파일 //
@@ -433,75 +434,75 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 // 폴더, 파일 스캔 후 검출 //
 int func_detect (gchar *path)
 {
-    DIR *dp = NULL;
-    FILE *fp = NULL;
-    struct dirent *file = NULL;
-    struct stat buf;
-    char filepath[300];
-    char buffer[5000];
-    const char *find_text;
+	DIR *dp = NULL;
+	FILE *fp = NULL;
+	struct dirent *file = NULL;
+	struct stat buf;
+	char filepath[300];
+	char buffer[5000];
+	const char *find_text;
 
-    if ((dp = opendir(path)) == NULL)
-    {
-        printf("폴더를 열수 없습니다.\n");
+	if ((dp = opendir(path)) == NULL)
+	{
+		printf("폴더를 열수 없습니다.\n");
 
-        return -1;
-    }
+		return -1;
+	}
 
-    while ((file = readdir(dp)) != NULL)
-    {
-        // filepath에 현재 path넣기 //
-        sprintf(filepath, "%s/%s", path, file->d_name);
-        lstat(filepath, &buf);
+	while ((file = readdir(dp)) != NULL)
+	{
+	// filepath에 현재 path넣기 //
+	sprintf(filepath, "%s/%s", path, file->d_name);
+	lstat(filepath, &buf);
 
-        // 폴더 //
-        if (S_ISDIR(buf.st_mode))
-        {
-            // .이거하고 ..이거 제외 //
-            if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
-            {
-                continue;
-            }
+		// 폴더 //
+		if (S_ISDIR(buf.st_mode))
+		{
+			// .이거하고 ..이거 제외 //
+			if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
+			{
+			continue;
+			}
 
-            // 안에 폴더로 재귀함수 //
-            func_detect(filepath);
-        }
+			// 안에 폴더로 재귀함수 //
+			func_detect(filepath);
+		}
 
+		// 파일 //
+		else if (S_ISREG(buf.st_mode))
+		{
+			fp = fopen(filepath, "r");
 
-        // 파일 //
-        else if (S_ISREG(buf.st_mode))
-        {
-            fp = fopen(filepath, "r");
-            
-            if (NULL == fp)
-            {
-                printf("파일을 열수 없습니다.\n");
-                return 1;
-            }
+			if (NULL == fp)
+			{
+				printf("파일을 열수 없습니다.\n");
+				return 1;
+			}
 
-            // 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
-            while (feof(fp) == 0)
-            {
-                fread(buffer, sizeof(char), sizeof(buffer), fp);
-                find_text = buffer;
-                check_kind_of_data(find_text, filepath, file, buf);
-                find_text = NULL;
-            }
+			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
+			while (feof(fp) == 0)
+			{
+				fread(buffer, sizeof(char), sizeof(buffer), fp);
+				find_text = buffer;
+				check_kind_of_data(find_text, filepath, file, buf);
+				find_text = NULL;
+			}
 
-            // 메모리관리(초기화), 파일닫기 //
-            memset(buffer, 0, sizeof(buffer));
-            fclose(fp);
-            printf("Close FILE\n");
-            chk_fname[0] = 0; // 초기화 //
-        }
-    }
-    closedir(dp);
+			// 메모리관리(초기화), 파일닫기 //
+			memset(buffer, 0, sizeof(buffer));
+			fclose(fp);
+			printf("Close FILE\n");
+			chk_fname[0] = 0; // 초기화 //
+		}
+	}
+	
+	closedir(dp);
 
-    printf("Close DIR\n");
-    
-    func_send();
-    
-    return  0;
+	printf("Close DIR\n");
+
+	func_send();
+
+	return  0;
 }
 /* end of func_detect(); */
 
@@ -609,16 +610,16 @@ int func_send()
 				printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds[i].fpath, ds[i].fname, ds[i].fsize);
 
 				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-														amqp_cstring_bytes(routingkey), 0, 0,
-														&props, amqp_cstring_bytes(enc)), "Publishing");
+								amqp_cstring_bytes(routingkey), 0, 0,
+								&props, amqp_cstring_bytes(enc)), "Publishing");
 			}
 		}
 		
 		else
 		{
 			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-													amqp_cstring_bytes(routingkey), 0, 0,
-													&props, amqp_cstring_bytes(enc)), "Publishing");
+							amqp_cstring_bytes(routingkey), 0, 0,
+							&props, amqp_cstring_bytes(enc)), "Publishing");
 		}
 		amqp_bytes_free(props.reply_to);
 	}
@@ -880,9 +881,9 @@ void m_setting_btn_clicked (GtkButton *m_setting_btn, gpointer *data)
 
 void main_window_destroy()
 {
-    gtk_main_quit();
-    
-    return;
+	gtk_main_quit();
+	
+	return;
 }
 /* end of main_window function */
 
@@ -910,15 +911,14 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 	gint resp = gtk_dialog_run(GTK_DIALOG(d_filechooserdialog));
 
     if( resp == GTK_RESPONSE_ACCEPT)
-	{
-		gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
-   	} 
-   	
+    {
+	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
+    } 
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
-	
+
 	gtk_entry_set_text(GTK_ENTRY (data), path);
 
-	
+
 	gtk_widget_destroy(d_filechooserdialog);
 
 	g_print("선택한 폴더 위치: %s\n", path);
@@ -979,11 +979,11 @@ view_selection_func 	(GtkTreeSelection *selection,
 
 // 아직안함 //
 gboolean
-chg_stat_func 	(GtkTreeSelection *selection,
-							GtkTreeModel     *model,
-							GtkTreePath      *path,
-							gboolean          path_currently_selected,
-							gpointer          userdata)
+chg_stat_func (GtkTreeSelection	*selection,
+		GtkTreeModel    *model,
+		GtkTreePath     *path,
+		gboolean         path_currently_selected,
+		gpointer         userdata)
 {
 	GtkTreeIter iter;
 	
@@ -1003,22 +1003,22 @@ d_create_and_fill_model (void)
 	GtkTreeIter	iter;
 
 	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
-											G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
+					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
 	for(int i = 1; i <= cntf; i++)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
-						  d_treeview_num, i,
-						  d_treeview_filename,	ds[i].fname,
-						  d_treeview_jcnt,		ds[i].jcnt,
-						  d_treeview_dcnt,		ds[i].dcnt,
-						  d_treeview_fgcnt,		ds[i].fgcnt,
-						  d_treeview_pcnt,		ds[i]. pcnt,
-						  d_treeview_stat,		ds[i].stat,
-						  d_treeview_size,		ds[i].fsize,
-						  d_treeview_fileloca,	ds[i].fpath,
-						  -1);
+					  d_treeview_num, i,
+					  d_treeview_filename,	ds[i].fname,
+					  d_treeview_jcnt,	ds[i].jcnt,
+					  d_treeview_dcnt,	ds[i].dcnt,
+					  d_treeview_fgcnt,	ds[i].fgcnt,
+					  d_treeview_pcnt,	ds[i]. pcnt,
+					  d_treeview_stat,	ds[i].stat,
+					  d_treeview_size,	ds[i].fsize,
+					  d_treeview_fileloca,	ds[i].fpath,
+					  -1);
 	}
 
 	return GTK_TREE_MODEL(treestore);
@@ -1029,8 +1029,8 @@ d_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*col;
 	GtkCellRenderer		*renderer;
-	GtkWidget				*view;
-	GtkTreeModel			*model;
+	GtkWidget		*view;
+	GtkTreeModel		*model;
 	GtkTreeSelection	*selection;
 	
 	view = gtk_tree_view_new();
@@ -1207,9 +1207,9 @@ void d_close_btn_clicked (GtkButton *d_close_btn, gpointer *data)
 
 void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 {
-    gtk_widget_destroy(GTK_WIDGET(detect_window));
-    
-    return;
+	gtk_widget_destroy(GTK_WIDGET(detect_window));
+	
+	return;
 }
 /* end of detect_window function */
 
@@ -1219,8 +1219,8 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 
 enum
 {
-  e_treeview_col,
-  NUM_COL
+	e_treeview_col,
+	NUM_COL
 } ;
 
 static GtkTreeModel *
@@ -1319,7 +1319,7 @@ create_and_fill_model (void)
 						 e_treeview_col, "특수사업부 컨설팅팀",
 						 -1);
                      
-  return GTK_TREE_MODEL(treestore);
+	return GTK_TREE_MODEL(treestore);
 }
 
 static GtkWidget *
@@ -1392,46 +1392,46 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 // main //
 int main (int argc, char *argv[])
 {
-    GtkBuilder	*builder;
+	GtkBuilder	*builder;
 
-    gtk_init(&argc, &argv);
-	
-    builder = gtk_builder_new();
-    gtk_builder_add_from_file(builder, "main.glade", NULL);
+	gtk_init(&argc, &argv);
 
-    main_window				= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-    enrollment_window		= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
-    department_window		= GTK_WIDGET(gtk_builder_get_object(builder, "department_window"));
-    detect_window			= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
-    setting_window			= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
-    d_progressbar 			= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
-    d_scrolledwindow		= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+	builder = gtk_builder_new();
+	gtk_builder_add_from_file(builder, "main.glade", NULL);
+
+	main_window		= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+	enrollment_window	= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
+	department_window	= GTK_WIDGET(gtk_builder_get_object(builder, "department_window"));
+	detect_window		= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
+	setting_window		= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
+	d_progressbar 		= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
+	d_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
 	dept_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "dept_scrolledwindow"));
 	gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
 
-    // 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
-    g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
-    g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
+	g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
-    gtk_builder_connect_signals(builder, NULL);
-    
-    g_object_unref(builder);
-    
-    func_chk_user(chk_tf);
-    
-    if (chk_tf == FALSE) // TRUE(1)=있다 //
-    {
+	gtk_builder_connect_signals(builder, NULL);
+
+	g_object_unref(builder);
+
+	func_chk_user(chk_tf);
+
+	if (chk_tf == FALSE) // TRUE(1)=있다 //
+	{
 		gtk_widget_show(enrollment_window);
 		gtk_main();
 	}
-	
+
 	if (chk_tf == TRUE) 	// FALSE(0)=없다 //
 	{
 		gtk_widget_show(main_window);
 		gtk_main();
 	}
-	
+
 	gtk_widget_show(window); 
 
-    return 0;
+	return 0;
 }
