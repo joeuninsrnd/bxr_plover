@@ -23,20 +23,20 @@
 #include "decode.c"
 
 #define	MAX_ERROR_MSG	0x1000
-#define	MAX_CNTF	50	// 최대 검출 파일 개수 //
-#define	ERASER_SIZE	512	//1k
-#define	ERASER_ENC_SIZE	896	//1k
+#define	MAX_CNTF	50		// 최대 검출 파일 개수 //
+#define	ERASER_SIZE	512		//1k
+#define	ERASER_ENC_SIZE	896		//1k
 
 typedef struct Data_storage
 {
-    char fname[100];		// 파일 이름 //
-    uint jcnt;			// 주민번호 개수 //
-    uint dcnt;			// 운전면허 개수 //
-    uint fgcnt;			// 외국인등록번호 개수 //
-    uint pcnt;			// 여권번호 개수 //
-    uint fsize;			// 파일 크기 //
-    char stat[20];		// 파일 상태 //
-    char fpath[300];		// 파일 경로 //
+    char fname[100];			// 파일 이름 //
+    uint jcnt;				// 주민번호 개수 //
+    uint dcnt;				// 운전면허 개수 //
+    uint fgcnt;				// 외국인등록번호 개수 //
+    uint pcnt;				// 여권번호 개수 //
+    uint fsize;				// 파일 크기 //
+    char stat[20];			// 파일 상태 //
+    char fpath[300];			// 파일 경로 //
 
 }data_storage;
 
@@ -1419,7 +1419,7 @@ int main (int argc, char *argv[])
 
 	func_chk_user(chk_tf);
 
-	if (chk_tf == FALSE) // TRUE(1)=있다 //
+	if (chk_tf == FALSE)	// TRUE(1)=있다 //
 	{
 		gtk_widget_show(enrollment_window);
 		gtk_main();
