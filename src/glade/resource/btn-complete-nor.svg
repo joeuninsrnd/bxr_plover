@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="114" height="40" viewBox="0 0 114 40">
+    <defs>
+        <linearGradient id="a" x1="0%" y1="43.844%" y2="56.156%">
+            <stop offset="0%" stop-color="#00BAE8"/>
+            <stop offset="100%" stop-color="#0063F2"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <rect width="114" height="40" fill="url(#a)" rx="6"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-Bold, Apple SD Gothic Neo" font-size="14" font-weight="bold" letter-spacing="-.25">
+            <tspan x="57.14" y="25">완료</tspan>
+        </text>
+        <path stroke="#FFF" stroke-width="3" d="M32 19.373l4.356 4.427L46 14"/>
+    </g>
+</svg>
