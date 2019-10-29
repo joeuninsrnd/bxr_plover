@@ -71,6 +71,9 @@ int func_send();
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
+
+static GtkTreeModel	*e_create_and_fill_model (void);
+static GtkWidget	*e_create_view_and_model (void);
 /* end of enrollment_window */
 
 // main_window //
@@ -92,8 +95,8 @@ gboolean	view_selection_func (GtkTreeSelection 	*selection,
 					gboolean         path_currently_selected,
 					gpointer         userdata);
 										
-static GtkTreeModel	*create_and_fill_model (void);
-static GtkWidget	*create_view_and_model (void);
+static GtkTreeModel	*d_create_and_fill_model (void);
+static GtkWidget	*d_create_view_and_model (void);
 /* end of detect_window */
 
 // setting_window //
@@ -514,7 +517,7 @@ int func_send()
 	char *exchange;
 	char *routingkey;
 	static char *enc;
-	
+
 	amqp_socket_t *socket = NULL;
 	amqp_connection_state_t conn;
 	amqp_bytes_t reply_to_queue;
@@ -1224,143 +1227,143 @@ enum
 } ;
 
 static GtkTreeModel *
-create_and_fill_model (void)
+e_create_and_fill_model (void)
 {
-	GtkTreeStore  *treestore;
+	GtkTreeStore  *e_treestore;
 	GtkTreeIter    parent, child1;
 
-	treestore = gtk_tree_store_new (NUM_COL, G_TYPE_STRING);
+	e_treestore = gtk_tree_store_new (NUM_COL, G_TYPE_STRING);
 
 	/*대표이사 0*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "대표이사",
 					 -1);
 
 	/*임원실 1*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "임원실",
 					 -1);
 
 	/*대전지사 2*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "대전지사",
 					 -1);
 					 
 	/*경영혁신팀 3*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "경영혁신팀",
 					 -1);
 
 	/*솔루션사업부 4*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "솔루션사업부",
 					 -1);
 		/*솔루션사업부 영업팀 8*/
-		gtk_tree_store_append(treestore, &parent, e_treeview_col);
-		gtk_tree_store_set(treestore, &parent,
+		gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+		gtk_tree_store_set(e_treestore, &parent,
 						 e_treeview_col, "솔루션사업부 영업팀",
 						 -1);
 		/*솔루션사업부 사업팀 9*/
-		gtk_tree_store_append(treestore, &parent, e_treeview_col);
-		gtk_tree_store_set(treestore, &parent,
+		gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+		gtk_tree_store_set(e_treestore, &parent,
 						 e_treeview_col, "솔루션사업부 기술팀",
 						 -1);
 
 	/*보안인프라사업부 5*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "보안인프라사업부",
 					 -1);
 		/*보안인프라사업부 영업팀 10*/
-		gtk_tree_store_append(treestore, &child1, &parent);
-		gtk_tree_store_set(treestore, &child1,
+		gtk_tree_store_append(e_treestore, &child1, &parent);
+		gtk_tree_store_set(e_treestore, &child1,
 						 e_treeview_col, "보안인프라사업부 영업팀",
 						 -1);
 		/*보안인프라사업부 기술팀 11*/
-		gtk_tree_store_append(treestore, &child1, &parent);
-		gtk_tree_store_set(treestore, &child1,
+		gtk_tree_store_append(e_treestore, &child1, &parent);
+		gtk_tree_store_set(e_treestore, &child1,
 						 e_treeview_col, "보안인프라사업부 기술팀",
 						 -1);
 
 	/*부설연구소 6*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "부설연구소",
 					 -1);
 		/*부설연구소 개발1팀 12*/
-		gtk_tree_store_append(treestore, &child1, &parent);
-		gtk_tree_store_set(treestore, &child1,
+		gtk_tree_store_append(e_treestore, &child1, &parent);
+		gtk_tree_store_set(e_treestore, &child1,
 						 e_treeview_col, "부설연구소 개발1팀",
 						 -1);
 		/*부설연구소 개발2팀 13*/
-		gtk_tree_store_append(treestore, &child1, &parent);
-		gtk_tree_store_set(treestore, &child1,
+		gtk_tree_store_append(e_treestore, &child1, &parent);
+		gtk_tree_store_set(e_treestore, &child1,
 						 e_treeview_col, "부설연구소 개발2팀",
 						 -1);
 
 	/*특수사업부 7*/
-	gtk_tree_store_append(treestore, &parent, e_treeview_col);
-	gtk_tree_store_set(treestore, &parent,
+	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set(e_treestore, &parent,
 					 e_treeview_col, "특수사업부",
 					 -1);
 		/*특수사업부 자사품 TF팀 14*/
-		gtk_tree_store_append(treestore, &child1, &parent);
-		gtk_tree_store_set(treestore, &child1,
+		gtk_tree_store_append(e_treestore, &child1, &parent);
+		gtk_tree_store_set(e_treestore, &child1,
 						 e_treeview_col, "특수사업부 자사품 TF팀",
 						 -1);
 		/*특수사업부 컨설팅팀 15*/
-		gtk_tree_store_append(treestore, &child1, &parent);
-		gtk_tree_store_set(treestore, &child1,
+		gtk_tree_store_append(e_treestore, &child1, &parent);
+		gtk_tree_store_set(e_treestore, &child1,
 						 e_treeview_col, "특수사업부 컨설팅팀",
 						 -1);
                      
-	return GTK_TREE_MODEL(treestore);
+	return GTK_TREE_MODEL(e_treestore);
 }
 
 static GtkWidget *
-create_view_and_model (void)
+e_create_view_and_model (void)
 {
-	GtkTreeViewColumn	*col;
-	GtkCellRenderer		*renderer;
-	GtkWidget				*view;
-	GtkTreeModel			*model;
+	GtkTreeViewColumn	*e_col;
+	GtkCellRenderer		*e_renderer;
+	GtkWidget				*e_view;
+	GtkTreeModel			*e_model;
 	
-	view = gtk_tree_view_new();
+	e_view = gtk_tree_view_new();
 
 	// Column #부서 //
-	col = gtk_tree_view_column_new();
+	e_col = gtk_tree_view_column_new();
 
-	gtk_tree_view_column_set_title(col, "(주)조은아이앤에스 조직도");
+	gtk_tree_view_column_set_title(e_col, "(주)조은아이앤에스 조직도");
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(e_view), e_col);
+	e_renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(e_col, e_renderer, TRUE);
 	
-	gtk_tree_view_column_add_attribute(col, renderer, "text", e_treeview_col);
+	gtk_tree_view_column_add_attribute(e_col, e_renderer, "text", e_treeview_col);
 
-	model = create_and_fill_model();
+	e_model = e_create_and_fill_model();
 
-	gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(e_view), e_model);
 
-	g_object_unref(model); // destroy model automatically with view //
+	g_object_unref(e_model); // destroy model automatically with view //
 	
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(e_view)),
                               GTK_SELECTION_SINGLE);
 
-	return view;
+	return e_view;
 }
 
 void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
 {
-	GtkWidget *view;
+	GtkWidget *e_view;
 	
-	view = create_view_and_model();
-	gtk_container_add (GTK_CONTAINER(dept_scrolledwindow), view);
+	e_view = e_create_view_and_model();
+	gtk_container_add (GTK_CONTAINER(dept_scrolledwindow), e_view);
 	gtk_widget_show_all ((GtkWidget *)department_window);
 }
 
@@ -1368,6 +1371,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
 	gtk_widget_hide(enrollment_window);
 	gtk_widget_show(main_window);
+	chk_tf = TRUE;
 	gtk_main();
 	
 	return;
@@ -1412,6 +1416,7 @@ int main (int argc, char *argv[])
 	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
 	g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 	g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	g_signal_connect(enrollment_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
 	gtk_builder_connect_signals(builder, NULL);
 
