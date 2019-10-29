@@ -24,5 +24,8 @@
             </g>
         </g>
         <rect width="259" height="33" x="20.5" y="426.5" stroke="#DEE2E6" rx="16.5"/>
+        <text fill="#495057" font-family="SpoqaHanSans-Bold, SpoqaHanSans" font-size="12" font-weight="bold" letter-spacing="-.214">
+            <tspan x="34" y="448">사용자 : </tspan>
+        </text>
     </g>
 </svg>

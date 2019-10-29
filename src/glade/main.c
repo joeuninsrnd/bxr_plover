@@ -51,7 +51,6 @@ static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
 static int	chk_tf;			// chk_true or false //
 //uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
 
-
 GtkWidget		*main_window,
 			*enrollment_window,
 			*detect_window,
@@ -71,6 +70,8 @@ int func_send();
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
+void dept_ok_btn_clicked	(GtkButton *dept_ok_btn,	gpointer *data);
+void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
 
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
@@ -603,14 +604,23 @@ int func_send()
 		*/
 		if(chk_tf == 1)
 		{
+			char message[1024];
+			gdouble percent = 0.0;
+			memset(message, 0x00, strlen(message));
+
 			for(int i = 1; i <= cntf; i++)
 			{
+				percent = i / cntf * 100;
 				size_t in_len = sizeof(ds[i]);
-				//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인	
-				
+				//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인
+
 				enc = b64_encode((unsigned char *)&ds[i], in_len, enc);
 				printf("enc_data: %s\n", enc);
 				printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds[i].fpath, ds[i].fname, ds[i].fsize);
+
+				sprintf( message, "%.0f%% Complete", percent);
+				gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
+				gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 
 				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 								amqp_cstring_bytes(routingkey), 0, 0,
@@ -945,7 +955,7 @@ enum
 } ;
 
 gboolean
-view_selection_func 	(GtkTreeSelection *selection,
+d_view_selection_func 	(GtkTreeSelection *selection,
 							GtkTreeModel     *model,
 							GtkTreePath      *path,
 							gboolean          path_currently_selected,
@@ -1119,7 +1129,7 @@ d_create_view_and_model (void)
 	
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	
-	gtk_tree_selection_set_select_function(selection, view_selection_func, NULL, NULL);
+	gtk_tree_selection_set_select_function(selection, d_view_selection_func, NULL, NULL);
 
 
 
@@ -1140,23 +1150,12 @@ d_create_view_and_model (void)
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	GtkWidget *view;
-	char message[1024];
-	gdouble percent = 0.0;
-	
-	memset( message, 0x00, strlen(message));
-	sprintf( message, "%.0f%% Complete", percent);
-	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 0 );
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 	
 	func_detect(path);
 	
 	view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
-	
-	sprintf( message, "%.0f%% Complete", 100.0);
-	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 
 	//strcpy(ds[cntf].stat, "일반");
 
@@ -1225,6 +1224,38 @@ enum
 	e_treeview_col,
 	NUM_COL
 } ;
+
+gboolean
+e_view_selection_func 	(GtkTreeSelection *selection,
+							GtkTreeModel     *model,
+							GtkTreePath      *path,
+							gboolean          path_currently_selected,
+							gpointer          userdata)
+{
+	GtkTreeIter iter;
+	gchar *vs_dept;
+	
+	if (gtk_tree_model_get_iter(model, &iter, path))
+	{
+		gtk_tree_model_get(model, &iter, e_treeview_col, &vs_dept, -1);
+
+		if (!path_currently_selected)
+		{
+			g_print ("%s 선택.\n", vs_dept);
+		}
+		
+		else
+		{
+			g_print ("%s 선택 해제.\n", vs_dept);
+		}
+		
+		//strcpy(chk_fpath ,vs_dept);
+
+		g_free(vs_dept);
+	}
+
+	return TRUE; /* allow selection state to change */
+}
 
 static GtkTreeModel *
 e_create_and_fill_model (void)
@@ -1332,6 +1363,7 @@ e_create_view_and_model (void)
 	GtkCellRenderer		*e_renderer;
 	GtkWidget				*e_view;
 	GtkTreeModel			*e_model;
+	GtkTreeSelection	*e_selection;
 	
 	e_view = gtk_tree_view_new();
 
@@ -1345,7 +1377,11 @@ e_create_view_and_model (void)
 	gtk_tree_view_column_pack_start(e_col, e_renderer, TRUE);
 	
 	gtk_tree_view_column_add_attribute(e_col, e_renderer, "text", e_treeview_col);
-
+	
+	e_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(e_view));
+	
+	gtk_tree_selection_set_select_function(e_selection, e_view_selection_func, NULL, NULL);
+	
 	e_model = e_create_and_fill_model();
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(e_view), e_model);
@@ -1356,6 +1392,16 @@ e_create_view_and_model (void)
                               GTK_SELECTION_SINGLE);
 
 	return e_view;
+}
+
+void dept_ok_btn_clicked	(GtkButton *dept_ok_btn,	gpointer *data)
+{
+	gtk_widget_hide(department_window);
+}
+
+void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data)
+{
+	gtk_widget_hide(department_window);
 }
 
 void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
