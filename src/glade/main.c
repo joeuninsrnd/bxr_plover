@@ -27,25 +27,36 @@
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
 
-typedef struct Data_storage
+typedef struct Udata_storage
 {
-    char fname[100];			// 파일 이름 //
-    uint jcnt;				// 주민번호 개수 //
-    uint dcnt;				// 운전면허 개수 //
-    uint fgcnt;				// 외국인등록번호 개수 //
-    uint pcnt;				// 여권번호 개수 //
-    uint fsize;				// 파일 크기 //
-    char stat[20];			// 파일 상태 //
-    char fpath[300];			// 파일 경로 //
+	char uname[100];			// 사용자 이름 //
+	char ujob[100];			// 사용자 직급 //
+	char udept[300];			// 사용자 부서 //
+	
+}udata_storage;
 
-}data_storage;
+udata_storage uDs;
 
-data_storage ds[MAX_CNTF];		// 파일기준의 data구조체 //
+typedef struct Fdata_storage
+{
+	char fname[100];			// 파일 이름 //
+	uint jcnt;				// 주민번호 개수 //
+	uint dcnt;				// 운전면허 개수 //
+	uint fgcnt;				// 외국인등록번호 개수 //
+	uint pcnt;				// 여권번호 개수 //
+	uint fsize;				// 파일 크기 //
+	char stat[20];			// 파일 상태 //
+	char fpath[300];			// 파일 경로 //
+
+}fdata_storage;
+
+fdata_storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
 
 static gchar *path;			// 검사 파일경로 //
+static gchar *name;			// 등록 유저이름 //
 
 static int	cntf = 0;		// 파일개수 cnt //
-static char	chk_fname[20];		// 정규식돌고있는 파일이름 //
+static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
 static int	chk_tf;			// chk_true or false //
@@ -60,7 +71,8 @@ GtkWidget		*main_window,
 			*d_progressbar,
 			*window;
 						
-GtkEntry		*d_detect_entry;
+GtkEntry		*e_name_entry,
+				*d_detect_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
@@ -70,11 +82,18 @@ int func_send();
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
+void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 void dept_ok_btn_clicked	(GtkButton *dept_ok_btn,	gpointer *data);
 void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
 
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
+
+gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
+					GtkTreeModel    *model,
+					GtkTreePath     *path,
+					gboolean         path_currently_selected,
+					gpointer         userdata);
 /* end of enrollment_window */
 
 // main_window //
@@ -90,7 +109,7 @@ void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
-gboolean	view_selection_func (GtkTreeSelection 	*selection,
+gboolean	d_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -220,16 +239,16 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 주민등록번호의 수 //
-					ds[cntf].jcnt++;
+					fDs[cntf].jcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(ds[cntf].fpath, filepath);
-					strcpy(ds[cntf].fname, file->d_name);
-					ds[cntf].fsize = buf.st_size;
-					strcpy(ds[cntf].stat, "일반");
+					strcpy(fDs[cntf].fpath, filepath);
+					strcpy(fDs[cntf].fname, file->d_name);
+					fDs[cntf].fsize = buf.st_size;
+					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 					}
 
 					// 외국인등록번호 유효성 통과 //
@@ -246,16 +265,16 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 외국인등록번호의 수 //
-					ds[cntf].fgcnt++;
+					fDs[cntf].fgcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(ds[cntf].fpath, filepath);
-					strcpy(ds[cntf].fname, file->d_name);
-					ds[cntf].fsize = buf.st_size;
-					strcpy(ds[cntf].stat, "일반");
+					strcpy(fDs[cntf].fpath, filepath);
+					strcpy(fDs[cntf].fname, file->d_name);
+					fDs[cntf].fsize = buf.st_size;
+					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 					}
 				}
 			}
@@ -311,16 +330,16 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 운전면허의 수 //
-					ds[cntf].dcnt++;
+					fDs[cntf].dcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(ds[cntf].fpath, filepath);
-					strcpy(ds[cntf].fname, file->d_name);
-					ds[cntf].fsize = buf.st_size;
-					strcpy(ds[cntf].stat, "일반");
+					strcpy(fDs[cntf].fpath, filepath);
+					strcpy(fDs[cntf].fname, file->d_name);
+					fDs[cntf].fsize = buf.st_size;
+					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 				}
 			}
 		}
@@ -376,16 +395,16 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 운전면허의 수 //
-					ds[cntf].pcnt++;
+					fDs[cntf].pcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(ds[cntf].fpath, filepath);
-					strcpy(ds[cntf].fname, file->d_name);
-					ds[cntf].fsize = buf.st_size;
-					strcpy(ds[cntf].stat, "일반");
+					strcpy(fDs[cntf].fpath, filepath);
+					strcpy(fDs[cntf].fname, file->d_name);
+					fDs[cntf].fsize = buf.st_size;
+					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, ds[cntf].jcnt, ds[cntf].dcnt, ds[cntf].fgcnt, ds[cntf].pcnt, ds[cntf].fpath, ds[cntf].fname, ds[cntf].fsize);
+						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 				}
 			}
 		}
@@ -611,12 +630,12 @@ int func_send()
 			for(int i = 1; i <= cntf; i++)
 			{
 				percent = i / cntf * 100;
-				size_t in_len = sizeof(ds[i]);
-				//printf("ds[%d]: %ld\n", i ,in_len); //구조체 크기확인
+				size_t in_len = sizeof(fDs[i]);
+				//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 
-				enc = b64_encode((unsigned char *)&ds[i], in_len, enc);
+				enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
 				printf("enc_data: %s\n", enc);
-				printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, ds[i].fpath, ds[i].fname, ds[i].fsize);
+				printf("cnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n\n", i, fDs[i].fpath, fDs[i].fname, fDs[i].fsize);
 
 				sprintf( message, "%.0f%% Complete", percent);
 				gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
@@ -1023,14 +1042,14 @@ d_create_and_fill_model (void)
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
 					  d_treeview_num, i,
-					  d_treeview_filename,	ds[i].fname,
-					  d_treeview_jcnt,	ds[i].jcnt,
-					  d_treeview_dcnt,	ds[i].dcnt,
-					  d_treeview_fgcnt,	ds[i].fgcnt,
-					  d_treeview_pcnt,	ds[i]. pcnt,
-					  d_treeview_stat,	ds[i].stat,
-					  d_treeview_size,	ds[i].fsize,
-					  d_treeview_fileloca,	ds[i].fpath,
+					  d_treeview_filename,	fDs[i].fname,
+					  d_treeview_jcnt,	fDs[i].jcnt,
+					  d_treeview_dcnt,	fDs[i].dcnt,
+					  d_treeview_fgcnt,	fDs[i].fgcnt,
+					  d_treeview_pcnt,	fDs[i]. pcnt,
+					  d_treeview_stat,	fDs[i].stat,
+					  d_treeview_size,	fDs[i].fsize,
+					  d_treeview_fileloca,	fDs[i].fpath,
 					  -1);
 	}
 
@@ -1157,7 +1176,7 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
 
-	//strcpy(ds[cntf].stat, "일반");
+	//strcpy(fDs[cntf].stat, "일반");
 
 	return;
 }
@@ -1219,6 +1238,15 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 
 // enrollment_window function //
 
+void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
+{
+	name = (gchar *)gtk_entry_get_text(e_name_entry);
+	strcpy(uDs.uname, name);
+	printf("%s\n", name);
+	
+	return;
+}
+
 enum
 {
 	e_treeview_col,
@@ -1249,7 +1277,7 @@ e_view_selection_func 	(GtkTreeSelection *selection,
 			g_print ("%s 선택 해제.\n", vs_dept);
 		}
 		
-		//strcpy(chk_fpath ,vs_dept);
+		strcpy(uDs.udept, vs_dept);
 
 		g_free(vs_dept);
 	}
@@ -1418,6 +1446,9 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	gtk_widget_hide(enrollment_window);
 	gtk_widget_show(main_window);
 	chk_tf = TRUE;
+	
+	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
+	
 	gtk_main();
 	
 	return;
