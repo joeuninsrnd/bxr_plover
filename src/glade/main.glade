@@ -2,6 +2,34 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkWindow" id="department_window">
+    <property name="width_request">660</property>
+    <property name="height_request">480</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">부서선택</property>
+    <property name="resizable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkFixed" id="dept_fixed">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkScrolledWindow" id="dept_scrolledwindow">
+            <property name="width_request">660</property>
+            <property name="height_request">480</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkWindow" id="detect_window">
     <property name="width_request">660</property>
     <property name="height_request">610</property>
@@ -429,56 +457,80 @@
                         <property name="height_request">46</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="focus_on_click">False</property>
                         <property name="margin_top">2</property>
-                        <property name="active">4</property>
+                        <property name="active">11</property>
                         <property name="has_frame">False</property>
                         <property name="has_entry">True</property>
                         <items>
-                          <item translatable="yes">a</item>
-                          <item translatable="yes">b</item>
-                          <item translatable="yes">c</item>
-                          <item translatable="yes">d</item>
+                          <item translatable="yes">사장</item>
+                          <item translatable="yes">부사장</item>
+                          <item translatable="yes">전무</item>
+                          <item translatable="yes">상무</item>
+                          <item translatable="yes">이사</item>
+                          <item translatable="yes">부장</item>
+                          <item translatable="yes">차장</item>
+                          <item translatable="yes">과장</item>
+                          <item translatable="yes">대리</item>
+                          <item translatable="yes">주임</item>
+                          <item translatable="yes">사원</item>
                         </items>
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="can_focus">False</property>
-                            <property name="has_frame">False</property>
+                            <property name="placeholder_text" translatable="yes">선택</property>
                           </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="width_request">295</property>
+                        <property name="height_request">46</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">3</property>
+                        <child>
+                          <object class="GtkEntry" id="e_department_entry">
+                            <property name="width_request">251</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="editable">False</property>
+                            <property name="has_frame">False</property>
+                            <property name="placeholder_text" translatable="yes">선택</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="e_department_btn">
+                            <property name="width_request">46</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="margin_top">1</property>
+                            <property name="relief">none</property>
+                            <signal name="clicked" handler="e_department_btn_clicked" object="department_window" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkComboBoxText" id="e_department_cbxtext">
-                        <property name="width_request">290</property>
-                        <property name="height_request">46</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_top">3</property>
-                        <property name="active">4</property>
-                        <property name="has_frame">False</property>
-                        <property name="has_entry">True</property>
-                        <items>
-                          <item translatable="yes">a</item>
-                          <item translatable="yes">b</item>
-                          <item translatable="yes">c</item>
-                          <item translatable="yes">d</item>
-                        </items>
-                        <child internal-child="entry">
-                          <object class="GtkEntry">
-                            <property name="can_focus">False</property>
-                            <property name="has_frame">False</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -548,7 +600,7 @@
                     <property name="opacity">0.10000000000000001</property>
                     <property name="relief">none</property>
                     <property name="always_show_image">True</property>
-                    <signal name="clicked" handler="e_enroll_btn_clicked" object="enrollment_window" swapped="no"/>
+                    <signal name="clicked" handler="e_enroll_btn_clicked" object="main_window" swapped="no"/>
                     <child>
                       <placeholder/>
                     </child>
