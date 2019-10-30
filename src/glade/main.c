@@ -54,6 +54,7 @@ fdata_storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
 
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
+static gchar *job;			// 등록 직급이름 //
 static gchar *vs_dept;		// 등록 부서이름 //
 
 static int	cntf = 0;		// 파일개수 cnt //
@@ -66,6 +67,7 @@ static int	chk_tf;			// chk_true or false //
 GtkWidget		*main_window,
 			*m_userinfo_label,
 			*enrollment_window,
+			*e_jobtitle_cbxtext,
 			*detect_window,
 			*setting_window,
 			*department_window,
@@ -74,6 +76,7 @@ GtkWidget		*main_window,
 			*window;
 						
 GtkEntry		*e_name_entry,
+				*e_jobtitle_entry,
 				*e_department_entry,
 				*d_detect_entry;
 
@@ -85,6 +88,7 @@ int func_send();
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
+void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data);
 void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data);
 void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
 
@@ -1252,6 +1256,16 @@ void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
 	
 	return;
 }
+
+void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data)
+{
+	job = (gchar *)gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(e_jobtitle_cbxtext))));
+	strcpy(uDs.ujob, job);
+	printf("%s\n", uDs.ujob);
+
+	return;
+}
+
 
 enum
 {

@@ -553,11 +553,11 @@
                           <item translatable="yes">주임</item>
                           <item translatable="yes">사원</item>
                         </items>
+                        <signal name="changed" handler="oe_jobtitle_cbxtext_changed" swapped="no"/>
                         <child internal-child="entry">
                           <object class="GtkEntry" id="e_jobtitle_entry">
                             <property name="can_focus">False</property>
                             <property name="placeholder_text" translatable="yes">선택</property>
-                            <signal name="activate" handler="e_jobtitle_entry_activate" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -582,7 +582,6 @@
                             <property name="editable">False</property>
                             <property name="has_frame">False</property>
                             <property name="placeholder_text" translatable="yes">선택</property>
-                            <signal name="activate" handler="e_department_entry_activate" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
