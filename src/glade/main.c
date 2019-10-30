@@ -29,9 +29,9 @@
 
 typedef struct Udata_storage
 {
-	char uname[100];			// 사용자 이름 //
-	char ujob[100];			// 사용자 직급 //
-	char udept[300];			// 사용자 부서 //
+	char uname[10];			// 사용자 이름 //
+	char ujob[10];			// 사용자 직급 //
+	char udept[20];			// 사용자 부서 //
 	
 }udata_storage;
 
@@ -54,6 +54,7 @@ fdata_storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
 
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
+static gchar *vs_dept;		// 등록 부서이름 //
 
 static int	cntf = 0;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
@@ -73,6 +74,7 @@ GtkWidget		*main_window,
 			*window;
 						
 GtkEntry		*e_name_entry,
+				*e_department_entry,
 				*d_detect_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
@@ -83,9 +85,12 @@ int func_send();
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
-void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
-void dept_ok_btn_clicked	(GtkButton *dept_ok_btn,	gpointer *data);
+void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data);
+void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
+
 void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
+
+void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
@@ -1262,8 +1267,7 @@ e_view_selection_func 	(GtkTreeSelection *selection,
 							gpointer          userdata)
 {
 	GtkTreeIter iter;
-	gchar *vs_dept;
-	
+
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
 		gtk_tree_model_get(model, &iter, e_treeview_col, &vs_dept, -1);
@@ -1423,9 +1427,16 @@ e_create_view_and_model (void)
 	return e_view;
 }
 
-void dept_ok_btn_clicked	(GtkButton *dept_ok_btn,	gpointer *data)
+void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data)
 {
 	gtk_widget_hide(department_window);
+}
+
+void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data)
+{
+	gtk_entry_set_text(GTK_ENTRY(data), uDs.udept);
+
+	return;
 }
 
 void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data)
