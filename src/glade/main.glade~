@@ -32,7 +32,8 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="dept_ok_btn_clicked" object="department_window" swapped="no"/>
+            <signal name="clicked" handler="dept_ok_btn_clicked_e" object="e_department_entry" swapped="no"/>
+            <signal name="clicked" handler="dept_ok_btn_clicked_w" object="department_window" swapped="no"/>
             <child>
               <placeholder/>
             </child>
@@ -552,8 +553,9 @@
                           <item translatable="yes">주임</item>
                           <item translatable="yes">사원</item>
                         </items>
+                        <signal name="changed" handler="oe_jobtitle_cbxtext_changed" swapped="no"/>
                         <child internal-child="entry">
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="e_jobtitle_entry">
                             <property name="can_focus">False</property>
                             <property name="placeholder_text" translatable="yes">선택</property>
                           </object>
@@ -859,7 +861,7 @@
                     </attributes>
                   </object>
                   <packing>
-                    <property name="x">48</property>
+                    <property name="x">58</property>
                     <property name="y">26</property>
                   </packing>
                 </child>
