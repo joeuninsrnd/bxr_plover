@@ -63,6 +63,7 @@ static int	chk_tf;			// chk_true or false //
 //uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
 
 GtkWidget		*main_window,
+			*m_userinfo_label,
 			*enrollment_window,
 			*detect_window,
 			*setting_window,
@@ -1195,7 +1196,7 @@ void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현
 
 void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 {
-	char	message[1024];
+	char	message[1134];
 	
 	if( chk_fpath[0] == 0x00 )
 	{
@@ -1443,12 +1444,18 @@ void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
 
 void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
+	char *usrinfostr = malloc(sizeof(char) * 10);
+	sprintf(usrinfostr, "%s %s", uDs.uname, uDs.ujob);
+
 	gtk_widget_hide(enrollment_window);
+
+	gtk_label_set_text(GTK_LABEL(m_userinfo_label), usrinfostr);
 	gtk_widget_show(main_window);
 	chk_tf = TRUE;
-	
+
 	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
-	
+	//printf("%s\n", usrinfostr);
+
 	gtk_main();
 	
 	return;
@@ -1488,6 +1495,7 @@ int main (int argc, char *argv[])
 	d_progressbar 		= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
 	d_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
 	dept_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "dept_scrolledwindow"));
+	m_userinfo_label = GTK_WIDGET(gtk_builder_get_object(builder, "m_userinfo_label"));
 	gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
 
 	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
