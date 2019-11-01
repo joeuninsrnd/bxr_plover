@@ -41,14 +41,14 @@ Udata_Storage uDs;
 typedef struct _Fdata_Storage
 {
 	char uuid[36];			// UUID //
-	char fname[100];		// 파일 이름 //
-	uint jcnt;			// 주민번호 개수 //
-	uint dcnt;			// 운전면허 개수 //
-	uint fgcnt;			// 외국인등록번호 개수 //
-	uint pcnt;			// 여권번호 개수 //
-	uint fsize;			// 파일 크기 //
+	char fname[100];			// 파일 이름 //
+	uint jcnt;				// 주민번호 개수 //
+	uint dcnt;				// 운전면허 개수 //
+	uint fgcnt;				// 외국인등록번호 개수 //
+	uint pcnt;				// 여권번호 개수 //
+	uint fsize;				// 파일 크기 //
 	char stat[20];			// 파일 상태 //
-	char fpath[300];		// 파일 경로 //
+	char fpath[300];			// 파일 경로 //
 
 }Fdata_Storage;
 Fdata_Storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
@@ -57,19 +57,22 @@ Fdata_Storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
-static gchar *vs_dept;			// 등록 부서이름 //
+static gchar *vs_dept;		// 등록 부서이름 //
 
 static int	cntf = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
+static char	uuid[36];			// UUID 저장 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
 static int	chk_tf;			// chk_true or false //
 //uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
 
 GtkWidget		*main_window,
 			*m_userinfo_label,
+			*m_verion_label,
 			*enrollment_window,
 			*e_jobtitle_cbxtext,
+			*e_verion_label,
 			*detect_window,
 			*setting_window,
 			*department_window,
@@ -78,16 +81,17 @@ GtkWidget		*main_window,
 			*window;
 						
 GtkEntry		*e_name_entry,
-			*e_jobtitle_entry,
-			*e_department_entry,
-			*d_detect_entry;
+				*e_jobtitle_entry,
+				*e_department_entry,
+				*d_detect_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
-
-int func_send();
-int func_detect(gchar *path);
+			
 int func_uuid();
+int func_detect(gchar *path);
+char *b64_encode (const unsigned char *src, size_t len, char *enc);
+int func_send();
 
 // enrollment_window #ef //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
@@ -98,12 +102,12 @@ void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
 
 void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
 
-void e_name_entry_activate	(GtkEntry *e_name_entry,	gpointer *data);
+void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
 
-gboolean	e_view_selection_func (GtkTreeSelection *selection,
+gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -123,11 +127,11 @@ void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
-gboolean  d_view_selection_func (GtkTreeSelection *selection,
-				 GtkTreeModel	  *model,
-				 GtkTreePath      *path,
-				 gboolean          path_currently_selected,
-				 gpointer          userdata);
+gboolean	d_view_selection_func (GtkTreeSelection 	*selection,
+					GtkTreeModel    *model,
+					GtkTreePath     *path,
+					gboolean         path_currently_selected,
+					gpointer         userdata);
 										
 static GtkTreeModel	*d_create_and_fill_model (void);
 static GtkWidget	*d_create_view_and_model (void);
@@ -161,11 +165,11 @@ int func_uuid()
 			if(pstr[0] == 'U' && pstr[42] == '/')
 			{
 				for (int i = 0; i < 36; i++)
-				{
-					uDs.uuid[i] = pstr[i+5];
+				{ 
+					uuid[i] = pstr[i+5];
 				}
-
-				printf("[%s]\n", uDs.uuid);
+				strcpy(uDs.uuid, uuid);
+				printf("UUID: [%s]\n", uDs.uuid);
 			}
 		}
     }
@@ -187,10 +191,6 @@ int func_chk_user()
 }
 /* end of func_chk_user(); */
 
-
-// Base64 encoding #b64 //
-char *b64_encode (const unsigned char *src, size_t len, char *enc);
-/* end of char *b64_encode(); */
 
 //Compile the regular expression described by "regex_text" into "r"//
 int compile_regex (regex_t *r, const char *regex_text)
@@ -589,6 +589,9 @@ int func_send()
 	char *exchange;
 	char *routingkey;
 	static char *enc;
+	char message[1024];
+	gdouble percent = 0.0;
+	size_t in_len = 0;
 
 	amqp_socket_t *socket = NULL;
 	amqp_connection_state_t conn;
@@ -671,45 +674,51 @@ int func_send()
 		props.correlation_id = amqp_cstring_bytes("1");
 
 		/*
-		  publish // data넣어서 보내기 #send_data
+		  publish // 어떤데이터를 보낼지 chk_tf로 구분 #data_sending
 		*/
-		if(chk_tf == 1)
+		switch(chk_tf)
 		{
-			char message[1024];
-			gdouble percent = 0.0;
-			memset(message, 0x00, strlen(message));
+			case 0:
+				strcpy(uDs.uuid, uuid);
+				//strcpy(uDs.uname, name);
+				in_len = sizeof(uDs);
+				printf("[UUID: [%s], [%s]\n\n", uDs.uuid, uDs.uname);
+				enc = b64_encode((unsigned char *)&uDs, in_len, enc);
 
-			for(int i = 0; i <= cntf; i++)
-			{
-				percent = i / cntf * 100;
-				strcpy(fDs[i].uuid, uDs.uuid);
-				size_t in_len = sizeof(fDs[i]);
-				//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
-				enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
-				
 				printf("[enc_data: %s]\n", enc);
-				printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
-					fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
+				printf("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
+				break;
 
-				sprintf( message, "%.0f%% Complete", percent);
-				gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
-				gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+			case 1:
+				memset(message, 0x00, strlen(message));
 
-				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-								amqp_cstring_bytes(routingkey), 0, 0,
-								&props, amqp_cstring_bytes(enc)), "Publishing");
+				for(int i = 0; i <= cntf; i++)
+				{
+					percent = i / cntf * 100;
+					strcpy(fDs[i].uuid, uDs.uuid);
+					size_t in_len = sizeof(fDs[i]);
+					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
+					enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
+					
+					printf("[enc_data: %s]\n", enc);
+					printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
+								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
+
+					sprintf( message, "%.0f%% Complete", percent);
+					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
+					gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 			}
+				break;
+
+			case 2:
+			
+				break;
 		}
-		
-		else
-		{
-			printf("chk_tf != 1 '0'일 경우는 사용자 데이터 보내기");
-			/*
-			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-							amqp_cstring_bytes(routingkey), 0, 0,
-							&props, amqp_cstring_bytes(enc)), "Publishing");
-			*/
-		}	
+
+		die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
+
 		amqp_bytes_free(props.reply_to);
 	}
 	
@@ -858,7 +867,7 @@ int func_gtk_dialog_modal(int type, GtkWidget *widget, char *message)
 			break;
 	}
 
-	label = gtk_label_new(message);
+	label=gtk_label_new(message);
 	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_container_add (GTK_CONTAINER (content_area), label);
 	gtk_widget_show_all(dialog);
@@ -1506,10 +1515,12 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 
 	gtk_label_set_text(GTK_LABEL(m_userinfo_label), usrinfostr);
 	gtk_widget_show(main_window);
-	chk_tf = TRUE;
 
 	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
 	//printf("%s\n", usrinfostr);
+	func_send();
+	
+	chk_tf = 1;
 
 	gtk_main();
 	
@@ -1564,14 +1575,16 @@ int main (int argc, char *argv[])
 
 	g_object_unref(builder);
 
-	func_chk_user(chk_tf);
+	//gtk_label_set_text(GTK_LABEL(m_version_label), usrinfostr);
+	//gtk_label_set_text(GTK_LABEL(e_verion_label), usrinfostr);
 
+	// 사용자 확인 //
+	func_chk_user(chk_tf);
 	if (chk_tf == FALSE)	// TRUE(1)=있다 //
 	{
 		gtk_widget_show(enrollment_window);
 		gtk_main();
 	}
-
 	if (chk_tf == TRUE) 	// FALSE(0)=없다 //
 	{
 		gtk_widget_show(main_window);
