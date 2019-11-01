@@ -553,7 +553,7 @@
                           <item translatable="yes">주임</item>
                           <item translatable="yes">사원</item>
                         </items>
-                        <signal name="changed" handler="oe_jobtitle_cbxtext_changed" swapped="no"/>
+                        <signal name="changed" handler="e_jobtitle_cbxtext_changed" swapped="no"/>
                         <child internal-child="entry">
                           <object class="GtkEntry" id="e_jobtitle_entry">
                             <property name="can_focus">False</property>
@@ -1010,7 +1010,6 @@
                       <object class="GtkEntry" id="s_change_user_entry">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <signal name="activate" handler="s_change_user_entry_activate" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
