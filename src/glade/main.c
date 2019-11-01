@@ -27,17 +27,17 @@
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
 
-
+#pragma pack(push, 1)
 typedef struct _Uuid_Storage
 {
 	char uuid[36];			// UUID //
 
 }Uuid_Storage;
-Uuid_Storage uIds;
+Uuid_Storage uIDs;
 
 typedef struct _Udata_Storage
 {
-	Uuid_Storage uIds;		// UUID //
+	Uuid_Storage uIds;			// UUID //
 	char uname[10];			// 사용자 이름 //
 	char ujob[10];			// 사용자 직급 //
 	char udept[20];			// 사용자 부서 //
@@ -47,32 +47,24 @@ Udata_Storage uDs;
 
 typedef struct _Fdata_Storage
 {
-<<<<<<< HEAD
-	Uuid_Storage uIds;		// UUID //
-	char fname[100];		// 파일 이름 //
-	uint jcnt;			// 주민번호 개수 //
-	uint dcnt;			// 운전면허 개수 //
-	uint fgcnt;			// 외국인등록번호 개수 //
-	uint pcnt;			// 여권번호 개수 //
-	uint fsize;			// 파일 크기 //
-=======
-	char fname[100];		// 파일 이름 //
-	uint jcnt;			// 주민번호 개수 //
-	uint dcnt;			// 운전면허 개수 //
-	uint fgcnt;			// 외국인등록번호 개수 //
-	uint pcnt;			// 여권번호 개수 //
-	uint fsize;			// 파일 크기 //
->>>>>>> 9c219d17cd396ccdc27873d33828c4d8f9765a42
+	Uuid_Storage uIds;			// UUID //
+	char fname[100];			// 파일 이름 //
+	uint jcnt;				// 주민번호 개수 //
+	uint dcnt;				// 운전면허 개수 //
+	uint fgcnt;				// 외국인등록번호 개수 //
+	uint pcnt;				// 여권번호 개수 //
+	uint fsize;				// 파일 크기 //
 	char stat[20];			// 파일 상태 //
-	char fpath[300];		// 파일 경로 //
+	char fpath[300];			// 파일 경로 //
 
 }Fdata_Storage;
 Fdata_Storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
+#pragma pack(pop)
 
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
-static gchar *vs_dept;			// 등록 부서이름 //
+static gchar *vs_dept;		// 등록 부서이름 //
 
 static int	cntf = 0;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
@@ -93,9 +85,9 @@ GtkWidget		*main_window,
 			*window;
 						
 GtkEntry		*e_name_entry,
-			*e_jobtitle_entry,
-			*e_department_entry,
-			*d_detect_entry;
+				*e_jobtitle_entry,
+				*e_department_entry,
+				*d_detect_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
@@ -112,12 +104,12 @@ void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
 
 void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
 
-void e_name_entry_activate	(GtkEntry *e_name_entry,	gpointer *data);
+void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
 
-gboolean	e_view_selection_func (GtkTreeSelection *selection,
+gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -137,7 +129,7 @@ void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
-gboolean	d_view_selection_func (GtkTreeSelection *selection,
+gboolean	d_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -176,13 +168,13 @@ int func_uuid()
 			{
 				for (int i = 0; i < 36; i++)
 				{
-					uIds.uuid[i] = pstr[i+5];
+					uIDs.uuid[i] = pstr[i+5];
 					uDs.uIds.uuid[i] = pstr[i+5];
 					fDs->uIds.uuid[i] = pstr[i+5];
 				}
-				printf("[%s]\n", uIds.uuid);
+				printf("[%s]\n", uIDs.uuid);
 				printf("[%s]\n", uDs.uIds.uuid);
-				printf("[%s]\n", fDs->uIds.uuid);
+				printf("[%s]\n", fDs[1].uIds.uuid);
 			}
 		}
     }
@@ -212,7 +204,7 @@ char *b64_encode (const unsigned char *src, size_t len, char *enc);
 //Compile the regular expression described by "regex_text" into "r"//
 int compile_regex (regex_t *r, const char *regex_text)
 {
-	int status = regcomp(r, regex_text, REG_EXTENDED | REG_NEWLINE);
+	int status = regcomp(r, regex_text, REG_EXTENDED|REG_NEWLINE);
 
 	if (status != 0)
 	{
@@ -704,8 +696,8 @@ int func_send()
 				size_t in_len = sizeof(fDs[i]);
 				//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 				enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
-				printf("enc_data: %s\n", enc);
-				printf("UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s\n",
+				printf("[enc_data: %s]\n", enc);
+				printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
 							fDs->uIds.uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
 
 				sprintf( message, "%.0f%% Complete", percent);
@@ -872,12 +864,12 @@ int func_gtk_dialog_modal(int type, GtkWidget *widget, char *message)
 			break;
 	}
 
-	label = gtk_label_new(message);
+	label=gtk_label_new(message);
 	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_container_add (GTK_CONTAINER (content_area), label);
 	gtk_widget_show_all(dialog);
 
-	rtn = gtk_dialog_run (GTK_DIALOG (dialog));
+	rtn = gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 	return(rtn);	
 }
@@ -1046,10 +1038,10 @@ enum
 
 gboolean
 d_view_selection_func 	(GtkTreeSelection *selection,
-			 GtkTreeModel     *model,
-			 GtkTreePath      *path,
-			 gboolean          path_currently_selected,
-			 gpointer          userdata)
+							GtkTreeModel     *model,
+							GtkTreePath      *path,
+							gboolean          path_currently_selected,
+							gpointer          userdata)
 {
 	GtkTreeIter iter;
 	gchar *vs_fpath;
@@ -1318,10 +1310,10 @@ enum
 
 gboolean
 e_view_selection_func 	(GtkTreeSelection *selection,
-			 GtkTreeModel     *model,
-			 GtkTreePath      *path,
-			 gboolean          path_currently_selected,
-			 gpointer          userdata)
+							GtkTreeModel     *model,
+							GtkTreePath      *path,
+							gboolean          path_currently_selected,
+							gpointer          userdata)
 {
 	GtkTreeIter iter;
 
@@ -1451,8 +1443,8 @@ e_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*e_col;
 	GtkCellRenderer		*e_renderer;
-	GtkWidget		*e_view;
-	GtkTreeModel		*e_model;
+	GtkWidget				*e_view;
+	GtkTreeModel			*e_model;
 	GtkTreeSelection	*e_selection;
 	
 	e_view = gtk_tree_view_new();
@@ -1506,7 +1498,7 @@ void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
 	GtkWidget *e_view;
 	
 	e_view = e_create_view_and_model();
-	gtk_container_add (GTK_CONTAINER (dept_scrolledwindow), e_view);
+	gtk_container_add (GTK_CONTAINER(dept_scrolledwindow), e_view);
 	gtk_widget_show_all ((GtkWidget *)department_window);
 }
 
@@ -1517,7 +1509,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 
 	gtk_widget_hide(enrollment_window);
 
-	gtk_label_set_text(GTK_LABEL (m_userinfo_label), usrinfostr);
+	gtk_label_set_text(GTK_LABEL(m_userinfo_label), usrinfostr);
 	gtk_widget_show(main_window);
 	chk_tf = TRUE;
 
@@ -1537,7 +1529,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 // setting_window function #sf //
 void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 {
-	gtk_widget_hide(GTK_WIDGET (data));
+	gtk_widget_hide(GTK_WIDGET(data));
 	
 	return;
 }
@@ -1565,7 +1557,7 @@ int main (int argc, char *argv[])
 	d_progressbar 		= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
 	d_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
 	dept_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "dept_scrolledwindow"));
-	m_userinfo_label	= GTK_WIDGET(gtk_builder_get_object(builder, "m_userinfo_label"));
+	m_userinfo_label = GTK_WIDGET(gtk_builder_get_object(builder, "m_userinfo_label"));
 	gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
 
 	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
