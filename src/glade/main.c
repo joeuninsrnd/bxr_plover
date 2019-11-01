@@ -37,7 +37,7 @@ Uuid_Storage uIds;
 
 typedef struct _Udata_Storage
 {
-	Uuid_Storage uIds;			// UUID //
+	Uuid_Storage uIds;		// UUID //
 	char uname[10];			// 사용자 이름 //
 	char ujob[10];			// 사용자 직급 //
 	char udept[20];			// 사용자 부서 //
@@ -48,13 +48,13 @@ Udata_Storage uDs;
 typedef struct _Fdata_Storage
 {
 <<<<<<< HEAD
-	Uuid_Storage uIds;			// UUID //
-	char fname[100];			// 파일 이름 //
-	uint jcnt;				// 주민번호 개수 //
-	uint dcnt;				// 운전면허 개수 //
-	uint fgcnt;				// 외국인등록번호 개수 //
-	uint pcnt;				// 여권번호 개수 //
-	uint fsize;				// 파일 크기 //
+	Uuid_Storage uIds;		// UUID //
+	char fname[100];		// 파일 이름 //
+	uint jcnt;			// 주민번호 개수 //
+	uint dcnt;			// 운전면허 개수 //
+	uint fgcnt;			// 외국인등록번호 개수 //
+	uint pcnt;			// 여권번호 개수 //
+	uint fsize;			// 파일 크기 //
 =======
 	char fname[100];		// 파일 이름 //
 	uint jcnt;			// 주민번호 개수 //
