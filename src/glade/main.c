@@ -28,16 +28,9 @@
 #define	ERASER_ENC_SIZE	896		//1k
 
 #pragma pack(push, 1)
-typedef struct _Uuid_Storage
-{
-	char uuid[36];			// UUID //
-
-}Uuid_Storage;
-Uuid_Storage uIDs;
-
 typedef struct _Udata_Storage
 {
-	Uuid_Storage uIds;			// UUID //
+	char uuid[36];			// UUID //
 	char uname[10];			// 사용자 이름 //
 	char ujob[10];			// 사용자 직급 //
 	char udept[20];			// 사용자 부서 //
@@ -47,7 +40,7 @@ Udata_Storage uDs;
 
 typedef struct _Fdata_Storage
 {
-	Uuid_Storage uIds;			// UUID //
+	char uuid[36];			// UUID //
 	char fname[100];			// 파일 이름 //
 	uint jcnt;				// 주민번호 개수 //
 	uint dcnt;				// 운전면허 개수 //
@@ -93,6 +86,7 @@ GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
 
 int func_send();
+int func_detect(gchar *path);
 int func_uuid();
 
 // enrollment_window #ef //
@@ -168,13 +162,10 @@ int func_uuid()
 			{
 				for (int i = 0; i < 36; i++)
 				{
-					uIDs.uuid[i] = pstr[i+5];
-					uDs.uIds.uuid[i] = pstr[i+5];
-					fDs->uIds.uuid[i] = pstr[i+5];
+					uDs.uuid[i] = pstr[i+5];
 				}
-				printf("[%s]\n", uIDs.uuid);
-				printf("[%s]\n", uDs.uIds.uuid);
-				printf("[%s]\n", fDs[1].uIds.uuid);
+
+				printf("[%s]\n", uDs.uuid);
 			}
 		}
     }
@@ -680,7 +671,7 @@ int func_send()
 		props.correlation_id = amqp_cstring_bytes("1");
 
 		/*
-		  publish // data넣어서 보내기 #input_data
+		  publish // data넣어서 보내기 #send_data
 		*/
 		if(chk_tf == 1)
 		{
@@ -691,13 +682,14 @@ int func_send()
 			for(int i = 0; i <= cntf; i++)
 			{
 				percent = i / cntf * 100;
+				strcpy(fDs[i].uuid, uDs.uuid);
 				size_t in_len = sizeof(fDs[i]);
 				//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 				enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
 				
 				printf("[enc_data: %s]\n", enc);
 				printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
-							fDs->uIds.uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
+							fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
 
 				sprintf( message, "%.0f%% Complete", percent);
 				gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
