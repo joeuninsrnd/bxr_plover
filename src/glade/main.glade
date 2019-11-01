@@ -1010,7 +1010,6 @@
                       <object class="GtkEntry" id="s_change_user_entry">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <signal name="activate" handler="s_change_user_entry_activate" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
