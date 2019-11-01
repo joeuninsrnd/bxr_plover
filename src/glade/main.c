@@ -66,7 +66,7 @@ static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
 static gchar *vs_dept;		// 등록 부서이름 //
 
-static int	cntf = 0;		// 파일개수 cnt //
+static int	cntf = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
@@ -311,7 +311,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 					}
 
 					// 외국인등록번호 유효성 통과 //
@@ -337,7 +337,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 					}
 				}
 			}
@@ -402,7 +402,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 				}
 			}
 		}
@@ -467,7 +467,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					strcpy(fDs[cntf].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
 				}
 			}
 		}
@@ -586,8 +586,6 @@ int func_detect (gchar *path)
 
 	printf("Close DIR\n");
 
-	func_send();
-
 	return  0;
 }
 /* end of func_detect(); */
@@ -690,12 +688,13 @@ int func_send()
 			gdouble percent = 0.0;
 			memset(message, 0x00, strlen(message));
 
-			for(int i = 1; i <= cntf; i++)
+			for(int i = 0; i <= cntf; i++)
 			{
 				percent = i / cntf * 100;
 				size_t in_len = sizeof(fDs[i]);
 				//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 				enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
+				
 				printf("[enc_data: %s]\n", enc);
 				printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
 							fDs->uIds.uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
@@ -712,10 +711,13 @@ int func_send()
 		
 		else
 		{
+			printf("chk_tf != 1 '0'일 경우는 사용자 데이터 보내기");
+			/*
 			die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
 							amqp_cstring_bytes(routingkey), 0, 0,
 							&props, amqp_cstring_bytes(enc)), "Publishing");
-		}
+			*/
+		}	
 		amqp_bytes_free(props.reply_to);
 	}
 	
@@ -1082,11 +1084,11 @@ d_create_and_fill_model (void)
 	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
 					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
-	for(int i = 1; i <= cntf; i++)
+	for(int i = 0; i <= cntf; i++)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
-					  d_treeview_num, i,
+					  d_treeview_num, i + 1,
 					  d_treeview_filename,	fDs[i].fname,
 					  d_treeview_jcnt,	fDs[i].jcnt,
 					  d_treeview_dcnt,	fDs[i].dcnt,
@@ -1216,6 +1218,7 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	GtkWidget *view;
 	
 	func_detect(path);
+	func_send();
 	
 	view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
