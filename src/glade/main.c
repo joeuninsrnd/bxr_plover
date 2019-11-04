@@ -59,13 +59,14 @@ static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
 static gchar *vs_dept;		// 등록 부서이름 //
 
-static int	cntf = -1;		// 파일개수 cnt //
+static int	chk_fcnt = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
-static char	uuid[40];			// UUID 저장 //
+static char	chk_uuid[40];			// UUID 저장 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
-static int	chk_tf;			// chk_true or false //
-//uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
+static int	chk_df = 0;			// chk data flag //
+static const char	*chk_ver;		// chk version //
+
 
 GtkWidget		*main_window,
 			*m_userinfo_label,
@@ -87,7 +88,8 @@ GtkEntry		*e_name_entry,
 
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
-			
+
+int func_verchk();
 int func_uuid();
 int func_detect(gchar *path);
 char *b64_encode (const unsigned char *src, size_t len, char *enc);
@@ -141,7 +143,39 @@ static GtkWidget	*d_create_view_and_model (void);
 void s_cloese_btn_clicked	(GtkButton *s_cloese_btn,	gpointer *data);
 /* end of setting_window */
 
-// 사용자 UUID parsing //
+
+// Version Check #cv//
+int func_verchk()
+{
+	func_send();
+	//gtk_label_set_text(GTK_LABEL(e_verion_label), chk_ver); // fuc_send()의 flag(0)에서 chk_ver에 버전data넣어야함
+	chk_df = 1; // 사용자 확인해야함 //
+
+	return chk_df;
+}
+// end of func_verchk(); //
+
+// 계정이 있는지 확인: 1=없다 2=있다 #cu //
+int func_usrchk()
+{
+	func_send();
+
+	if (chk_df == 1)
+	{
+		gtk_widget_show(enrollment_window); // 사용자 등록 창 //
+		gtk_main();
+	}
+	if (chk_df == 2)
+	{
+		gtk_widget_show(main_window); 		// 메인 창 //
+		gtk_main();
+	}
+	
+	return chk_df;
+}
+/* end of func_chk_user(); */
+
+// 사용자 UUID parsing #up//
 int func_uuid()
 {
 	FILE *uidfp = NULL;
@@ -166,9 +200,9 @@ int func_uuid()
 			{
 				for (int i = 0; i < 36; i++)
 				{ 
-					uuid[i] = pstr[i+5];
+					chk_uuid[i] = pstr[i+5];
 				}
-				strcpy(uDs.uuid, uuid);
+				strcpy(uDs.uuid, chk_uuid);
 				printf("UUID: [%s]\n", uDs.uuid);
 			}
 		}
@@ -180,17 +214,6 @@ int func_uuid()
 	return 0;
 }
 // end of func_uuid(); //
-
-
-// 계정이 있는지 확인: TRUE(1)=있다 FALSE(0)=없다 #cu //
-int func_chk_user()
-{
-	chk_tf = FALSE;
-	
-	return chk_tf;
-}
-/* end of func_chk_user(); */
-
 
 //Compile the regular expression described by "regex_text" into "r"//
 int compile_regex (regex_t *r, const char *regex_text)
@@ -286,23 +309,23 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 					if (res != 0)
 					{
-						cntf++;
+						chk_fcnt++;
 					}
 
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 주민등록번호의 수 //
-					fDs[cntf].jcnt++;
+					fDs[chk_fcnt].jcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(fDs[cntf].fpath, filepath);
-					strcpy(fDs[cntf].fname, file->d_name);
-					fDs[cntf].fsize = buf.st_size;
-					strcpy(fDs[cntf].stat, "일반");
+					strcpy(fDs[chk_fcnt].fpath, filepath);
+					strcpy(fDs[chk_fcnt].fname, file->d_name);
+					fDs[chk_fcnt].fsize = buf.st_size;
+					strcpy(fDs[chk_fcnt].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 					}
 
 					// 외국인등록번호 유효성 통과 //
@@ -312,23 +335,23 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 					if (res != 0)
 					{
-						cntf++;
+						chk_fcnt++;
 					}
 
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 외국인등록번호의 수 //
-					fDs[cntf].fgcnt++;
+					fDs[chk_fcnt].fgcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(fDs[cntf].fpath, filepath);
-					strcpy(fDs[cntf].fname, file->d_name);
-					fDs[cntf].fsize = buf.st_size;
-					strcpy(fDs[cntf].stat, "일반");
+					strcpy(fDs[chk_fcnt].fpath, filepath);
+					strcpy(fDs[chk_fcnt].fname, file->d_name);
+					fDs[chk_fcnt].fsize = buf.st_size;
+					strcpy(fDs[chk_fcnt].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].pcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 					}
 				}
 			}
@@ -377,23 +400,23 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 
 					if (res != 0)
 					{
-						cntf++;
+						chk_fcnt++;
 					}
 
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 운전면허의 수 //
-					fDs[cntf].dcnt++;
+					fDs[chk_fcnt].dcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(fDs[cntf].fpath, filepath);
-					strcpy(fDs[cntf].fname, file->d_name);
-					fDs[cntf].fsize = buf.st_size;
-					strcpy(fDs[cntf].stat, "일반");
+					strcpy(fDs[chk_fcnt].fpath, filepath);
+					strcpy(fDs[chk_fcnt].fname, file->d_name);
+					fDs[chk_fcnt].fsize = buf.st_size;
+					strcpy(fDs[chk_fcnt].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].pcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 				}
 			}
 		}
@@ -442,23 +465,23 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 
 					if (res != 0)
 					{
-						cntf++;
+						chk_fcnt++;
 					}
 
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
 
 					// 검출된 운전면허의 수 //
-					fDs[cntf].pcnt++;
+					fDs[chk_fcnt].pcnt++;
 
 					// data 구조체에 저장 //
-					strcpy(fDs[cntf].fpath, filepath);
-					strcpy(fDs[cntf].fname, file->d_name);
-					fDs[cntf].fsize = buf.st_size;
-					strcpy(fDs[cntf].stat, "일반");
+					strcpy(fDs[chk_fcnt].fpath, filepath);
+					strcpy(fDs[chk_fcnt].fname, file->d_name);
+					fDs[chk_fcnt].fsize = buf.st_size;
+					strcpy(fDs[chk_fcnt].stat, "일반");
 
 					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						cntf+1, fDs[cntf].jcnt, fDs[cntf].dcnt, fDs[cntf].fgcnt, fDs[cntf].pcnt, fDs[cntf].fpath, fDs[cntf].fname, fDs[cntf].fsize);
+						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].pcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 				}
 			}
 		}
@@ -674,11 +697,26 @@ int func_send()
 		props.correlation_id = amqp_cstring_bytes("1");
 
 		/*
-		  publish // 어떤데이터를 보낼지 chk_tf로 구분 #data_sending
+		  publish // 어떤데이터를 보낼지 chk_df로 구분 #data_sending
 		*/
-		switch(chk_tf)
+		switch(chk_df)
 		{
-			case 0:
+			case 0:	// 버전 확인 //
+				printf("##### 버전 확인 #####\n");
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
+				break;
+
+			case 1:	// 사용자 확인 //
+			printf("##### 사용자 확인 #####\n");
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
+				break;
+			
+			case 2:	// 사용자 등록 //
+				printf("##### 사용자 등록 #####\n");
 				in_len = sizeof(uDs);
 				enc = b64_encode((unsigned char *)&uDs, in_len, enc);
 				printf("[enc_data: %s]\n", enc);
@@ -689,12 +727,13 @@ int func_send()
 									&props, amqp_cstring_bytes(enc)), "Publishing");
 				break;
 
-			case 1:
+			case 3:	// 검출 결과 //
+				printf("##### 검출 결과  #####\n");
 				memset(message, 0x00, strlen(message));
 
-				for(int i = 0; i <= cntf; i++)
+				for(int i = 0; i <= chk_fcnt; i++)
 				{	printf("[i: %d]", i);
-					percent = i / cntf * 100;
+					percent = i / chk_fcnt * 100;
 					strcpy(fDs[i].uuid, uDs.uuid);
 					size_t in_len = sizeof(fDs[i]);
 					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
@@ -714,8 +753,6 @@ int func_send()
 				}
 				break;
 
-			case 2:
-				break;
 		}
 
 		amqp_bytes_free(props.reply_to);
@@ -723,7 +760,7 @@ int func_send()
 	
 	
 	/*
-	wait an answer
+	wait an answer //응답도 case이용해서 flag별로 구분해야 할듯
 	*/
 	/*
 	{
@@ -836,7 +873,7 @@ int func_send()
 															
 	//die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS), "Closing connection");
 															
-	die_on_error(amqp_destroy_connection(conn), "Ending connection");
+	//die_on_error(amqp_destroy_connection(conn), "Ending connection");
 
 	return TRUE;
 }
@@ -1084,7 +1121,7 @@ d_create_and_fill_model (void)
 	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
 					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
-	for(int i = 0; i <= cntf; i++)
+	for(int i = 0; i <= chk_fcnt; i++)
 	{
 		gtk_tree_store_append(treestore, &iter, NULL);
 		gtk_tree_store_set (treestore, &iter,
@@ -1224,7 +1261,7 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
 
-	//strcpy(fDs[cntf].stat, "일반");
+	//strcpy(fDs[chk_fcnt].stat, "일반");
 
 	return;
 }
@@ -1519,7 +1556,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	//printf("%s\n", usrinfostr);
 	func_send();
 	
-	chk_tf = 1;
+	chk_df = 3;
 
 	gtk_main();
 	
@@ -1547,6 +1584,8 @@ int main (int argc, char *argv[])
 {
 	GtkBuilder	*builder;
 
+	func_verchk();	// 버전 확인	//
+	func_usrchk();	// 사용자 확인	//
 	func_uuid();
 
 	gtk_init(&argc, &argv);
@@ -1573,22 +1612,6 @@ int main (int argc, char *argv[])
 	gtk_builder_connect_signals(builder, NULL);
 
 	g_object_unref(builder);
-
-	//gtk_label_set_text(GTK_LABEL(m_version_label), usrinfostr);
-	//gtk_label_set_text(GTK_LABEL(e_verion_label), usrinfostr);
-
-	// 사용자 확인 //
-	func_chk_user(chk_tf);
-	if (chk_tf == FALSE)	// TRUE(1)=있다 //
-	{
-		gtk_widget_show(enrollment_window);
-		gtk_main();
-	}
-	if (chk_tf == TRUE) 	// FALSE(0)=없다 //
-	{
-		gtk_widget_show(main_window);
-		gtk_main();
-	}
 
 	gtk_widget_show(window); 
 
