@@ -30,17 +30,17 @@
 #pragma pack(push, 1)
 typedef struct _Udata_Storage
 {
-	char uuid[36];			// UUID //
-	char uname[10];			// 사용자 이름 //
-	char ujob[10];			// 사용자 직급 //
-	char udept[20];			// 사용자 부서 //
+	char uuid[37];			// UUID //	
+	char uname[20];			// 사용자 이름 //
+	char ujob[20];			// 사용자 직급 //
+	char udept[30];			// 사용자 부서 //
 	
 }Udata_Storage;
 Udata_Storage uDs;
 
 typedef struct _Fdata_Storage
 {
-	char uuid[36];			// UUID //
+	char uuid[37];			// UUID //
 	char fname[100];			// 파일 이름 //
 	uint jcnt;				// 주민번호 개수 //
 	uint dcnt;				// 운전면허 개수 //
@@ -62,7 +62,7 @@ static gchar *vs_dept;		// 등록 부서이름 //
 static int	cntf = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
-static char	uuid[36];			// UUID 저장 //
+static char	uuid[40];			// UUID 저장 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
 static int	chk_tf;			// chk_true or false //
 //uint 	data_flag = 1;			// 민감정보 종류 확인 flag //
@@ -679,21 +679,21 @@ int func_send()
 		switch(chk_tf)
 		{
 			case 0:
-				strcpy(uDs.uuid, uuid);
-				//strcpy(uDs.uname, name);
 				in_len = sizeof(uDs);
-				printf("[UUID: [%s], [%s]\n\n", uDs.uuid, uDs.uname);
 				enc = b64_encode((unsigned char *)&uDs, in_len, enc);
-
 				printf("[enc_data: %s]\n", enc);
 				printf("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
+				
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
 				break;
 
 			case 1:
 				memset(message, 0x00, strlen(message));
 
 				for(int i = 0; i <= cntf; i++)
-				{
+				{	printf("[i: %d]", i);
 					percent = i / cntf * 100;
 					strcpy(fDs[i].uuid, uDs.uuid);
 					size_t in_len = sizeof(fDs[i]);
@@ -707,17 +707,16 @@ int func_send()
 					sprintf( message, "%.0f%% Complete", percent);
 					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
 					gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
-			}
+
+					die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
+				}
 				break;
 
 			case 2:
-			
 				break;
 		}
-
-		die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
-									amqp_cstring_bytes(routingkey), 0, 0,
-									&props, amqp_cstring_bytes(enc)), "Publishing");
 
 		amqp_bytes_free(props.reply_to);
 	}
