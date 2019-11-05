@@ -13,16 +13,17 @@
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
-static gchar *vs_dept;		// 등록 부서이름 //
+static gchar *vs_dept;			// 등록 부서이름 //
 
 static int	chk_fcnt = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
-static char	chk_uuid[40];			// UUID 저장 //
+static char	chk_uuid[40];		// UUID 저장 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
-static int	chk_df = 0;			// chk data flag //
-static const char	*chk_ver;		// chk version //
+static int	chk_df = 0;		// chk data flag //
+static const char	*chk_ver;	// chk version //
 
+GtkBuilder		*builder;
 
 GtkWidget		*main_window,
 			*m_userinfo_label,
@@ -38,14 +39,12 @@ GtkWidget		*main_window,
 			*window;
 						
 GtkEntry		*e_name_entry,
-				*e_jobtitle_entry,
-				*e_department_entry,
-				*d_detect_entry;
+			*e_jobtitle_entry,
+			*e_department_entry,
+			*d_detect_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
-
-GtkBuilder	*builder;
 
 
 char *b64_encode (const unsigned char *src, size_t len, char *enc);
@@ -64,7 +63,7 @@ void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
 
-gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
+gboolean	e_view_selection_func (GtkTreeSelection *selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -84,7 +83,7 @@ void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
-gboolean	d_view_selection_func (GtkTreeSelection 	*selection,
+gboolean	d_view_selection_func (GtkTreeSelection *selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -117,12 +116,12 @@ int func_UsrChk()
 
 	if (chk_df == 1)
 	{
-		gtk_widget_show(enrollment_window); // 사용자 등록 창 //
+		gtk_widget_show(enrollment_window);	// 사용자 등록 창 //
 		gtk_main();
 	}
 	if (chk_df == 2)
 	{
-		gtk_widget_show(main_window); 		// 메인 창 //
+		gtk_widget_show(main_window);		// 메인 창 //
 		gtk_main();
 	}
 	
@@ -1296,10 +1295,10 @@ enum
 
 gboolean
 e_view_selection_func 	(GtkTreeSelection *selection,
-							GtkTreeModel     *model,
-							GtkTreePath      *path,
-							gboolean          path_currently_selected,
-							gpointer          userdata)
+			 GtkTreeModel     *model,
+			 GtkTreePath      *path,
+			 gboolean          path_currently_selected,
+			 gpointer          userdata)
 {
 	GtkTreeIter iter;
 
@@ -1429,8 +1428,8 @@ e_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*e_col;
 	GtkCellRenderer		*e_renderer;
-	GtkWidget				*e_view;
-	GtkTreeModel			*e_model;
+	GtkWidget		*e_view;
+	GtkTreeModel		*e_model;
 	GtkTreeSelection	*e_selection;
 	
 	e_view = gtk_tree_view_new();
@@ -1554,7 +1553,7 @@ int main (int argc, char *argv[])
 	func_SetRabbit();	// 서버와 연결	//
 	func_VerChk();		// 버전 확인	//
 	func_UsrChk();		// 사용자 확인	//
-	func_Uuid();			// 사용자 UUID	//
+	func_Uuid();		// 사용자 UUID	//
 
 	g_object_unref(builder);
 
