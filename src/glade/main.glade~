@@ -881,6 +881,7 @@
     <property name="width_request">660</property>
     <property name="height_request">610</property>
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">환경설정</property>
     <property name="resizable">False</property>
     <property name="default_width">660</property>
     <property name="default_height">610</property>
@@ -901,7 +902,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="s_ok_btn_clicked" swapped="no"/>
+            <signal name="clicked" handler="s_ok_btn_clicked" object="main_window" swapped="no"/>
           </object>
           <packing>
             <property name="x">211</property>
@@ -931,7 +932,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="s_folder_btn_clicked" object="s_folder_entry" swapped="no"/>
+            <signal name="clicked" handler="s_folder_btn_clicked" object="s_detect_entry" swapped="no"/>
           </object>
           <packing>
             <property name="x">180</property>
@@ -939,14 +940,14 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="s_folder_entry">
+          <object class="GtkEntry" id="s_detect_entry">
             <property name="width_request">315</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="has_frame">False</property>
             <property name="placeholder_text" translatable="yes">  [파일/폴더] 의 위치를 입력하세요...</property>
-            <signal name="activate" handler="s_folder_entry_activate" swapped="no"/>
+            <signal name="activate" handler="s_detect_entry_activate" swapped="no"/>
           </object>
           <packing>
             <property name="x">285</property>
@@ -954,13 +955,14 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="s_server_entry">
+          <object class="GtkEntry" id="s_ip_entry">
             <property name="width_request">220</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="has_frame">False</property>
             <property name="placeholder_text" translatable="yes">접속서버 IP를 입력하세요...</property>
+            <signal name="activate" handler="s_ip_entry_activate" swapped="no"/>
           </object>
           <packing>
             <property name="x">180</property>
@@ -974,23 +976,11 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="has_frame">False</property>
+            <signal name="activate" handler="s_port_entry_activate" swapped="no"/>
           </object>
           <packing>
             <property name="x">500</property>
             <property name="y">207</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="s_pagelink_entry">
-            <property name="width_request">420</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="has_frame">False</property>
-          </object>
-          <packing>
-            <property name="x">180</property>
-            <property name="y">267</property>
           </packing>
         </child>
         <child>
@@ -1094,6 +1084,23 @@
           <packing>
             <property name="x">512</property>
             <property name="y">337</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLinkButton" id="s_pagelink_btn">
+            <property name="label" translatable="yes">button</property>
+            <property name="width_request">420</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="opacity">0.20000000000000001</property>
+            <property name="relief">none</property>
+            <property name="uri">http://joeunins.slack.com</property>
+          </object>
+          <packing>
+            <property name="x">180</property>
+            <property name="y">267</property>
           </packing>
         </child>
       </object>
