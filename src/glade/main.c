@@ -1,58 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <errno.h>
+#include "plover.h"
 #include <unistd.h>
 #include <assert.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#include <gtk/gtk.h>
-
 #include <regex.h>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
-#include "utils.h"
-#include "utils.c"
-
-#include "b64.h"
-#include "encode.c"
-#include "decode.c"
-
 #define	MAX_ERROR_MSG	0x1000
-#define	MAX_CNTF	50		// 최대 검출 파일 개수 //
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
-
-#pragma pack(push, 1)
-typedef struct _Udata_Storage
-{
-	char uuid[37];			// UUID //	
-	char uname[20];			// 사용자 이름 //
-	char ujob[20];			// 사용자 직급 //
-	char udept[30];			// 사용자 부서 //
-	
-}Udata_Storage;
-Udata_Storage uDs;
-
-typedef struct _Fdata_Storage
-{
-	char uuid[37];			// UUID //
-	char fname[100];			// 파일 이름 //
-	uint jcnt;				// 주민번호 개수 //
-	uint dcnt;				// 운전면허 개수 //
-	uint fgcnt;				// 외국인등록번호 개수 //
-	uint pcnt;				// 여권번호 개수 //
-	uint fsize;				// 파일 크기 //
-	char stat[20];			// 파일 상태 //
-	char fpath[300];			// 파일 경로 //
-
-}Fdata_Storage;
-Fdata_Storage fDs[MAX_CNTF];		// 파일기준의 data구조체 //
-#pragma pack(pop)
 
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
@@ -89,13 +45,12 @@ GtkEntry		*e_name_entry,
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
 
-int func_verchk();
-int func_uuid();
-int func_detect(gchar *path);
-char *b64_encode (const unsigned char *src, size_t len, char *enc);
-int func_send();
+GtkBuilder	*builder;
 
-// enrollment_window #ef //
+
+char *b64_encode (const unsigned char *src, size_t len, char *enc);
+
+// enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
 void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data);
@@ -116,7 +71,7 @@ gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
 					gpointer         userdata);
 /* end of enrollment_window */
 
-// main_window #mf //
+// main_window //
 void m_window_destroy();
 void m_detect_btn_clicked	(GtkButton *m_detect_btn,	gpointer *data);
 void m_setting_btn_clicked	(GtkButton *m_setting_btn,	gpointer *data);
@@ -144,21 +99,21 @@ void s_cloese_btn_clicked	(GtkButton *s_cloese_btn,	gpointer *data);
 /* end of setting_window */
 
 
-// Version Check #cv//
-int func_verchk()
+// Version Check #fvc//
+int func_VerChk()
 {
-	func_send();
+	func_Send();
 	//gtk_label_set_text(GTK_LABEL(e_verion_label), chk_ver); // fuc_send()의 flag(0)에서 chk_ver에 버전data넣어야함
 	chk_df = 1; // 사용자 확인해야함 //
 
 	return chk_df;
 }
-// end of func_verchk(); //
+// end of func_VerChk(); //
 
-// 계정이 있는지 확인: 1=없다 2=있다 #cu //
-int func_usrchk()
+// 계정이 있는지 확인: 1=없다 2=있다 #fuc //
+int func_UsrChk()
 {
-	func_send();
+	func_Send();
 
 	if (chk_df == 1)
 	{
@@ -173,10 +128,10 @@ int func_usrchk()
 	
 	return chk_df;
 }
-/* end of func_chk_user(); */
+/* end of func_UsrChk(); */
 
-// 사용자 UUID parsing #up//
-int func_uuid()
+// 사용자 UUID parsing #fuu//
+int func_Uuid()
 {
 	FILE *uidfp = NULL;
     char strbuf[300];
@@ -213,7 +168,7 @@ int func_uuid()
 
 	return 0;
 }
-// end of func_uuid(); //
+// end of func_Uuid()(); //
 
 //Compile the regular expression described by "regex_text" into "r"//
 int compile_regex (regex_t *r, const char *regex_text)
@@ -531,8 +486,8 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 }
 /* end of check_kind_of_data(); */
 
-// 폴더, 파일 스캔 후 검출 #detect //
-int func_detect (gchar *path)
+// 폴더, 파일 스캔 후 검출 #fd //
+int func_Detect (gchar *path)
 {
 	DIR *dp = NULL;
 	FILE *fp = NULL;
@@ -565,7 +520,7 @@ int func_detect (gchar *path)
 			}
 
 			// 안에 폴더로 재귀함수 //
-			func_detect(filepath);
+			func_Detect(filepath);
 		}
 
 		// 파일 //
@@ -602,43 +557,23 @@ int func_detect (gchar *path)
 
 	return  0;
 }
-/* end of func_detect(); */
+/* end of func_Detect(); */
 
-// 전송 #send //
-int func_send()
+int func_SetRabbit()
 {
-	char *hostname;
-	int port, status;
-	char *exchange;
-	char *routingkey;
-	static char *enc;
-	char message[1024];
-	gdouble percent = 0.0;
-	size_t in_len = 0;
+	port = atoi(PORT);
 
-	amqp_socket_t *socket = NULL;
-	amqp_connection_state_t conn;
-	amqp_bytes_t reply_to_queue;
-
-	hostname = "127.0.0.1";
-	port = atoi("5672");
-	exchange = "aa";
-	routingkey = "ka";
-	
 	/*
 	 establish a channel that is used to connect RabbitMQ server
 	*/
 	conn = amqp_new_connection();
 
 	socket = amqp_tcp_socket_new(conn);
-	
 	if (!socket)
 	{
 	die("creating TCP socket");
 	}
-
-	status = amqp_socket_open(socket, hostname, port);
-	
+	status = amqp_socket_open(socket, HOSTNAME, port);
 	if (status)
 	{
 	die("opening TCP socket");
@@ -651,9 +586,7 @@ int func_send()
 
 					
 	amqp_channel_open(conn, 1);
-
 	die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
-
 
 	/*
 	 create private reply_to queue
@@ -673,6 +606,17 @@ int func_send()
 			return 1;
 		}
 	}
+	return 0;
+}
+
+// 전송 #fs //
+int func_Send()
+{
+	static char *enc;
+	char message[1024];
+	gdouble percent = 0.0;
+	size_t in_len = 0;
+	routingkey = "ka"; // TRCODE //
 
 	/*
 	 send the message
@@ -703,14 +647,16 @@ int func_send()
 		{
 			case 0:	// 버전 확인 //
 				printf("##### 버전 확인 #####\n");
-				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+				enc = "Version Check";
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
 									&props, amqp_cstring_bytes(enc)), "Publishing");
 				break;
 
 			case 1:	// 사용자 확인 //
-			printf("##### 사용자 확인 #####\n");
-				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+				printf("##### 사용자 확인 #####\n");
+				enc = "User Check";
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
 									&props, amqp_cstring_bytes(enc)), "Publishing");
 				break;
@@ -722,7 +668,7 @@ int func_send()
 				printf("[enc_data: %s]\n", enc);
 				printf("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
 				
-				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
 									&props, amqp_cstring_bytes(enc)), "Publishing");
 				break;
@@ -747,7 +693,7 @@ int func_send()
 					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
 					gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 
-					die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(exchange),
+					die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
 									&props, amqp_cstring_bytes(enc)), "Publishing");
 				}
@@ -877,7 +823,7 @@ int func_send()
 
 	return TRUE;
 }
-/* end of func_send(); */
+/* end of func_Send(); */
 
 // gtk_dialog_modal //
 int func_gtk_dialog_modal(int type, GtkWidget *widget, char *message)
@@ -1254,8 +1200,8 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	GtkWidget *view;
 	
-	func_detect(path);
-	func_send();
+	func_Detect(path);
+	func_Send();
 	
 	view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
@@ -1554,7 +1500,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 
 	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
 	//printf("%s\n", usrinfostr);
-	func_send();
+	func_Send();
 	
 	chk_df = 3;
 
@@ -1582,12 +1528,6 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 // main #main //
 int main (int argc, char *argv[])
 {
-	GtkBuilder	*builder;
-
-	func_verchk();	// 버전 확인	//
-	func_usrchk();	// 사용자 확인	//
-	func_uuid();
-
 	gtk_init(&argc, &argv);
 
 	builder = gtk_builder_new();
@@ -1611,9 +1551,14 @@ int main (int argc, char *argv[])
 
 	gtk_builder_connect_signals(builder, NULL);
 
+	func_SetRabbit();	// 서버와 연결	//
+	func_VerChk();		// 버전 확인	//
+	func_UsrChk();		// 사용자 확인	//
+	func_Uuid();			// 사용자 UUID	//
+
 	g_object_unref(builder);
 
-	gtk_widget_show(window); 
+	gtk_widget_show(window);
 
 	return 0;
 }

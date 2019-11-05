@@ -1,0 +1,27 @@
+<svg id="btn_restart_nor" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="88" height="36" viewBox="0 0 88 36">
+  <defs>
+    <linearGradient id="linear-gradient" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff5959"/>
+      <stop offset="1" stop-color="#e10000"/>
+    </linearGradient>
+  </defs>
+  <g id="btn_restart_nor-2" data-name="btn_restart_nor">
+    <rect id="Rectangle_Copy_8" data-name="Rectangle Copy 8" width="88" height="36" rx="18" fill="url(#linear-gradient)"/>
+    <text id="일시정지" transform="translate(55 23)" fill="#fff" font-size="13" font-family="SpoqaHanSans-Regular, SpoqaHanSans" letter-spacing="-0.018em"><tspan x="-17.708" y="0">재실행</tspan></text>
+  </g>
+  <g id="그룹_9" data-name="그룹 9" transform="translate(1099.5 -2674)">
+    <g id="타원_2" data-name="타원 2" transform="translate(-1083 2689)" fill="none" stroke="#fff" stroke-width="1">
+      <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
+      <circle cx="3.5" cy="3.5" r="3" fill="none"/>
+    </g>
+    <g id="사각형_1" data-name="사각형 1" transform="translate(-1080 2688)" fill="#fff" stroke="#f64040" stroke-width="1">
+      <rect width="1" height="4" rx="0.5" stroke="none"/>
+      <rect x="-0.5" y="-0.5" width="2" height="5" rx="1" fill="none"/>
+    </g>
+    <g id="refresh" transform="matrix(-0.454, 0.891, -0.891, -0.454, -1064.941, 2680.953)">
+      <g id="그룹_8" data-name="그룹 8" transform="translate(9.461 0.661)">
+        <path id="패스_3" data-name="패스 3" d="M23.859,6.7a.563.563,0,0,0-1.113.178l0,.01a6.2,6.2,0,1,1-1.54-3.15L20.2,3.514a.564.564,0,0,0-.357.713h0a.564.564,0,0,0,.713.357h0l1.9-.069a.563.563,0,0,0,.385-.535V1.545a.563.563,0,1,0-1.127,0V2.657A7.25,7.25,0,1,0,23.859,6.7Z" transform="translate(-9.461 -0.661)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>
