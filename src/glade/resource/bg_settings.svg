@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="bg_settings" width="660" height="610" viewBox="0 0 660 610">
+    <defs>
+        <style>
+            .cls-1{fill:#fff}.cls-2,.cls-3{fill:#343a40;font-family:SpoqaHanSans-Bold,SpoqaHanSans;font-weight:700;letter-spacing:-.018em}.cls-2{font-size:30px}.cls-3{font-size:14px}.cls-4{fill:#dee2e6}.cls-5{fill:#f3f5f7}
+        </style>
+    </defs>
+    <g id="bg_settings-2" data-name="bg_settings">
+        <path id="Rectangle" d="M0 0h650a10 10 0 0 1 10 10v590a10 10 0 0 1-10 10H10a10 10 0 0 1-10-10V0z" class="cls-1"/>
+        <text id="환경설정" class="cls-2" transform="translate(330 93)">
+            <tspan x="-54.396" y="0">환경설정</tspan>
+        </text>
+        <text id="사용자_변경_copy" class="cls-3" data-name="사용자 변경 copy" transform="translate(60 172)">
+            <tspan x="0" y="0">· 검사 기본경로</tspan>
+        </text>
+        <text id="사용자_변경_copy_3" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(60 232)">
+            <tspan x="0" y="0">· 접속서버 IP</tspan>
+        </text>
+        <text id="사용자_변경_copy_3-2" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(440 232)">
+            <tspan x="0" y="0">· Port</tspan>
+        </text>
+        <text id="사용자_변경_copy_3-3" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(60 292)">
+            <tspan x="0" y="0">· 관리자 페이지</tspan>
+        </text>
+        <rect id="input" width="420" height="40" class="cls-4" rx="10" transform="translate(180 267)"/>
+        <rect id="Rectangle_Copy_12" width="315" height="40" class="cls-5" data-name="Rectangle Copy 12" rx="6" transform="translate(285 147)"/>
+    </g>
+    <rect id="input-2" width="220" height="40" class="cls-5" data-name="input" rx="10" transform="translate(180 207)"/>
+    <rect id="input-3" width="100" height="40" class="cls-5" data-name="input" rx="10" transform="translate(500 207)"/>
+</svg>
