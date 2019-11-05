@@ -13,17 +13,16 @@
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
-static gchar *vs_dept;			// 등록 부서이름 //
+static gchar *vs_dept;		// 등록 부서이름 //
 
 static int	chk_fcnt = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_fpath[1024];	// 검출 결과에서 선택한 파일경로 //
-static char	chk_uuid[40];		// UUID 저장 //
+static char	chk_uuid[40];			// UUID 저장 //
 static uint	chk_fsize;		// 검출 결과에서 선택한 파일크기 //
-static int	chk_df = 0;		// chk data flag //
-static const char	*chk_ver;	// chk version //
+static int	chk_df = 0;			// chk data flag //
+static const char	*chk_ver;		// chk version //
 
-GtkBuilder		*builder;
 
 GtkWidget		*main_window,
 			*m_userinfo_label,
@@ -32,19 +31,26 @@ GtkWidget		*main_window,
 			*e_jobtitle_cbxtext,
 			*e_verion_label,
 			*detect_window,
-			*setting_window,
 			*department_window,
 			*d_progressbar_status,
 			*d_progressbar,
+			*setting_window,
 			*window;
 						
 GtkEntry		*e_name_entry,
-			*e_jobtitle_entry,
-			*e_department_entry,
-			*d_detect_entry;
+				*e_jobtitle_entry,
+				*e_department_entry,
+				*d_detect_entry,
+				*s_detect_entry,
+				*s_ip_entry,
+				*s_port_entry;
 
 GtkScrolledWindow	*d_scrolledwindow,
 			*dept_scrolledwindow;
+
+GtkWidget *filechooserdialog;
+
+GtkBuilder	*builder;
 
 
 char *b64_encode (const unsigned char *src, size_t len, char *enc);
@@ -63,7 +69,7 @@ void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 static GtkTreeModel	*e_create_and_fill_model (void);
 static GtkWidget	*e_create_view_and_model (void);
 
-gboolean	e_view_selection_func (GtkTreeSelection *selection,
+gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -83,7 +89,7 @@ void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
 void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
 void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
 
-gboolean	d_view_selection_func (GtkTreeSelection *selection,
+gboolean	d_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreeModel    *model,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
@@ -94,7 +100,13 @@ static GtkWidget	*d_create_view_and_model (void);
 /* end of detect_window */
 
 // setting_window #sf //
+void s_ok_btn_clicked		(GtkButton *s_ok_btn,		gpointer *data);
 void s_cloese_btn_clicked	(GtkButton *s_cloese_btn,	gpointer *data);
+void s_folder_btn_clicked	(GtkButton *s_folder_btn,	gpointer *data);
+void s_usrchg_btn_clicked	(GtkButton *s_usrchg_btn,	gpointer *data);
+void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data);
+void s_ip_entry_activate	(GtkEntry  *s_ip_entry,	gpointer *data);
+void s_port_entry_activate	(GtkEntry  *s_port_entry,	gpointer *data);
 /* end of setting_window */
 
 
@@ -116,12 +128,12 @@ int func_UsrChk()
 
 	if (chk_df == 1)
 	{
-		gtk_widget_show(enrollment_window);	// 사용자 등록 창 //
+		gtk_widget_show(enrollment_window); // 사용자 등록 창 //
 		gtk_main();
 	}
 	if (chk_df == 2)
 	{
-		gtk_widget_show(main_window);		// 메인 창 //
+		gtk_widget_show(main_window); 		// 메인 창 //
 		gtk_main();
 	}
 	
@@ -973,32 +985,30 @@ void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(d_detect_entry);
 	g_print("선택한 폴더 위치: %s\n", path);
-	
+
 	return;
 }
 
 
 void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 {
-	GtkWidget *d_filechooserdialog;
-	
-    d_filechooserdialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
+    filechooserdialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
 			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
 
-    gtk_widget_show_all(d_filechooserdialog);
+    gtk_widget_show_all(filechooserdialog);
     
-	gint resp = gtk_dialog_run(GTK_DIALOG(d_filechooserdialog));
+	gint resp = gtk_dialog_run(GTK_DIALOG(filechooserdialog));
 
     if( resp == GTK_RESPONSE_ACCEPT)
     {
-	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
+	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
     } 
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d_filechooserdialog));
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
 
 	gtk_entry_set_text(GTK_ENTRY (data), path);
 
 
-	gtk_widget_destroy(d_filechooserdialog);
+	gtk_widget_destroy(filechooserdialog);
 
 	g_print("선택한 폴더 위치: %s\n", path);
 
@@ -1295,10 +1305,10 @@ enum
 
 gboolean
 e_view_selection_func 	(GtkTreeSelection *selection,
-			 GtkTreeModel     *model,
-			 GtkTreePath      *path,
-			 gboolean          path_currently_selected,
-			 gpointer          userdata)
+							GtkTreeModel     *model,
+							GtkTreePath      *path,
+							gboolean          path_currently_selected,
+							gpointer          userdata)
 {
 	GtkTreeIter iter;
 
@@ -1428,8 +1438,8 @@ e_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*e_col;
 	GtkCellRenderer		*e_renderer;
-	GtkWidget		*e_view;
-	GtkTreeModel		*e_model;
+	GtkWidget				*e_view;
+	GtkTreeModel			*e_model;
 	GtkTreeSelection	*e_selection;
 	
 	e_view = gtk_tree_view_new();
@@ -1514,6 +1524,66 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 
 
 // setting_window function #sf //
+void s_ip_entry_activate	(GtkEntry  *s_ip_entry,	gpointer *data)
+{
+	char *hostname;
+	hostname = (gchar *)gtk_entry_get_text(s_ip_entry);
+	g_print("선택한 폴더 위치: %s\n", hostname);
+
+	return;
+}
+
+void s_port_entry_activate	(GtkEntry  *s_port_entry,	gpointer *data)
+{
+	char *port;
+	port = (gchar *)gtk_entry_get_text(s_port_entry);
+	g_print("선택한 폴더 위치: %s\n", port);
+
+	return;
+}
+
+void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data)
+{
+	path = (gchar *)gtk_entry_get_text(s_detect_entry);
+	g_print("선택한 폴더 위치: %s\n", path);
+
+	return;
+}
+
+void s_folder_btn_clicked	(GtkButton *s_folder_btn,	gpointer *data)
+{
+    filechooserdialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
+			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
+
+    gtk_widget_show_all(filechooserdialog);
+    
+	gint resp = gtk_dialog_run(GTK_DIALOG(filechooserdialog));
+
+    if( resp == GTK_RESPONSE_ACCEPT)
+    {
+	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+    } 
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+
+	gtk_entry_set_text(GTK_ENTRY (data), path);
+
+
+	gtk_widget_destroy(filechooserdialog);
+
+	g_print("선택한 폴더 위치: %s\n", path);
+
+	return;
+}
+void s_usrchg_btn_clicked	(GtkButton *s_usrchg_btn,	gpointer *data);
+
+
+void s_ok_btn_clicked		(GtkButton *s_ok_btn,		gpointer *data)
+{
+	gtk_widget_show(main_window);
+	
+	return;
+}
+
 void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 {
 	gtk_widget_hide(GTK_WIDGET(data));
@@ -1553,7 +1623,7 @@ int main (int argc, char *argv[])
 	func_SetRabbit();	// 서버와 연결	//
 	func_VerChk();		// 버전 확인	//
 	func_UsrChk();		// 사용자 확인	//
-	func_Uuid();		// 사용자 UUID	//
+	func_Uuid();			// 사용자 UUID	//
 
 	g_object_unref(builder);
 
