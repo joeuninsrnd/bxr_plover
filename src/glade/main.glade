@@ -895,213 +895,235 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkButton" id="s_ok_btn">
-            <property name="width_request">114</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="s_ok_btn_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">211</property>
-            <property name="y">510</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="s_cloese_btn">
-            <property name="width_request">114</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="s_cloese_btn_clicked" object="setting_window" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">335</property>
-            <property name="y">510</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="s_folder_btn">
-            <property name="width_request">100</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="s_folder_btn_clicked" object="s_detect_entry" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">180</property>
-            <property name="y">147</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="s_detect_entry">
-            <property name="width_request">315</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="has_frame">False</property>
-            <property name="placeholder_text" translatable="yes">  [파일/폴더] 의 위치를 입력하세요...</property>
-            <signal name="activate" handler="s_detect_entry_activate" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">285</property>
-            <property name="y">147</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="s_ip_entry">
-            <property name="width_request">220</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="has_frame">False</property>
-            <property name="placeholder_text" translatable="yes">접속서버 IP를 입력하세요...</property>
-            <signal name="activate" handler="s_ip_entry_activate" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">180</property>
-            <property name="y">207</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="s_port_entry">
-            <property name="width_request">100</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="has_frame">False</property>
-            <signal name="activate" handler="s_port_entry_activate" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">500</property>
-            <property name="y">207</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="s_usrchg_btn">
-            <property name="width_request">110</property>
-            <property name="height_request">36</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="s_usrchg_btn_clicked" object="enrollment_window" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">392</property>
-            <property name="y">337</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="s_restart_btn">
-            <property name="width_request">88</property>
-            <property name="height_request">36</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-          </object>
-          <packing>
-            <property name="x">512</property>
-            <property name="y">337</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkImage" id="s_window_image">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
+            <property name="width_request">660</property>
+            <property name="height_request">610</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="pixbuf">resource/bg_settings.svg</property>
           </object>
         </child>
         <child>
-          <object class="GtkImage" id="s_ok_btn_image">
-            <property name="width_request">114</property>
-            <property name="height_request">40</property>
+          <object class="GtkBox">
+            <property name="width_request">660</property>
+            <property name="height_request">610</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="pixbuf">resource/btn-apply-nor.svg</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkFixed" id="s_sub_fixed">
+                <property name="width_request">660</property>
+                <property name="height_request">610</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkButton" id="s_ok_btn">
+                    <property name="width_request">114</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="s_ok_btn_clicked" object="setting_window" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">211</property>
+                    <property name="y">510</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="s_cloese_btn">
+                    <property name="width_request">114</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="s_cloese_btn_clicked" object="setting_window" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">335</property>
+                    <property name="y">510</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="s_folder_btn">
+                    <property name="width_request">100</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="s_folder_btn_clicked" object="s_detect_entry" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">180</property>
+                    <property name="y">147</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="s_detect_entry">
+                    <property name="width_request">315</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="has_frame">False</property>
+                    <property name="placeholder_text" translatable="yes">  [파일/폴더] 의 위치를 입력하세요...</property>
+                    <signal name="activate" handler="s_detect_entry_activate" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">285</property>
+                    <property name="y">147</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="s_ip_entry">
+                    <property name="width_request">220</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="has_frame">False</property>
+                    <property name="placeholder_text" translatable="yes">접속서버 IP를 입력하세요...</property>
+                    <signal name="activate" handler="s_ip_entry_activate" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">180</property>
+                    <property name="y">207</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="s_port_entry">
+                    <property name="width_request">100</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="has_frame">False</property>
+                    <signal name="activate" handler="s_port_entry_activate" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">500</property>
+                    <property name="y">207</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="s_usrchg_btn">
+                    <property name="width_request">110</property>
+                    <property name="height_request">36</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
+                    <signal name="clicked" handler="s_usrchg_btn_clicked" object="enrollment_window" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">392</property>
+                    <property name="y">337</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="s_restart_btn">
+                    <property name="width_request">88</property>
+                    <property name="height_request">36</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
+                  </object>
+                  <packing>
+                    <property name="x">512</property>
+                    <property name="y">337</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage" id="s_ok_btn_image">
+                    <property name="width_request">114</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn-apply-nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">211</property>
+                    <property name="y">510</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage" id="s_cloese_btn_image">
+                    <property name="width_request">114</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn-close-nor1.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">335</property>
+                    <property name="y">510</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage" id="s_folder_btn_image">
+                    <property name="width_request">100</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn-select-folder-nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">180</property>
+                    <property name="y">147</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage" id="s_usrchg_btn_image">
+                    <property name="width_request">110</property>
+                    <property name="height_request">36</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn_change_user_nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">392</property>
+                    <property name="y">337</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage" id="s_restart_btn_image">
+                    <property name="width_request">88</property>
+                    <property name="height_request">36</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixbuf">resource/btn_restart_nor.svg</property>
+                  </object>
+                  <packing>
+                    <property name="x">512</property>
+                    <property name="y">337</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="s_pagelink_btn">
+                    <property name="label" translatable="yes">button</property>
+                    <property name="width_request">420</property>
+                    <property name="height_request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="opacity">0.20000000000000001</property>
+                    <property name="relief">none</property>
+                    <property name="uri">http://joeunins.slack.com</property>
+                  </object>
+                  <packing>
+                    <property name="x">180</property>
+                    <property name="y">267</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
           </object>
-          <packing>
-            <property name="x">211</property>
-            <property name="y">510</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="s_cloese_btn_image">
-            <property name="width_request">114</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="pixbuf">resource/btn-close-nor1.svg</property>
-          </object>
-          <packing>
-            <property name="x">335</property>
-            <property name="y">510</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="s_folder_btn_image">
-            <property name="width_request">100</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="pixbuf">resource/btn-select-folder-nor.svg</property>
-          </object>
-          <packing>
-            <property name="x">180</property>
-            <property name="y">147</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="s_usrchg_btn_image">
-            <property name="width_request">110</property>
-            <property name="height_request">36</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="pixbuf">resource/btn_change_user_nor.svg</property>
-          </object>
-          <packing>
-            <property name="x">392</property>
-            <property name="y">337</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="s_restart_btn_image">
-            <property name="width_request">88</property>
-            <property name="height_request">36</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="pixbuf">resource/btn_restart_nor.svg</property>
-          </object>
-          <packing>
-            <property name="x">512</property>
-            <property name="y">337</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLinkButton" id="s_pagelink_btn">
-            <property name="label" translatable="yes">button</property>
-            <property name="width_request">420</property>
-            <property name="height_request">40</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="opacity">0.20000000000000001</property>
-            <property name="relief">none</property>
-            <property name="uri">http://joeunins.slack.com</property>
-          </object>
-          <packing>
-            <property name="x">180</property>
-            <property name="y">267</property>
-          </packing>
         </child>
       </object>
     </child>
