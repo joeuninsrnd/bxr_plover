@@ -14,7 +14,12 @@
 
 #define	HOSTNAME	"localhost"
 #define	EXCHANGE	"aa"
-#define	PORT 		"5672"
+//#define	HOSTNAME	"plover-server"
+//#define	EXCHANGE	"amq.direct"
+#define	PORT 		5672
+#define	VHOST		"PLOVER_VHOST"
+#define	USERNAME	"plover"
+#define	PASSWORD	"Whdms9500!"
 
 #pragma pack(push, 1)
 typedef struct _Udata_Storage
@@ -45,7 +50,8 @@ Fdata_Storage fDs[50];		// 파일기준의 data구조체 //
 
 
 static int  status, port;
-static char *routingkey;
+static char *routingkey, *username, *password;
+static const char *vhost;
 static amqp_socket_t *socket = NULL;
 static amqp_connection_state_t conn;
 static amqp_bytes_t reply_to_queue;

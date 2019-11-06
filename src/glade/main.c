@@ -10,10 +10,11 @@
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
 
-static gchar *path;			// 검사 파일경로 //
-static gchar *name;			// 등록 유저이름 //
-static gchar *job;			// 등록 직급이름 //
-static gchar *vs_dept;		// 등록 부서이름 //
+static gchar *dpath;		//	default 경로	//
+static gchar *path;			// 	검사 파일경로	//
+static gchar *name;			// 	등록 유저이름	//
+static gchar *job;			//	등록 직급이름	//
+static gchar *vs_dept;		//	등록 부서이름	//
 
 static int	chk_fcnt = -1;		// 파일개수 cnt //
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
@@ -53,17 +54,10 @@ GtkWidget *filechooserdialog;
 GtkBuilder	*builder;
 
 
-char *b64_encode (const unsigned char *src, size_t len, char *enc);
-
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
 void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data);
-void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data);
-void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
-
-void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
-
 void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
 
 static GtkTreeModel	*e_create_and_fill_model (void);
@@ -74,6 +68,10 @@ gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
 					GtkTreePath     *path,
 					gboolean         path_currently_selected,
 					gpointer         userdata);
+
+void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data);
+void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
+void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
 /* end of enrollment_window */
 
 // main_window //
@@ -181,7 +179,7 @@ int func_Uuid()
 }
 // end of func_Uuid()(); //
 
-//Compile the regular expression described by "regex_text" into "r"//
+// 정규식 컴파일 //
 int compile_regex (regex_t *r, const char *regex_text)
 {
 	int status = regcomp(r, regex_text, REG_EXTENDED|REG_NEWLINE);
@@ -201,8 +199,6 @@ int compile_regex (regex_t *r, const char *regex_text)
 }
 /* end of compile_regex(); */
 
-
-//Match the string in "to_match" against the compiled regular expression in "r"//
 // 주민등록번호, 외국인등록번호 정규식 #jfr //
 char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
@@ -331,12 +327,10 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 // 운전면허 정규식 #dr //
 char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
-	/* "P" is a pointer into the string which points to the end of the
-	previous match. */
 	const char *p = to_match;
-	/* "N_matches" is the maximum number of matches allowed. */
+
 	const int n_matches = 100;
-	/* "M" contains the matches found. */
+
 	regmatch_t m[n_matches];
 
 	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
@@ -392,16 +386,13 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 }
 /* end of match_regex_d(); */
 
-
 // 여권번호 정규식 #pr //
 char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
-	/* "P" is a pointer into the string which points to the end of the
-	previous match. */
 	const char *p = to_match;
-	/* "N_matches" is the maximum number of matches allowed. */
+
 	const int n_matches = 100;
-	/* "M" contains the matches found. */
+
 	regmatch_t m[n_matches];
 
 	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
@@ -570,9 +561,13 @@ int func_Detect (gchar *path)
 }
 /* end of func_Detect(); */
 
+// RabbitMQ 소켓, 채널 열기 //
 int func_SetRabbit()
 {
-	port = atoi(PORT);
+	port		=	PORT;
+	vhost		=	VHOST;
+	username	=	USERNAME;
+	password	=	PASSWORD;
 
 	/*
 	 establish a channel that is used to connect RabbitMQ server
@@ -594,7 +589,9 @@ int func_SetRabbit()
 	die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
 																		"guest", "guest"),
 																		"Logging in");
-
+	/*die_on_amqp_error(amqp_login(conn, vhost, 200, 131072, 0, AMQP_SASL_METHOD_PLAIN,
+																		username, password),
+																		"Logging in");*/
 					
 	amqp_channel_open(conn, 1);
 	die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
@@ -605,11 +602,9 @@ int func_SetRabbit()
 	{
 		amqp_queue_declare_ok_t *r = amqp_queue_declare(
 			conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
-			
-			
+
 		die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
 
-		
 		reply_to_queue = amqp_bytes_malloc_dup(r->queue);
 		if (reply_to_queue.bytes == NULL)
 		{
@@ -617,6 +612,7 @@ int func_SetRabbit()
 			return 1;
 		}
 	}
+
 	return 0;
 }
 
@@ -627,7 +623,7 @@ int func_Send()
 	char message[1024];
 	gdouble percent = 0.0;
 	size_t in_len = 0;
-	routingkey = "ka"; // TRCODE //
+	//routingkey = "ka"; // TRCODE //
 
 	/*
 	 send the message
@@ -658,6 +654,8 @@ int func_Send()
 		{
 			case 0:	// 버전 확인 //
 				printf("##### 버전 확인 #####\n");
+				//routingkey = "BPVCHK0R"; // TRCODE //
+				routingkey = "ka";
 				enc = "Version Check";
 				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
@@ -666,6 +664,7 @@ int func_Send()
 
 			case 1:	// 사용자 확인 //
 				printf("##### 사용자 확인 #####\n");
+				routingkey = "ka"; // TRCODE //
 				enc = "User Check";
 				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
@@ -674,6 +673,8 @@ int func_Send()
 			
 			case 2:	// 사용자 등록 //
 				printf("##### 사용자 등록 #####\n");
+				//routingkey = "BPDEPT0R"; // TRCODE //
+				routingkey = "ka";
 				in_len = sizeof(uDs);
 				enc = b64_encode((unsigned char *)&uDs, in_len, enc);
 				printf("[enc_data: %s]\n", enc);
@@ -686,6 +687,7 @@ int func_Send()
 
 			case 3:	// 검출 결과 //
 				printf("##### 검출 결과  #####\n");
+				routingkey = "ka"; // TRCODE //
 				memset(message, 0x00, strlen(message));
 
 				for(int i = 0; i <= chk_fcnt; i++)
@@ -1517,10 +1519,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	
 	return;
 }
-
-
 /* end of enrollment_window */
-
 
 
 // setting_window function #sf //
@@ -1528,7 +1527,7 @@ void s_ip_entry_activate	(GtkEntry  *s_ip_entry,	gpointer *data)
 {
 	char *hostname;
 	hostname = (gchar *)gtk_entry_get_text(s_ip_entry);
-	g_print("선택한 폴더 위치: %s\n", hostname);
+	g_print("HOST NAME: %s\n", hostname);
 
 	return;
 }
@@ -1537,7 +1536,7 @@ void s_port_entry_activate	(GtkEntry  *s_port_entry,	gpointer *data)
 {
 	char *port;
 	port = (gchar *)gtk_entry_get_text(s_port_entry);
-	g_print("선택한 폴더 위치: %s\n", port);
+	g_print("PORT: %s\n", port);
 
 	return;
 }
@@ -1545,7 +1544,7 @@ void s_port_entry_activate	(GtkEntry  *s_port_entry,	gpointer *data)
 void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(s_detect_entry);
-	g_print("선택한 폴더 위치: %s\n", path);
+	g_print("선택한 디폴트 폴더 위치: %s\n", dpath);
 
 	return;
 }
@@ -1563,24 +1562,29 @@ void s_folder_btn_clicked	(GtkButton *s_folder_btn,	gpointer *data)
     {
 	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
     } 
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+	dpath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
 
-	gtk_entry_set_text(GTK_ENTRY (data), path);
+	gtk_entry_set_text(GTK_ENTRY (data), dpath);
 
 
 	gtk_widget_destroy(filechooserdialog);
 
-	g_print("선택한 폴더 위치: %s\n", path);
+	g_print("선택한 디폴트 폴더 위치: %s\n", dpath);
 
 	return;
 }
-void s_usrchg_btn_clicked	(GtkButton *s_usrchg_btn,	gpointer *data);
+
+void s_usrchg_btn_clicked	(GtkButton *s_usrchg_btn,	gpointer *data)
+{
+	gtk_widget_show(enrollment_window);
+	return;
+}
 
 
 void s_ok_btn_clicked		(GtkButton *s_ok_btn,		gpointer *data)
 {
-	gtk_widget_show(main_window);
-	
+	gtk_widget_hide(GTK_WIDGET(data));
+
 	return;
 }
 
