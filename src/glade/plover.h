@@ -46,6 +46,17 @@ typedef struct _Fdata_Storage
 
 }Fdata_Storage;
 Fdata_Storage fDs[50];		// 파일기준의 data구조체 //
+
+typedef struct _SFdata_Storage
+{
+	char uuid[37];			// UUID //
+	char fname[100];			// 파일 이름 //
+	uint fsize;				// 파일 크기 //
+	char stat[20];			// 파일 상태 //
+	char fpath[300];			// 파일 경로 //
+
+}SFdata_Storage;
+SFdata_Storage sfDs;		// 선택파일 data구조체 //
 #pragma pack(pop)
 
 
@@ -61,4 +72,4 @@ int func_Send();
 int func_VerChk();
 int func_Usrchk();
 int func_Uuid();
-int func_Detect(gchar *path);
+int func_Detect (gchar *path);
