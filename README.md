@@ -29,6 +29,7 @@ https://github.com/joeuninsrnd/bxr_plover/wiki/about-LICENSE
 
 ## 참여방법
 https://joeunins.slack.com<br>
+https://joeuninsrnd.tistory.com<br>
 https://joeuninsrnd.github.io<br>
 https://github.com/joeuninsrnd/bxr_plover/blob/master/CONTRIBUTING.md<br>
 old: https://github.com/joeunins/bxr_plover<br>
