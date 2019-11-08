@@ -1,8 +1,7 @@
 [![GitHub version](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover.svg)](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c5b68ed507a24791a1b41f3d9c5b1dc1)](https://www.codacy.com/manual/jun08111/bxr_plover?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=joeunins/bxr_plover&amp;utm_campaign=Badge_Grade)
 ## GETTING STARTED
- BXR_Plover is one of the Open OS R&D project in Korean government. It will be able to detect and protect sensitive data.<br>
-BXR_Plover structure is Server and Client in RabbitMQ and MariaDB. Now you can see UI that is made from GTK+3 and Glade, can detect sensitive data like Resident registration number, Driver License numver, Foreigner registration number and Passport number in txt file.<br><br>
+ BXR_Plover is one of the Open OS R&D project in Korean government. It will be able to detect and protect sensitive data. It is Server and Client structure in RabbitMQ and MariaDB. Now you can see UI that is made from GTK+3 and Glade, can detect sensitive data like Resident registration number, Driver License numver, Foreigner registration number and Passport number in txt file.<br><br>
 **&#35;&#35;Process and Tools&#35;&#35;**<br>Client <=> Server <=> Web <=> Administrator<br><br>
 *&#35;Client&#35;*<br>Debian 10 <br>GTK+ 3.24.10 <br>RabbitMQ 3.7.17 <br><br>
 *&#35;Server&#35;*<br>Debian 10 <br>RabbitMQ 3.7.17 <br>MariaDB 10.4.7 <br><br>
