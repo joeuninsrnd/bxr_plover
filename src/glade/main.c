@@ -165,6 +165,7 @@ int func_Uuid()
 					chk_uuid[i] = pstr[i+5];
 				}
 				strcpy(uDs.uuid, chk_uuid);
+				strcpy(sfDs.uuid, uDs.uuid);
 				printf("UUID: [%s]\n", uDs.uuid);
 			}
 		}
@@ -1001,9 +1002,8 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 
     if( resp == GTK_RESPONSE_ACCEPT)
     {
-	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
-    } 
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+    } 
 
 	gtk_entry_set_text(GTK_ENTRY (data), path);
 
@@ -1038,18 +1038,25 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 							gpointer          userdata)
 {
 	GtkTreeIter iter;
-
+	gchar *name, *stat, *fpath;
+	gint size = 0;
+	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
-		// set select data //
-		strcpy(sfDs.uuid, uDs.uuid);
-		gtk_tree_model_get(model, &iter, d_treeview_filename, 	sfDs.fname, -1);
-		gtk_tree_model_get(model, &iter, d_treeview_size,			sfDs.fsize, -1);
-		gtk_tree_model_get(model, &iter, d_treeview_stat,			sfDs.stat, -1);
-		gtk_tree_model_get(model, &iter, d_treeview_fileloca,	sfDs.fpath, -1);
-
 		if (!path_currently_selected)
 		{
+			// set select data //
+			gtk_tree_model_get(model, &iter, d_treeview_filename, 	&name, -1);
+			gtk_tree_model_get(model, &iter, d_treeview_size,			size, -1);
+			gtk_tree_model_get(model, &iter, d_treeview_stat,			&stat, -1);
+			gtk_tree_model_get(model, &iter, d_treeview_fileloca,	&fpath, -1);
+
+			// input data in structure //
+			strcpy(sfDs.fname, name);
+			sfDs.fsize = size;
+			strcpy(sfDs.stat, stat);
+			strcpy(sfDs.fpath, fpath);
+			
 			g_print ("파일위치: [%s] 선택.\n", sfDs.fpath);
 		}
 		else
