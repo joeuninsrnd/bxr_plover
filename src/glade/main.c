@@ -21,6 +21,8 @@ static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_uuid[40];			// UUID 저장 //
 static int	chk_df = 0;			// chk data flag //
 static const char	*chk_ver;		// chk version //
+static GtkTreeViewColumn	*dcol;
+static GtkCellRenderer		*drenderer;
 
 
 GtkWidget		*main_window,
@@ -49,61 +51,12 @@ GtkScrolledWindow	*d_scrolledwindow,
 
 GtkWidget *filechooserdialog;
 
+GtkWidget *d_view;
+
+GtkTreeStore	*dtreestore;
+GtkTreeIter	diter;
+
 GtkBuilder	*builder;
-
-
-// enrollment_window //
-void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
-void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
-void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data);
-void e_name_entry_activate	(GtkEntry *e_name_entry, gpointer *data);
-
-static GtkTreeModel	*e_create_and_fill_model (void);
-static GtkWidget	*e_create_view_and_model (void);
-
-gboolean	e_view_selection_func (GtkTreeSelection 	*selection,
-					GtkTreeModel    *model,
-					GtkTreePath     *path,
-					gboolean         path_currently_selected,
-					gpointer         userdata);
-
-void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data);
-void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data);
-void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data);
-/* end of enrollment_window */
-
-// main_window //
-void m_window_destroy();
-void m_detect_btn_clicked	(GtkButton *m_detect_btn,	gpointer *data);
-void m_setting_btn_clicked	(GtkButton *m_setting_btn,	gpointer *data);
-/* end of main_window */
-
-// detect_window #df //
-void d_detect_btn_clicked	(GtkButton *d_detect_btn,	gpointer *data);
-void d_option_btn_clicked	(GtkButton *d_option_btn,	gpointer *data);
-void d_folder_btn_clicked	(GtkButton *d_folder_btn,	gpointer *data);
-void d_close_btn_clicked	(GtkButton *d_close_btn,	gpointer *data);
-void d_detect_entry_activate	(GtkEntry  *d_detect_entry,	gpointer *data);
-
-gboolean	d_view_selection_func (GtkTreeSelection 	*selection,
-					GtkTreeModel    *model,
-					GtkTreePath     *path,
-					gboolean         path_currently_selected,
-					gpointer         userdata);
-										
-static GtkTreeModel	*d_create_and_fill_model (void);
-static GtkWidget	*d_create_view_and_model (void);
-/* end of detect_window */
-
-// setting_window #sf //
-void s_ok_btn_clicked		(GtkButton *s_ok_btn,		gpointer *data);
-void s_cloese_btn_clicked	(GtkButton *s_cloese_btn,	gpointer *data);
-void s_folder_btn_clicked	(GtkButton *s_folder_btn,	gpointer *data);
-void s_usrchg_btn_clicked	(GtkButton *s_usrchg_btn,	gpointer *data);
-void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data);
-void s_ip_entry_activate	(GtkEntry  *s_ip_entry,	gpointer *data);
-void s_port_entry_activate	(GtkEntry  *s_port_entry,	gpointer *data);
-/* end of setting_window */
 
 
 // Version Check #fvc//
@@ -708,6 +661,9 @@ int func_Send()
 					die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
 									&props, amqp_cstring_bytes(enc)), "Publishing");
+									
+				case 4:	// 파일 삭제 //
+					printf("##### 파일 삭제  #####\n");
 				}
 				break;
 
@@ -1072,16 +1028,13 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 static GtkTreeModel *
 d_create_and_fill_model (void)
 {
-	GtkTreeStore	*treestore;
-	GtkTreeIter	iter;
-
-	treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
+	dtreestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
 					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
 	
 	for(int i = 0; i <= chk_fcnt; i++)
 	{
-		gtk_tree_store_append(treestore, &iter, NULL);
-		gtk_tree_store_set (treestore, &iter,
+		gtk_tree_store_append(dtreestore, &diter, NULL);
+		gtk_tree_store_set (dtreestore, &diter,
 					  d_treeview_num, i + 1,
 					  d_treeview_filename,	fDs[i].fname,
 					  d_treeview_jcnt,	fDs[i].jcnt,
@@ -1094,7 +1047,7 @@ d_create_and_fill_model (void)
 					  -1);
 	}
 
-	return GTK_TREE_MODEL(treestore);
+	return GTK_TREE_MODEL(dtreestore);
 }
 
 static GtkWidget *
@@ -1102,11 +1055,11 @@ d_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*col;
 	GtkCellRenderer		*renderer;
-	GtkWidget		*view;
+	GtkWidget		*d_view;
 	GtkTreeModel		*model;
 	GtkTreeSelection	*selection;
 	
-	view = gtk_tree_view_new();
+	d_view = gtk_tree_view_new();
 
 	// Column #컬럼명 //
 	col = gtk_tree_view_column_new();
@@ -1114,7 +1067,7 @@ d_create_view_and_model (void)
 	gtk_tree_view_column_set_title(col, "번호");
 
 	// pack tree view column into tree view //
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 
 	renderer = gtk_cell_renderer_text_new();
 
@@ -1126,7 +1079,7 @@ d_create_view_and_model (void)
 	// --- Column #파일 이름 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "파일 이름");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filename);
@@ -1134,7 +1087,7 @@ d_create_view_and_model (void)
 	// --- Column #주민번호 개수 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "주민번호");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_jcnt);
@@ -1142,7 +1095,7 @@ d_create_view_and_model (void)
 	// --- Column #운전면허 개수 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "운전면허");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_dcnt);
@@ -1150,7 +1103,7 @@ d_create_view_and_model (void)
 	// --- Column #외국인등록번호 개수 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "외국인등록");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fgcnt);
@@ -1158,23 +1111,23 @@ d_create_view_and_model (void)
 	// --- Column #여권번호 개수 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "여권번호");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_pcnt);
 
 	// --- Column #상태 --- //
-	col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(col, "상태");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_stat);
+	dcol = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(dcol, "상태");
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), dcol);
+	drenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(dcol, drenderer, TRUE);
+	gtk_tree_view_column_add_attribute(dcol, drenderer, "text", d_treeview_stat);
 	
 	// --- Column #파일 크기 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "파일 크기");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_size);
@@ -1182,12 +1135,12 @@ d_create_view_and_model (void)
 	// --- Column #파일 위치 --- //
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, "파일 위치");
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fileloca);
 	
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(d_view));
 	
 	gtk_tree_selection_set_select_function(selection, d_view_selection_func, NULL, NULL);
 
@@ -1195,30 +1148,26 @@ d_create_view_and_model (void)
 
 	model = d_create_and_fill_model();
 
-	gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(d_view), model);
 
 	g_object_unref(model); // destroy model automatically with view //
 
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(d_view)),
 							  GTK_SELECTION_SINGLE);
 
-	return view;
+	return d_view;
 }
 	/* end of treeview function */
 
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
-	GtkWidget *view;
-	
 	func_Detect(path);
 	func_Send();
 	
-	view = d_create_view_and_model();
-	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), view);
+	d_view = d_create_view_and_model();
+	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
-
-	//strcpy(fDs[chk_fcnt].stat, "일반");
 
 	return;
 }
@@ -1259,6 +1208,12 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 	}
 
 	strcpy(sfDs.stat, "삭제");
+	//gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+	gtk_tree_store_remove(dtreestore, &diter);									// 선택한거만 지우기
+
+	//d_view = d_create_view_and_model();
+	//gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
+	//gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
 
 	return;
 }
