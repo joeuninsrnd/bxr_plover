@@ -1208,12 +1208,14 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 	}
 
 	strcpy(sfDs.stat, "삭제");
-	//gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
-	gtk_tree_store_remove(dtreestore, &diter);									// 선택한거만 지우기
-
-	//d_view = d_create_view_and_model();
-	//gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
-	//gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+	gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+	//gtk_tree_store_remove(dtreestore, &diter);									// 선택한거만 지우기
+	strcpy(fDs->stat, "삭제");
+	d_view = d_create_view_and_model();
+	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
+	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+	
+	printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 	return;
 }
