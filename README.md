@@ -1,7 +1,6 @@
 [![GitHub version](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover.svg)](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c5b68ed507a24791a1b41f3d9c5b1dc1)](https://www.codacy.com/manual/jun08111/bxr_plover?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=joeunins/bxr_plover&amp;utm_campaign=Badge_Grade)<br>
 ![plover_symbol_small](https://user-images.githubusercontent.com/28081461/68650959-8e942580-0569-11ea-8e49-5be2e7ee7a40.png)<br>
-**Blue X-ray Plover v1.0.0.1**
 
 ## 개요
  bxr_plover(민감정보 생명주기 관리프로그램)는 최근 정부에서 진행되는 개방형 OS 도입 및 확산 프로젝트의 한 부분으로 진행되는 연구 개발로써 개방형 OS 환경에서의 민감정보 검출 및 유출을 방지하기 위한 방향으로 진행할 것이며, RabbitMQ를 사용하여 Server와 Client 통신을 하고 MariaDB, Tomcat을 사용할 예정이다. 현재 GTK와 Glade로 개발한 UI를 통해 Server/Client 구조로 txt파일 형태의 민감정보(주민등록번호, 외국인등록번호, 운전면허번호, 여권번호) 검출이 가능하며 hwp, pdf 등과 같은 다양한 문서포맷을 검출하는 모듈을 개발중이다. 또한, 관리자 페이지도 개발 및 디자인 중이다.<br><br>
