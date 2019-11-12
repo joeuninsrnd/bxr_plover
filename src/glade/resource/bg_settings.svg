@@ -15,15 +15,15 @@
         <text id="사용자_변경_copy_3" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(60 232)">
             <tspan x="0" y="0">· 접속서버 IP</tspan>
         </text>
-        <text id="사용자_변경_copy_3-2" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(440 232)">
+        <text id="사용자_변경_copy_3-2" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(380 232)">
             <tspan x="0" y="0">· Port</tspan>
         </text>
         <text id="사용자_변경_copy_3-3" class="cls-3" data-name="사용자 변경 copy 3" transform="translate(60 292)">
             <tspan x="0" y="0">· 관리자 페이지</tspan>
         </text>
-        <rect id="input" width="420" height="40" class="cls-4" rx="10" transform="translate(180 267)"/>
-        <rect id="Rectangle_Copy_12" width="315" height="40" class="cls-5" data-name="Rectangle Copy 12" rx="6" transform="translate(285 147)"/>
+        <rect id="input" width="430" height="40" class="cls-4" rx="10" transform="translate(170 267)"/>
+        <rect id="Rectangle_Copy_12" width="325" height="40" class="cls-5" data-name="Rectangle Copy 12" rx="6" transform="translate(275 147)"/>
     </g>
-    <rect id="input-2" width="220" height="40" class="cls-5" data-name="input" rx="10" transform="translate(180 207)"/>
-    <rect id="input-3" width="100" height="40" class="cls-5" data-name="input" rx="10" transform="translate(500 207)"/>
+    <rect id="input-2" width="180" height="40" class="cls-5" data-name="input" rx="10" transform="translate(170 207)"/>
+    <rect id="input-3" width="160" height="40" class="cls-5" data-name="input" rx="10" transform="translate(440 207)"/>
 </svg>

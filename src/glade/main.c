@@ -16,11 +16,12 @@ static gchar *name;			// 	등록 유저이름	//
 static gchar *job;			//	등록 직급이름	//
 static gchar *vs_dept;		//	등록 부서이름	//
 
-static int	chk_fcnt = -1;		// 파일개수 cnt //
+static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개//
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_uuid[40];			// UUID 저장 //
 static int	chk_df = 0;			// chk data flag //
 static const char	*chk_ver;		// chk version //
+static gchar	*fname;
 static GtkTreeViewColumn	*dcol;
 static GtkCellRenderer		*drenderer;
 
@@ -118,7 +119,7 @@ int func_Uuid()
 					chk_uuid[i] = pstr[i+5];
 				}
 				strcpy(uDs.uuid, chk_uuid);
-				strcpy(sfDs.uuid, uDs.uuid);
+				strcpy(sfDs.uuid, chk_uuid);
 				printf("UUID: [%s]\n", uDs.uuid);
 			}
 		}
@@ -646,7 +647,7 @@ int func_Send()
 				{
 					percent = i / chk_fcnt * 100;
 					strcpy(fDs[i].uuid, uDs.uuid);
-					size_t in_len = sizeof(fDs[i]);
+					in_len = sizeof(fDs[i]);
 					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 					enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
 					
@@ -661,10 +662,19 @@ int func_Send()
 					die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
 									amqp_cstring_bytes(routingkey), 0, 0,
 									&props, amqp_cstring_bytes(enc)), "Publishing");
-									
-				case 4:	// 파일 삭제 //
-					printf("##### 파일 삭제  #####\n");
 				}
+				break;
+
+			case 4:	// 파일 삭제 //
+				printf("##### 파일 삭제  #####\n");
+				routingkey = "ka"; // TRCODE //
+				in_len = sizeof(sfDs);
+				enc = b64_encode((unsigned char *)&sfDs, in_len, enc);
+				printf("[enc_data: %s]\n", enc);
+				
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
 				break;
 
 		}
@@ -833,7 +843,7 @@ int func_file_eraser(int type)
 	FILE *fp;
 	int mode = R_OK | W_OK;
 	char MsgTmp[5];
-	gdouble size = 0.0;
+	guint size = 0;
 	char *msize;
 
 	if( access( sfDs.fpath, mode ) != 0 )
@@ -845,13 +855,11 @@ int func_file_eraser(int type)
 	{
 		msize = malloc(ERASER_SIZE);
 		fp = fopen(sfDs.fpath, "w");
-		
+
 		for( int i=0 ; i < type ; i++ )
 		{
-			size = 0;
-
 			while (size<sfDs.fsize)
-			{   
+			{
 				switch(i)
 				{
 					case 0 :
@@ -896,8 +904,10 @@ int func_file_eraser(int type)
 					default :
 						break;
 				}
+				
+				size += ERASER_SIZE;
 			}
-			
+
 			fseek( fp, 0L, SEEK_SET );
 		}
 		
@@ -907,7 +917,8 @@ int func_file_eraser(int type)
 
 	remove( sfDs.fpath );
 	func_gtk_dialog_modal(0, window, "\n    삭제가 완료되었습니다.    \n");
-	
+	chk_df = 4;
+
 	return( TRUE );
 }
 // end of func_file_eraser(); //
@@ -923,14 +934,14 @@ void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 void m_setting_btn_clicked (GtkButton *m_setting_btn, gpointer *data)
 {
 	gtk_widget_show(setting_window);
-	
+
 	return;
 }
 
 void m_window_destroy()
 {
 	gtk_main_quit();
-	
+
 	return;
 }
 /* end of main_window function */
@@ -994,26 +1005,27 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 							gpointer          userdata)
 {
 	GtkTreeIter iter;
-	gchar *name, *stat, *fpath;
-	gint size = 0;
+	gchar *stat, *fpath;
+	uint fsize;
 	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
 		if (!path_currently_selected)
 		{
 			// set select data //
-			gtk_tree_model_get(model, &iter, d_treeview_filename, 	&name, -1);
-			gtk_tree_model_get(model, &iter, d_treeview_size,			size, -1);
+			gtk_tree_model_get(model, &iter, d_treeview_filename, 	&fname, -1);
+			gtk_tree_model_get(model, &iter, d_treeview_size,			&fsize, -1);
 			gtk_tree_model_get(model, &iter, d_treeview_stat,			&stat, -1);
 			gtk_tree_model_get(model, &iter, d_treeview_fileloca,	&fpath, -1);
 
 			// input data in structure //
-			strcpy(sfDs.fname, name);
-			sfDs.fsize = size;
+			strcpy(sfDs.fname, fname);
+			sfDs.fsize = fsize;
 			strcpy(sfDs.stat, stat);
 			strcpy(sfDs.fpath, fpath);
-			
+
 			g_print ("파일위치: [%s] 선택.\n", sfDs.fpath);
+
 		}
 		else
 		{
@@ -1162,9 +1174,12 @@ d_create_view_and_model (void)
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
+	chk_df = 3;
+
 	func_Detect(path);
 	func_Send();
-	
+
+	gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
 	d_view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
@@ -1199,7 +1214,31 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
     
 		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 		{
+			int res = 0;
 			func_file_eraser(3);
+			strcpy(sfDs.stat, "삭제");
+			printf("chk_fcnt: %d\n", chk_fcnt);
+			for(int i = 0; i <= chk_fcnt; i++)
+			{
+				res = strcmp(fname, fDs[i].fname);
+
+				if(res == 0)
+				{
+					strcpy(fDs[i].stat, "삭제");
+					printf("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
+				}
+			}
+
+			gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
+
+			printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+
+			d_view = d_create_view_and_model();
+			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
+			gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+			
+			func_Send();
 		}
 		else
 		{
@@ -1207,15 +1246,7 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 		}
 	}
 
-	strcpy(sfDs.stat, "삭제");
-	gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
-	//gtk_tree_store_remove(dtreestore, &diter);									// 선택한거만 지우기
-	strcpy(fDs->stat, "삭제");
-	d_view = d_create_view_and_model();
-	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
-	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
 	
-	printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 	return;
 }
@@ -1460,6 +1491,9 @@ void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
 void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
 	char *usrinfostr = malloc(sizeof(char) * 10);
+
+	chk_df = 3;
+
 	sprintf(usrinfostr, "%s %s", uDs.uname, uDs.ujob);
 
 	gtk_widget_hide(enrollment_window);
@@ -1470,8 +1504,6 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
 	//printf("%s\n", usrinfostr);
 	func_Send();
-	
-	chk_df = 3;
 
 	gtk_main();
 	
