@@ -12,6 +12,7 @@
 #include "encode.c"
 #include "decode.c"
 
+#define	MAX_FCNT	100
 #define	HOSTNAME	"localhost"
 #define	EXCHANGE	"aa"
 //#define	HOSTNAME	"plover-server"
@@ -45,7 +46,7 @@ typedef struct _Fdata_Storage
 	char fpath[300];			// 파일 경로 //
 
 }Fdata_Storage;
-Fdata_Storage fDs[50];		// 파일기준의 data구조체 //
+Fdata_Storage fDs[MAX_FCNT];		// 파일기준의 data구조체 //
 
 typedef struct _SFdata_Storage
 {
