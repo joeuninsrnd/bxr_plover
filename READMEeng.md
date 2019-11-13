@@ -14,7 +14,7 @@ Install
 ## RUN
 1. download
 1. build
-gcc -o bxr_plover main.c -lrabbitmq -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic</br>
+gcc -o bxr_plover main.c -lrabbitmq -Wall 	&#96;pkg-config --cflags --libs gtk+-3.0	&#96; -export-dynamic</br>
 on /usr/include input *.h files than you can fix bug.</br>
 1. run
 ./bxr_plover
