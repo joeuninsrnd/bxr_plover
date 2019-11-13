@@ -917,6 +917,7 @@ int func_file_eraser(int type)
 
 	remove( sfDs.fpath );
 	func_gtk_dialog_modal(0, window, "\n    삭제가 완료되었습니다.    \n");
+
 	chk_df = 4;
 
 	return( TRUE );
@@ -969,7 +970,7 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 
     if( resp == GTK_RESPONSE_ACCEPT)
     {
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+		path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
     } 
 
 	gtk_entry_set_text(GTK_ENTRY (data), path);
@@ -1042,7 +1043,7 @@ d_create_and_fill_model (void)
 {
 	dtreestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
 					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
-	
+
 	for(int i = 0; i <= chk_fcnt; i++)
 	{
 		gtk_tree_store_append(dtreestore, &diter, NULL);
@@ -1175,7 +1176,9 @@ d_create_view_and_model (void)
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	chk_df = 3;
-
+	chk_fcnt = -1; // 파일개수 count 초기화
+	memset (&fDs, 0, sizeof (fDs)); // 구조체 초기화
+	
 	func_Detect(path);
 	func_Send();
 
@@ -1216,7 +1219,6 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 		{
 			int res = 0;
 			func_file_eraser(3);
-			strcpy(sfDs.stat, "삭제");
 			printf("chk_fcnt: %d\n", chk_fcnt);
 			for(int i = 0; i <= chk_fcnt; i++)
 			{
@@ -1237,7 +1239,8 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 			d_view = d_create_view_and_model();
 			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
 			gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
-			
+
+			strcpy(sfDs.stat, "삭제");
 			func_Send();
 		}
 		else
