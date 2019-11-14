@@ -5,6 +5,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <regex.h>
+#include "iniparser.h"
+#include "iniparser.c"
+#include "dictionary.h"
+#include "dictionary.c"
 
 #define	MAX_ERROR_MSG	0x1000
 #define	ERASER_SIZE	512		//1k
@@ -18,7 +22,8 @@ static gchar *vs_dept;		//	등록 부서이름	//
 
 static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개//
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
-static char	chk_uuid[40];			// UUID 저장 //
+static char	chk_uuid[40];			// INI UUID 확인 //
+static char	set_uuid[40];			// UUID 저장 //
 static int	chk_df = 0;			// chk data flag //
 static const char	*chk_ver;		// chk version //
 static gchar	*fname;
@@ -59,6 +64,53 @@ GtkTreeIter	diter;
 
 GtkBuilder	*builder;
 
+// Create IniFile //
+void func_CreateIni(void)
+{
+    FILE    *   ini ;
+
+    if ((ini=fopen("plover.ini", "w"))==NULL) {
+        fprintf(stderr, "iniparser: cannot create plover.ini\n");
+        return ;
+    }
+
+    fprintf(ini,
+    "[USERINFO]\n"
+    "\n"
+    "UUID	=	%s;\n"
+    "\n", uDs.uuid);
+
+    fclose(ini);
+}
+// end of func_MakeIni(); //
+
+// Parse IniFile //
+int  func_ParseIni(char * ini_name)
+{
+    dictionary  *   ini ;
+
+    /* Some temporary variables to hold query results */
+
+    ini = iniparser_load(ini_name);
+    if (ini==NULL) {
+        fprintf(stderr, "cannot parse file: %s\n", ini_name);
+        return -1 ;
+    }
+    iniparser_dump(ini, stderr);
+
+    /* Get attributes */	
+    INI_UUID = iniparser_getstring(ini, "USERINFO:UUID", NULL);
+    strcpy(chk_uuid ,INI_UUID);
+    printf("********** INI FILE **********.\n");
+    printf("INI UUID:	[%s]\n", INI_UUID ? INI_UUID : "UNDEF");
+    
+    //i = iniparser_getint(ini, "a:b", -1);
+    //printf("a:	[%d]\n", i);
+
+    iniparser_freedict(ini);
+    return 0 ;
+}
+// end of func_ParseIni(); //
 
 // Version Check #fvc//
 int func_VerChk()
@@ -74,7 +126,23 @@ int func_VerChk()
 // 계정이 있는지 확인: 1=없다 2=있다 #fuc //
 int func_UsrChk()
 {
+	int tmp;
+
+	chk_df = 1;
 	func_Send();
+	tmp = strcmp(chk_uuid, uDs.uuid); // 클라이언트 흐름 다시 생각해보기. 실행부터
+
+	if (tmp == 0)
+	{
+		printf("사용자님 안녕하세요!\n");
+		chk_df = 2;
+	}
+	else
+	{
+		printf("사용자 등록을 해주세요!\n");
+		chk_df = 1;
+	}
+	 
 
 	if (chk_df == 1)
 	{
@@ -116,10 +184,10 @@ int func_Uuid()
 			{
 				for (int i = 0; i < 36; i++)
 				{ 
-					chk_uuid[i] = pstr[i+5];
+					set_uuid[i] = pstr[i+5];
 				}
-				strcpy(uDs.uuid, chk_uuid);
-				strcpy(sfDs.uuid, chk_uuid);
+				strcpy(uDs.uuid, set_uuid);
+				strcpy(sfDs.uuid, set_uuid);
 				printf("UUID: [%s]\n", uDs.uuid);
 			}
 		}
@@ -438,6 +506,8 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	regex_text = "[a-zA-Z]{2}[0-9]{7}";
 	compile_regex(&r, regex_text); // 정규식 컴파일 //
 	match_regex_p(&r, to_match, filepath, file, buf);
+
+	return;
 }
 /* end of check_kind_of_data(); */
 
@@ -1176,8 +1246,8 @@ d_create_view_and_model (void)
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	chk_df = 3;
-	chk_fcnt = -1; // 파일개수 count 초기화
-	memset (&fDs, 0, sizeof (fDs)); // 구조체 초기화
+	chk_fcnt = -1; 						// 파일개수 count 초기화
+	memset (&fDs, 0, sizeof (fDs));		// 구조체 초기화
 	
 	func_Detect(path);
 	func_Send();
@@ -1495,7 +1565,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
 	char *usrinfostr = malloc(sizeof(char) * 10);
 
-	chk_df = 3;
+	chk_df = 2;
 
 	sprintf(usrinfostr, "%s %s", uDs.uname, uDs.ujob);
 
@@ -1594,6 +1664,8 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 // main #main //
 int main (int argc, char *argv[])
 {
+	int chkini;
+	
 	gtk_init(&argc, &argv);
 
 	builder = gtk_builder_new();
@@ -1618,6 +1690,17 @@ int main (int argc, char *argv[])
 	gtk_builder_connect_signals(builder, NULL);
 
 	func_Uuid();			// 사용자 UUID	//
+	
+	// Ini File Check //
+	chkini = func_ParseIni("plover.ini");
+	if (chkini != 0)
+	{
+		func_CreateIni();
+		printf("ini 파일 생성!\n");
+		chkini = func_ParseIni("plover.ini");
+    }
+    
+
 	func_SetRabbit();	// 서버와 연결	//
 	func_VerChk();		// 버전 확인	//
 	func_UsrChk();		// 사용자 확인	//

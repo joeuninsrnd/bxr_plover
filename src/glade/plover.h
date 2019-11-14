@@ -22,6 +22,9 @@
 #define	USERNAME	"plover"
 #define	PASSWORD	"Whdms9500!"
 
+const char *INI_UUID;
+
+
 #pragma pack(push, 1)
 typedef struct _Udata_Storage
 {
@@ -68,6 +71,8 @@ static amqp_socket_t *socket = NULL;
 static amqp_connection_state_t conn;
 static amqp_bytes_t reply_to_queue;
 
+void func_CreateIni(void);
+int  func_ParseIni(char * ini_name);
 int func_SetRabbit();
 int func_Send();
 int func_VerChk();
