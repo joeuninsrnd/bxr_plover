@@ -44,7 +44,7 @@ typedef struct _Fdata_Storage
 	uint dcnt;				// 운전면허 개수 //
 	uint fgcnt;				// 외국인등록번호 개수 //
 	uint pcnt;				// 여권번호 개수 //
-	uint fsize;				// 파일 크기 //
+	ulong fsize;				// 파일 크기 //
 	char stat[20];			// 파일 상태 //
 	char fpath[300];			// 파일 경로 //
 
@@ -55,7 +55,7 @@ typedef struct _SFdata_Storage
 {
 	char uuid[37];			// UUID //
 	char fname[100];			// 파일 이름 //
-	uint fsize;				// 파일 크기 //
+	ulong fsize;				// 파일 크기 //
 	char stat[20];			// 파일 상태 //
 	char fpath[300];			// 파일 경로 //
 

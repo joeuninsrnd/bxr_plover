@@ -14,6 +14,10 @@
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
 
+int x,y,z; //지울거
+int nomatch;					// regex //
+const int n_matches = 200;	// "N_matches" is the maximum number of matches allowed. //
+
 static gchar *dpath;		//	default 경로	//
 static gchar *path;			// 	검사 파일경로	//
 static gchar *name;			// 	등록 유저이름	//
@@ -207,13 +211,13 @@ int compile_regex (regex_t *r, const char *regex_text)
 
 	if (status != 0)
 	{
-	char error_message[MAX_ERROR_MSG];
+		char error_message[MAX_ERROR_MSG];
 
-	regerror(status, r, error_message, MAX_ERROR_MSG);
+		regerror(status, r, error_message, MAX_ERROR_MSG);
 
-	printf("Regex error compiling '%s': %s\n", regex_text, error_message);
+		printf("Regex error compiling '%s': %s\n", regex_text, error_message);
 
-	return 1;
+		return 1;
 	}
 
 	return 0;
@@ -226,19 +230,19 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 	/* "P" is a pointer into the string which points to the end of the
 	previous match. */
 	const char *p = to_match;
-	/* "N_matches" is the maximum number of matches allowed. */
-	const int n_matches = 100;
+
 	/* "M" contains the matches found. */
 	regmatch_t m[n_matches];
 
 	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
 	while (1)
 	{
-		int nomatch = regexec(r, p, n_matches, m, 0);
+		nomatch = regexec(r, p, n_matches, m, 0);
 
 		if (nomatch)
 		{
-			printf("No more matches.\n");
+			//printf("No more matches.\n");
+			printf("[%d] JF reading\n", z++);
 			return 0;
 		}
 
@@ -277,12 +281,12 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 					if (jtmp >= 10)
 					{
-					jtmp -= 10;
+						jtmp -= 10;
 					}
 
 					if (fgtmp >= 10)
 					{
-					fgtmp -= 10;
+						fgtmp -= 10;
 					}
 
 					// 주민번호 유효성 통과 //
@@ -290,10 +294,10 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					{
 						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
 
-					if (res != 0)
-					{
-						chk_fcnt++;
-					}
+						if (res != 0)
+						{
+							chk_fcnt++;
+						}
 
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
@@ -307,19 +311,17 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					fDs[chk_fcnt].fsize = buf.st_size;
 					strcpy(fDs[chk_fcnt].stat, "일반");
 
-					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 					}
 
 					// 외국인등록번호 유효성 통과 //
 					if (fgtmp == chk)
 					{
-					int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
+						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
 
-					if (res != 0)
-					{
-						chk_fcnt++;
-					}
+						if (res != 0)
+						{
+							chk_fcnt++;
+						}
 
 					// 읽고있는중인 파일 이름 저장 //
 					strcpy(chk_fname, file->d_name);
@@ -333,8 +335,6 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					fDs[chk_fcnt].fsize = buf.st_size;
 					strcpy(fDs[chk_fcnt].stat, "일반");
 
-					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].pcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 					}
 				}
 			}
@@ -350,18 +350,17 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 {
 	const char *p = to_match;
 
-	const int n_matches = 100;
-
 	regmatch_t m[n_matches];
 
 	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
 	while (1)
 	{
-		int nomatch = regexec(r, p, n_matches, m, 0);
+		nomatch = regexec(r, p, n_matches, m, 0);
 
 		if (nomatch)
 		{
-			printf("No more matches.\n");
+			//printf("No more matches.\n");
+			printf("[%d] D reading\n", x++);
 			return 0;
 		}
 
@@ -396,8 +395,6 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					fDs[chk_fcnt].fsize = buf.st_size;
 					strcpy(fDs[chk_fcnt].stat, "일반");
 
-					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].pcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 				}
 			}
 		}
@@ -412,18 +409,17 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 {
 	const char *p = to_match;
 
-	const int n_matches = 100;
-
 	regmatch_t m[n_matches];
 
 	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
 	while (1)
 	{
-		int nomatch = regexec(r, p, n_matches, m, 0);
+		nomatch = regexec(r, p, n_matches, m, 0);
 
 		if (nomatch)
 		{
-			printf("No more matches.\n");
+			//printf("No more matches.\n");
+			printf("[%d] P reading\n", y++);
 			return 0;
 		}
 
@@ -458,8 +454,6 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					fDs[chk_fcnt].fsize = buf.st_size;
 					strcpy(fDs[chk_fcnt].stat, "일반");
 
-					printf("num: %d, jcnt: %d, dcnt: %d, fgcnt: %d, pcnt: %d, file_path: %s, file_name: %s, file_size: %dbyte\n",
-						chk_fcnt+1, fDs[chk_fcnt].jcnt, fDs[chk_fcnt].dcnt, fDs[chk_fcnt].fgcnt, fDs[chk_fcnt].pcnt, fDs[chk_fcnt].fpath, fDs[chk_fcnt].fname, fDs[chk_fcnt].fsize);
 				}
 			}
 		}
@@ -519,63 +513,64 @@ int func_Detect (gchar *path)
 	struct dirent *file = NULL;
 	struct stat buf;
 	char filepath[300];
-	char buffer[5000];
-	const char *find_text;
+	uint sum = 0, cur = 0;
 
-	if ((dp = opendir(path)) == NULL)
+	if ((dp = opendir(path)) != NULL)
+	{
+		while ((file = readdir(dp)) != NULL)
+		{
+		// filepath에 현재 path넣기 //
+		sprintf(filepath, "%s/%s", path, file->d_name);
+		lstat(filepath, &buf);
+
+			// 폴더 //
+			if (S_ISDIR(buf.st_mode))
+			{
+				// .이거하고 ..이거 제외 //
+				if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
+				{
+					continue;
+				}
+
+				// 안에 폴더로 재귀함수 //
+				func_Detect(filepath);
+			}
+
+			// 파일 //
+			else if (S_ISREG(buf.st_mode))
+			{
+				fp = fopen(filepath, "r");
+				fseek( fp, 0, SEEK_END);
+				long lSize = ftell(fp);
+				fseek( fp, 0, SEEK_SET);
+
+				char *buff = (char *)malloc( sizeof (char)*lSize);
+
+				while ((cur = fread(&buff[sum], sizeof(char), lSize - cur, fp)) > 0 )
+				{
+					sum += cur;
+				}
+				
+				if (sum != lSize)
+				{
+					printf("파일을 읽을수 없습니다.\n");
+				}
+
+				printf("버퍼에 다 넣었다~~~~~~~~~\n");
+				check_kind_of_data( buff, filepath, file, buf);
+
+				fclose(fp);
+				printf("Close FILE\n");
+				chk_fname[0] = 0; // 초기화 //
+			}
+		}
+	}
+	else
 	{
 		printf("폴더를 열수 없습니다.\n");
-
 		return -1;
 	}
 
-	while ((file = readdir(dp)) != NULL)
-	{
-	// filepath에 현재 path넣기 //
-	sprintf(filepath, "%s/%s", path, file->d_name);
-	lstat(filepath, &buf);
-
-		// 폴더 //
-		if (S_ISDIR(buf.st_mode))
-		{
-			// .이거하고 ..이거 제외 //
-			if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
-			{
-			continue;
-			}
-
-			// 안에 폴더로 재귀함수 //
-			func_Detect(filepath);
-		}
-
-		// 파일 //
-		else if (S_ISREG(buf.st_mode))
-		{
-			fp = fopen(filepath, "r");
-
-			if (NULL == fp)
-			{
-				printf("파일을 열수 없습니다.\n");
-				return 1;
-			}
-
-			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
-			while (feof(fp) == 0)
-			{
-				fread(buffer, sizeof(char), sizeof(buffer), fp);
-				find_text = buffer;
-				check_kind_of_data(find_text, filepath, file, buf);
-				find_text = NULL;
-			}
-
-			// 메모리관리(초기화), 파일닫기 //
-			memset(buffer, 0, sizeof(buffer));
-			fclose(fp);
-			printf("Close FILE\n");
-			chk_fname[0] = 0; // 초기화 //
-		}
-	}
-	
 	closedir(dp);
 
 	printf("Close DIR\n");
@@ -722,7 +717,7 @@ int func_Send()
 					enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
 					
 					printf("[enc_data: %s]\n", enc);
-					printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
+					printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %ld, fstat: %s, fpath: %s]\n\n",
 								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
 
 					sprintf( message, "%.0f%% Complete", percent);
@@ -913,7 +908,7 @@ int func_file_eraser(int type)
 	FILE *fp;
 	int mode = R_OK | W_OK;
 	char MsgTmp[5];
-	guint size = 0;
+	gulong size = 0;
 	char *msize;
 
 	if( access( sfDs.fpath, mode ) != 0 )
@@ -1077,7 +1072,7 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 {
 	GtkTreeIter iter;
 	gchar *stat, *fpath;
-	uint fsize;
+	ulong fsize;
 	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
@@ -1304,7 +1299,7 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 			gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
 			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
 
-			printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+			printf("[UUID: %s], [파일이름: %s], [파일크기: %ld], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 			d_view = d_create_view_and_model();
 			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
