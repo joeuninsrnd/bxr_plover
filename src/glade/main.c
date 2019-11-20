@@ -513,62 +513,53 @@ int func_Detect (gchar *path)
 	struct dirent *file = NULL;
 	struct stat buf;
 	char filepath[300];
-	uint sum = 0, cur = 0;
+	char buffer[2097152];
+	const char *find_text;
 
-	if ((dp = opendir(path)) != NULL)
-	{
-		while ((file = readdir(dp)) != NULL)
-		{
-		// filepath에 현재 path넣기 //
-		sprintf(filepath, "%s/%s", path, file->d_name);
-		lstat(filepath, &buf);
-
-			// 폴더 //
-			if (S_ISDIR(buf.st_mode))
-			{
-				// .이거하고 ..이거 제외 //
-				if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
-				{
-					continue;
-				}
-
-				// 안에 폴더로 재귀함수 //
-				func_Detect(filepath);
-			}
-
-			// 파일 //
-			else if (S_ISREG(buf.st_mode))
-			{
-				fp = fopen(filepath, "r");
-				fseek( fp, 0, SEEK_END);
-				long lSize = ftell(fp);
-				fseek( fp, 0, SEEK_SET);
-
-				char *buff = (char *)malloc( sizeof (char)*lSize);
-
-				while ((cur = fread(&buff[sum], sizeof(char), lSize - cur, fp)) > 0 )
-				{
-					sum += cur;
-				}
-				
-				if (sum != lSize)
-				{
-					printf("파일을 읽을수 없습니다.\n");
-				}
-
-				printf("버퍼에 다 넣었다~~~~~~~~~\n");
-				check_kind_of_data( buff, filepath, file, buf);
-
-				fclose(fp);
-				printf("Close FILE\n");
-				chk_fname[0] = 0; // 초기화 //
-			}
-		}
-	}
-	else
+	if ((dp = opendir(path)) == NULL)
 	{
 		printf("폴더를 열수 없습니다.\n");
 		return -1;
+	}
+	while ((file = readdir(dp)) != NULL)
+	{
+	// filepath에 현재 path넣기 //
+	sprintf(filepath, "%s/%s", path, file->d_name);
+	lstat(filepath, &buf);
+		// 폴더 //
+		if (S_ISDIR(buf.st_mode))
+		{
+			// .이거하고 ..이거 제외 //
+			if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
+			{
+				continue;
+			}
+			// 안에 폴더로 재귀함수 //
+			func_Detect(filepath);
+		}
+		// 파일 //
+		else if (S_ISREG(buf.st_mode))
+		{
+			fp = fopen(filepath, "r+");
+			if (NULL == fp)
+			{
+				printf("파일을 열수 없습니다.\n");
+				return 1;
+			}
+			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
+			while (feof(fp) == 0)
+			{
+				fread(buffer, sizeof(char), sizeof(buffer), fp);
+				find_text = buffer;
+				check_kind_of_data(find_text, filepath, file, buf);
+				find_text = NULL;
+			}
+			// 메모리관리(초기화), 파일닫기 //
+			memset(buffer, 0, sizeof(buffer));
+			fclose(fp);
+			printf("Close FILE\n");
+			chk_fname[0] = 0; // 초기화 //
+		}
 	}
 
 	closedir(dp);
@@ -707,19 +698,16 @@ int func_Send()
 				printf("##### 검출 결과  #####\n");
 				routingkey = "ka"; // TRCODE //
 				memset(message, 0x00, strlen(message));
-
 				for(int i = 0; i <= chk_fcnt; i++)
 				{
-					percent = i / chk_fcnt * 100;
+					percent = 100.0;
 					strcpy(fDs[i].uuid, uDs.uuid);
 					in_len = sizeof(fDs[i]);
 					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 					enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
-					
 					printf("[enc_data: %s]\n", enc);
-					printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %ld, fstat: %s, fpath: %s]\n\n",
+					printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
 								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
-
 					sprintf( message, "%.0f%% Complete", percent);
 					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
 					gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
@@ -732,6 +720,18 @@ int func_Send()
 
 			case 4:	// 파일 삭제 //
 				printf("##### 파일 삭제  #####\n");
+				routingkey = "ka"; // TRCODE //
+				in_len = sizeof(sfDs);
+				enc = b64_encode((unsigned char *)&sfDs, in_len, enc);
+				printf("[enc_data: %s]\n", enc);
+				
+				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+									amqp_cstring_bytes(routingkey), 0, 0,
+									&props, amqp_cstring_bytes(enc)), "Publishing");
+				break;
+				
+			case 5:	// 파일 암호화 //
+				printf("##### 파일 암호화  #####\n");
 				routingkey = "ka"; // TRCODE //
 				in_len = sizeof(sfDs);
 				enc = b64_encode((unsigned char *)&sfDs, in_len, enc);
@@ -908,7 +908,7 @@ int func_file_eraser(int type)
 	FILE *fp;
 	int mode = R_OK | W_OK;
 	char MsgTmp[5];
-	gulong size = 0;
+	uint size = 0;
 	char *msize;
 
 	if( access( sfDs.fpath, mode ) != 0 )
@@ -946,7 +946,7 @@ int func_file_eraser(int type)
 						
 					case 3 :
 						MsgTmp[0] = 'Z';
-						memset( msize, MsgTmp[0], ERASER_SIZE );
+						memset( msize, MsgTmp[0], ERASER_SIZE );printf("2 아니 어디서 죽냐 또~~~~~~~~\n");
 						break;
 						
 					case 4 :
@@ -988,6 +988,71 @@ int func_file_eraser(int type)
 	return( TRUE );
 }
 // end of func_file_eraser(); //
+
+// 암호화 #aria //
+void func_ARIA ()
+{
+	FILE *fp;
+	uint cur = 0, sum = 0;
+	char	message[1134];
+	
+	if( sfDs.fpath[0] == 0x00 )
+	{
+		func_gtk_dialog_modal(0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
+	}
+	else
+	{
+		sprintf( message, 
+			"\n 아래 파일을 암호화 하시겠습니까?\n    [ %s ]    \n", sfDs.fpath);
+    
+		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
+		{
+			int res = 0;
+			
+			fp = fopen( sfDs.fpath, "r+");
+			fseek( fp, 0, SEEK_END);
+			long lSize = ftell(fp);
+			fseek( fp, 0, SEEK_SET);
+
+			unsigned char *buff = (unsigned char *)malloc( sizeof (char)*lSize);
+			memset(buff, 0, sizeof (char)*lSize);
+
+			while ((cur = fread(&buff[sum], sizeof(char) * 6, lSize - cur, fp)) > 0 )
+			{
+				ARIA(&buff[sum]);
+				fwrite(&buff[sum], sizeof(char) * 6, lSize - cur, fp);
+				sum += cur;
+			}
+			
+			if (sum != lSize)
+			{
+				printf("파일을 읽을수 없습니다.\n");
+			}
+
+			for(int i = 0; i <= chk_fcnt; i++)
+			{
+				res = strcmp(fname, fDs[i].fname);
+
+				if(res == 0)
+				{
+					strcpy(fDs[i].stat, "암호화");
+					printf("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
+				}
+			}
+			
+			fclose(fp);
+			printf("Close FILE\n");
+			free(buff);
+			chk_df = 5;
+		}
+		else
+		{
+			printf("취소 되었습니다.\n");
+		}
+	}
+
+	return;
+}
 
 // main_window function #mf //
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
@@ -1072,7 +1137,7 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 {
 	GtkTreeIter iter;
 	gchar *stat, *fpath;
-	ulong fsize;
+	uint fsize;
 	
 	if (gtk_tree_model_get_iter(model, &iter, path))
 	{
@@ -1090,7 +1155,7 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 			strcpy(sfDs.stat, stat);
 			strcpy(sfDs.fpath, fpath);
 
-			g_print ("파일위치: [%s] 선택.\n", sfDs.fpath);
+			g_print ("파일위치: [%s], 파일크기: [%d] 선택.\n", sfDs.fpath, sfDs.fsize);
 
 		}
 		else
@@ -1264,6 +1329,21 @@ void d_option_btn_clicked (GtkButton *d_option_btn, gpointer *data)
 
 void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현//
 {
+	func_ARIA();
+
+	gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+	//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
+
+	printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+
+	d_view = d_create_view_and_model();
+	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
+	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+
+	strcpy(sfDs.stat, "암호화");
+	func_Send();
+
+
 	return;
 }
 
@@ -1283,8 +1363,9 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 		{
 			int res = 0;
+
 			func_file_eraser(3);
-			printf("chk_fcnt: %d\n", chk_fcnt);
+
 			for(int i = 0; i <= chk_fcnt; i++)
 			{
 				res = strcmp(fname, fDs[i].fname);
@@ -1299,7 +1380,7 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 			gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
 			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
 
-			printf("[UUID: %s], [파일이름: %s], [파일크기: %ld], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+			printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 			d_view = d_create_view_and_model();
 			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
@@ -1313,8 +1394,6 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 			printf("취소 되었습니다.\n");
 		}
 	}
-
-	
 
 	return;
 }
@@ -1694,7 +1773,6 @@ int main (int argc, char *argv[])
 		printf("ini 파일 생성!\n");
 		chkini = func_ParseIni("plover.ini");
     }
-    
 
 	func_SetRabbit();	// 서버와 연결	//
 	func_VerChk();		// 버전 확인	//

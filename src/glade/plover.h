@@ -11,6 +11,7 @@
 #include "b64.h"
 #include "encode.c"
 #include "decode.c"
+#include "aria.c"
 
 #define	MAX_FCNT	100
 #define	HOSTNAME	"localhost"
@@ -44,7 +45,7 @@ typedef struct _Fdata_Storage
 	uint dcnt;				// 운전면허 개수 //
 	uint fgcnt;				// 외국인등록번호 개수 //
 	uint pcnt;				// 여권번호 개수 //
-	ulong fsize;				// 파일 크기 //
+	uint fsize;				// 파일 크기 //
 	char stat[20];			// 파일 상태 //
 	char fpath[300];			// 파일 경로 //
 
@@ -55,7 +56,7 @@ typedef struct _SFdata_Storage
 {
 	char uuid[37];			// UUID //
 	char fname[100];			// 파일 이름 //
-	ulong fsize;				// 파일 크기 //
+	uint fsize;				// 파일 크기 //
 	char stat[20];			// 파일 상태 //
 	char fpath[300];			// 파일 경로 //
 
