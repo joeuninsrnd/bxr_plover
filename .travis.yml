@@ -1,7 +1,9 @@
 language: c
 
 script:
-  - gcc -o bxr_plover main.c -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+  - clang -coverage -O0 main.c -o main
+  - ./plover
+  - gcov main.c
   
 env:
   global:
