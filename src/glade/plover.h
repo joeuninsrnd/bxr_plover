@@ -11,6 +11,7 @@
 #include "b64.h"
 #include "encode.c"
 #include "decode.c"
+#include "aria.c"
 
 #define	MAX_FCNT	100
 #define	HOSTNAME	"localhost"
