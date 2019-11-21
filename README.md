@@ -1,6 +1,6 @@
 [![GitHub version](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover.svg)](https://badge.fury.io/gh/joeuninsrnd%2Fbxr_plover)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c5b68ed507a24791a1b41f3d9c5b1dc1)](https://www.codacy.com/manual/jun08111/bxr_plover?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=joeunins/bxr_plover&amp;utm_campaign=Badge_Grade)
-[![codecov](https://codecov.io//gh/jun08111/bxr_plover)
+[![codecov](https://codecov.io//gh/joeuninsrnd/bxr_plover)
 <br>
 ![plover_logo_horizontal](https://user-images.githubusercontent.com/28081461/68651563-feef7680-056a-11ea-9102-131561bedb90.png)
 <br>
