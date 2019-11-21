@@ -1,4 +1,0 @@
-language: cpp
-
-script:
-  - gcc -o bxr_plover main.c -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
