@@ -7,6 +7,6 @@ script:
   
 env:
   global:
-    - CODECOV_TOKEN="6a50fc10-c235-45c9-9104-dd165635ae8e"
+    - CODECOV_TOKEN=6a50fc10-c235-45c9-9104-dd165635ae8e
 after_success:
 - bash <(curl -s https://codecov.io/bash)

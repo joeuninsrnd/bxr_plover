@@ -1,5 +1,5 @@
         -:    0:Source:iniparser.c
-        -:    0:Graph:main.gcno
+        -:    0:Graph:./main.gcno
         -:    0:Data:-
         -:    0:Runs:0
         -:    0:Programs:0
@@ -47,13 +47,24 @@
         -:   42:  At most len - 1 elements of the input string will be converted.
         -:   43: */
         -:   44:/*--------------------------------------------------------------------------*/
+function strlwc called 0 returned 0% blocks executed 0%
     #####:   45:static const char * strlwc(const char * in, char *out, unsigned len)
         -:   46:{
         -:   47:    unsigned i ;
         -:   48:
     #####:   49:    if (in==NULL || out == NULL || len==0) return NULL ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
     #####:   50:    i=0 ;
     #####:   51:    while (in[i] != '\0' && i < len-1) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:   52:        out[i] = (char)tolower((int)in[i]);
     #####:   53:        i++ ;
         -:   54:    }
@@ -71,16 +82,21 @@
         -:   66:  for systems that do not have it.
         -:   67: */
         -:   68:/*--------------------------------------------------------------------------*/
+function xstrdup called 0 returned 0% blocks executed 0%
     #####:   69:static char * xstrdup(const char * s)
         -:   70:{
         -:   71:    char * t ;
         -:   72:    size_t len ;
     #####:   73:    if (!s)
+branch  0 never executed
+branch  1 never executed
     #####:   74:        return NULL ;
         -:   75:
     #####:   76:    len = strlen(s) + 1 ;
     #####:   77:    t = (char*) malloc(len) ;
     #####:   78:    if (t) {
+branch  0 never executed
+branch  1 never executed
     #####:   79:        memcpy(t, s, len) ;
         -:   80:    }
     #####:   81:    return t ;
@@ -93,17 +109,28 @@
         -:   88:  @return   unsigned New size of the string.
         -:   89: */
         -:   90:/*--------------------------------------------------------------------------*/
+function strstrip called 0 returned 0% blocks executed 0%
     #####:   91:static unsigned strstrip(char * s)
         -:   92:{
     #####:   93:    char *last = NULL ;
     #####:   94:    char *dest = s;
         -:   95:
     #####:   96:    if (s==NULL) return 0;
+branch  0 never executed
+branch  1 never executed
         -:   97:
     #####:   98:    last = s + strlen(s);
     #####:   99:    while (isspace((int)*s) && *s) s++;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  100:    while (last > s) {
+branch  0 never executed
+branch  1 never executed
     #####:  101:        if (!isspace((int)*(last-1)))
+branch  0 never executed
+branch  1 never executed
     #####:  102:            break ;
     #####:  103:        last -- ;
         -:  104:    }
@@ -118,12 +145,14 @@
         -:  113:  @brief    Default error callback for iniparser: wraps `fprintf(stderr, ...)`.
         -:  114: */
         -:  115:/*--------------------------------------------------------------------------*/
+function default_error_callback called 0 returned 0% blocks executed 0%
     #####:  116:static int default_error_callback(const char *format, ...)
         -:  117:{
         -:  118:  int ret;
         -:  119:  va_list argptr;
     #####:  120:  va_start(argptr, format);
     #####:  121:  ret = vfprintf(stderr, format, argptr);
+call    0 never executed
     #####:  122:  va_end(argptr);
     #####:  123:  return ret;
         -:  124:}
@@ -139,9 +168,12 @@
         -:  134:  as errback the error callback will be switched back to default.
         -:  135: */
         -:  136:/*--------------------------------------------------------------------------*/
+function iniparser_set_error_callback called 0 returned 0% blocks executed 0%
     #####:  137:void iniparser_set_error_callback(int (*errback)(const char *, ...))
         -:  138:{
     #####:  139:  if (errback) {
+branch  0 never executed
+branch  1 never executed
     #####:  140:    iniparser_error_callback = errback;
         -:  141:  } else {
     #####:  142:    iniparser_error_callback = default_error_callback;
@@ -166,17 +198,26 @@
         -:  161:  This function returns -1 in case of error.
         -:  162: */
         -:  163:/*--------------------------------------------------------------------------*/
+function iniparser_getnsec called 0 returned 0% blocks executed 0%
     #####:  164:int iniparser_getnsec(const dictionary * d)
         -:  165:{
         -:  166:    int i ;
         -:  167:    int nsec ;
         -:  168:
     #####:  169:    if (d==NULL) return -1 ;
+branch  0 never executed
+branch  1 never executed
     #####:  170:    nsec=0 ;
     #####:  171:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  172:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  173:            continue ;
     #####:  174:        if (strchr(d->key[i], ':')==NULL) {
+branch  0 never executed
+branch  1 never executed
     #####:  175:            nsec ++ ;
         -:  176:        }
         -:  177:    }
@@ -197,23 +238,38 @@
         -:  192:  This function returns NULL in case of error.
         -:  193: */
         -:  194:/*--------------------------------------------------------------------------*/
+function iniparser_getsecname called 0 returned 0% blocks executed 0%
     #####:  195:const char * iniparser_getsecname(const dictionary * d, int n)
         -:  196:{
         -:  197:    int i ;
         -:  198:    int foundsec ;
         -:  199:
     #####:  200:    if (d==NULL || n<0) return NULL ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  201:    foundsec=0 ;
     #####:  202:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  203:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  204:            continue ;
     #####:  205:        if (strchr(d->key[i], ':')==NULL) {
+branch  0 never executed
+branch  1 never executed
     #####:  206:            foundsec++ ;
     #####:  207:            if (foundsec>n)
+branch  0 never executed
+branch  1 never executed
     #####:  208:                break ;
         -:  209:        }
         -:  210:    }
     #####:  211:    if (foundsec<=n) {
+branch  0 never executed
+branch  1 never executed
     #####:  212:        return NULL ;
         -:  213:    }
     #####:  214:    return d->key[i] ;
@@ -232,18 +288,31 @@
         -:  227:  purposes mostly.
         -:  228: */
         -:  229:/*--------------------------------------------------------------------------*/
+function iniparser_dump called 0 returned 0% blocks executed 0%
     #####:  230:void iniparser_dump(const dictionary * d, FILE * f)
         -:  231:{
         -:  232:    int     i ;
         -:  233:
     #####:  234:    if (d==NULL || f==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  235:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  236:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  237:            continue ;
     #####:  238:        if (d->val[i]!=NULL) {
+branch  0 never executed
+branch  1 never executed
     #####:  239:            fprintf(f, "[%s]=[%s]\n", d->key[i], d->val[i]);
+call    0 never executed
         -:  240:        } else {
     #####:  241:            fprintf(f, "[%s]=UNDEF\n", d->key[i]);
+call    0 never executed
         -:  242:        }
         -:  243:    }
     #####:  244:    return ;
@@ -260,6 +329,7 @@
         -:  255:  It is Ok to specify @c stderr or @c stdout as output files.
         -:  256: */
         -:  257:/*--------------------------------------------------------------------------*/
+function iniparser_dump_ini called 0 returned 0% blocks executed 0%
     #####:  258:void iniparser_dump_ini(const dictionary * d, FILE * f)
         -:  259:{
         -:  260:    int          i ;
@@ -267,22 +337,39 @@
         -:  262:    const char * secname ;
         -:  263:
     #####:  264:    if (d==NULL || f==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
         -:  265:
     #####:  266:    nsec = iniparser_getnsec(d);
+call    0 never executed
     #####:  267:    if (nsec<1) {
+branch  0 never executed
+branch  1 never executed
         -:  268:        /* No section in file: dump all keys as they are */
     #####:  269:        for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  270:            if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  271:                continue ;
     #####:  272:            fprintf(f, "%s = %s\n", d->key[i], d->val[i]);
+call    0 never executed
         -:  273:        }
     #####:  274:        return ;
         -:  275:    }
     #####:  276:    for (i=0 ; i<nsec ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  277:        secname = iniparser_getsecname(d, i) ;
+call    0 never executed
     #####:  278:        iniparser_dumpsection_ini(d, secname, f);
+call    0 never executed
         -:  279:    }
     #####:  280:    fprintf(f, "\n");
+call    0 never executed
     #####:  281:    return ;
         -:  282:}
         -:  283:
@@ -298,6 +385,7 @@
         -:  293:  file.  It is Ok to specify @c stderr or @c stdout as output files.
         -:  294: */
         -:  295:/*--------------------------------------------------------------------------*/
+function iniparser_dumpsection_ini called 0 returned 0% blocks executed 0%
     #####:  296:void iniparser_dumpsection_ini(const dictionary * d, const char * s, FILE * f)
         -:  297:{
         -:  298:    int     j ;
@@ -305,22 +393,40 @@
         -:  300:    int     seclen ;
         -:  301:
     #####:  302:    if (d==NULL || f==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  303:    if (! iniparser_find_entry(d, s)) return ;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
         -:  304:
     #####:  305:    seclen  = (int)strlen(s);
     #####:  306:    fprintf(f, "\n[%s]\n", s);
+call    0 never executed
     #####:  307:    sprintf(keym, "%s:", s);
     #####:  308:    for (j=0 ; j<d->size ; j++) {
+branch  0 never executed
+branch  1 never executed
     #####:  309:        if (d->key[j]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  310:            continue ;
     #####:  311:        if (!strncmp(d->key[j], keym, seclen+1)) {
+branch  0 never executed
+branch  1 never executed
     #####:  312:            fprintf(f,
         -:  313:                    "%-30s = %s\n",
     #####:  314:                    d->key[j]+seclen+1,
+call    0 never executed
     #####:  315:                    d->val[j] ? d->val[j] : "");
+branch  0 never executed
+branch  1 never executed
         -:  316:        }
         -:  317:    }
     #####:  318:    fprintf(f, "\n");
+call    0 never executed
     #####:  319:    return ;
         -:  320:}
         -:  321:
@@ -332,6 +438,7 @@
         -:  327:  @return   Number of keys in section
         -:  328: */
         -:  329:/*--------------------------------------------------------------------------*/
+function iniparser_getsecnkeys called 0 returned 0% blocks executed 0%
     #####:  330:int iniparser_getsecnkeys(const dictionary * d, const char * s)
         -:  331:{
         -:  332:    int     seclen, nkeys ;
@@ -341,16 +448,28 @@
     #####:  336:    nkeys = 0;
         -:  337:
     #####:  338:    if (d==NULL) return nkeys;
+branch  0 never executed
+branch  1 never executed
     #####:  339:    if (! iniparser_find_entry(d, s)) return nkeys;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
         -:  340:
     #####:  341:    seclen  = (int)strlen(s);
     #####:  342:    strlwc(s, keym, sizeof(keym));
+call    0 never executed
     #####:  343:    keym[seclen] = ':';
         -:  344:
     #####:  345:    for (j=0 ; j<d->size ; j++) {
+branch  0 never executed
+branch  1 never executed
     #####:  346:        if (d->key[j]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  347:            continue ;
     #####:  348:        if (!strncmp(d->key[j], keym, seclen+1))
+branch  0 never executed
+branch  1 never executed
     #####:  349:            nkeys++;
         -:  350:    }
         -:  351:
@@ -374,24 +493,39 @@
         -:  369:  a string allocated in the dictionary; do not free or modify them.
         -:  370: */
         -:  371:/*--------------------------------------------------------------------------*/
+function iniparser_getseckeys called 0 returned 0% blocks executed 0%
     #####:  372:const char ** iniparser_getseckeys(const dictionary * d, const char * s, const char ** keys)
         -:  373:{
         -:  374:    int i, j, seclen ;
         -:  375:    char keym[ASCIILINESZ+1];
         -:  376:
     #####:  377:    if (d==NULL || keys==NULL) return NULL;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  378:    if (! iniparser_find_entry(d, s)) return NULL;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
         -:  379:
     #####:  380:    seclen  = (int)strlen(s);
     #####:  381:    strlwc(s, keym, sizeof(keym));
+call    0 never executed
     #####:  382:    keym[seclen] = ':';
         -:  383:
     #####:  384:    i = 0;
         -:  385:
     #####:  386:    for (j=0 ; j<d->size ; j++) {
+branch  0 never executed
+branch  1 never executed
     #####:  387:        if (d->key[j]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  388:            continue ;
     #####:  389:        if (!strncmp(d->key[j], keym, seclen+1)) {
+branch  0 never executed
+branch  1 never executed
     #####:  390:            keys[i] = d->key[j];
     #####:  391:            i++;
         -:  392:        }
@@ -415,6 +549,7 @@
         -:  410:  the dictionary, do not free or modify it.
         -:  411: */
         -:  412:/*--------------------------------------------------------------------------*/
+function iniparser_getstring called 0 returned 0% blocks executed 0%
     #####:  413:const char * iniparser_getstring(const dictionary * d, const char * key, const char * def)
         -:  414:{
         -:  415:    const char * lc_key ;
@@ -422,10 +557,16 @@
         -:  417:    char tmp_str[ASCIILINESZ+1];
         -:  418:
     #####:  419:    if (d==NULL || key==NULL)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  420:        return def ;
         -:  421:
     #####:  422:    lc_key = strlwc(key, tmp_str, sizeof(tmp_str));
+call    0 never executed
     #####:  423:    sval = dictionary_get(d, lc_key, def);
+call    0 never executed
     #####:  424:    return sval ;
         -:  425:}
         -:  426:
@@ -456,13 +597,18 @@
         -:  451:  Credits: Thanks to A. Becker for suggesting strtol()
         -:  452: */
         -:  453:/*--------------------------------------------------------------------------*/
+function iniparser_getlongint called 0 returned 0% blocks executed 0%
     #####:  454:long int iniparser_getlongint(const dictionary * d, const char * key, long int notfound)
         -:  455:{
         -:  456:    const char * str ;
         -:  457:
     #####:  458:    str = iniparser_getstring(d, key, INI_INVALID_KEY);
+call    0 never executed
     #####:  459:    if (str==INI_INVALID_KEY) return notfound ;
+branch  0 never executed
+branch  1 never executed
     #####:  460:    return strtol(str, NULL, 0);
+call    0 never executed
         -:  461:}
         -:  462:
         -:  463:
@@ -493,9 +639,11 @@
         -:  488:  Credits: Thanks to A. Becker for suggesting strtol()
         -:  489: */
         -:  490:/*--------------------------------------------------------------------------*/
+function iniparser_getint called 0 returned 0% blocks executed 0%
     #####:  491:int iniparser_getint(const dictionary * d, const char * key, int notfound)
         -:  492:{
     #####:  493:    return (int)iniparser_getlongint(d, key, notfound);
+call    0 never executed
         -:  494:}
         -:  495:
         -:  496:/*-------------------------------------------------------------------------*/
@@ -511,12 +659,16 @@
         -:  506:  the notfound value is returned.
         -:  507: */
         -:  508:/*--------------------------------------------------------------------------*/
+function iniparser_getdouble called 0 returned 0% blocks executed 0%
     #####:  509:double iniparser_getdouble(const dictionary * d, const char * key, double notfound)
         -:  510:{
         -:  511:    const char * str ;
         -:  512:
     #####:  513:    str = iniparser_getstring(d, key, INI_INVALID_KEY);
+call    0 never executed
     #####:  514:    if (str==INI_INVALID_KEY) return notfound ;
+branch  0 never executed
+branch  1 never executed
     #####:  515:    return atof(str);
         -:  516:}
         -:  517:
@@ -552,16 +704,40 @@
         -:  547:  necessarily have to be 0 or 1.
         -:  548: */
         -:  549:/*--------------------------------------------------------------------------*/
+function iniparser_getboolean called 0 returned 0% blocks executed 0%
     #####:  550:int iniparser_getboolean(const dictionary * d, const char * key, int notfound)
         -:  551:{
         -:  552:    int          ret ;
         -:  553:    const char * c ;
         -:  554:
     #####:  555:    c = iniparser_getstring(d, key, INI_INVALID_KEY);
+call    0 never executed
     #####:  556:    if (c==INI_INVALID_KEY) return notfound ;
+branch  0 never executed
+branch  1 never executed
     #####:  557:    if (c[0]=='y' || c[0]=='Y' || c[0]=='1' || c[0]=='t' || c[0]=='T') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
     #####:  558:        ret = 1 ;
     #####:  559:    } else if (c[0]=='n' || c[0]=='N' || c[0]=='0' || c[0]=='f' || c[0]=='F') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
     #####:  560:        ret = 0 ;
         -:  561:    } else {
     #####:  562:        ret = notfound ;
@@ -581,10 +757,14 @@
         -:  576:  of querying for the presence of sections in a dictionary.
         -:  577: */
         -:  578:/*--------------------------------------------------------------------------*/
+function iniparser_find_entry called 0 returned 0% blocks executed 0%
     #####:  579:int iniparser_find_entry(const dictionary * ini, const char * entry)
         -:  580:{
     #####:  581:    int found=0 ;
     #####:  582:    if (iniparser_getstring(ini, entry, INI_INVALID_KEY)!=INI_INVALID_KEY) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
     #####:  583:        found = 1 ;
         -:  584:    }
     #####:  585:    return found ;
@@ -603,10 +783,13 @@
         -:  598:  It is Ok to set val to NULL.
         -:  599: */
         -:  600:/*--------------------------------------------------------------------------*/
+function iniparser_set called 0 returned 0% blocks executed 0%
     #####:  601:int iniparser_set(dictionary * ini, const char * entry, const char * val)
         -:  602:{
         -:  603:    char tmp_str[ASCIILINESZ+1];
     #####:  604:    return dictionary_set(ini, strlwc(entry, tmp_str, sizeof(tmp_str)), val) ;
+call    0 never executed
+call    1 never executed
         -:  605:}
         -:  606:
         -:  607:/*-------------------------------------------------------------------------*/
@@ -619,10 +802,13 @@
         -:  614:  If the given entry can be found, it is deleted from the dictionary.
         -:  615: */
         -:  616:/*--------------------------------------------------------------------------*/
+function iniparser_unset called 0 returned 0% blocks executed 0%
     #####:  617:void iniparser_unset(dictionary * ini, const char * entry)
         -:  618:{
         -:  619:    char tmp_str[ASCIILINESZ+1];
     #####:  620:    dictionary_unset(ini, strlwc(entry, tmp_str, sizeof(tmp_str)));
+call    0 never executed
+call    1 never executed
     #####:  621:}
         -:  622:
         -:  623:/*-------------------------------------------------------------------------*/
@@ -635,6 +821,7 @@
         -:  630:  @return   line_status value
         -:  631: */
         -:  632:/*--------------------------------------------------------------------------*/
+function iniparser_line called 0 returned 0% blocks executed 0%
     #####:  633:static line_status iniparser_line(
         -:  634:    const char * input_line,
         -:  635:    char * section,
@@ -646,43 +833,76 @@
         -:  641:    size_t      len ;
         -:  642:
     #####:  643:    line = xstrdup(input_line);
+call    0 never executed
     #####:  644:    len = strstrip(line);
+call    0 never executed
         -:  645:
     #####:  646:    sta = LINE_UNPROCESSED ;
     #####:  647:    if (len<1) {
+branch  0 never executed
+branch  1 never executed
         -:  648:        /* Empty line */
     #####:  649:        sta = LINE_EMPTY ;
     #####:  650:    } else if (line[0]=='#' || line[0]==';') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
         -:  651:        /* Comment line */
     #####:  652:        sta = LINE_COMMENT ;
     #####:  653:    } else if (line[0]=='[' && line[len-1]==']') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
         -:  654:        /* Section name */
     #####:  655:        sscanf(line, "[%[^]]", section);
     #####:  656:        strstrip(section);
+call    0 never executed
     #####:  657:        strlwc(section, section, len);
+call    0 never executed
     #####:  658:        sta = LINE_SECTION ;
     #####:  659:    } else if (sscanf (line, "%[^=] = \"%[^\"]\"", key, value) == 2
+branch  0 never executed
+branch  1 never executed
     #####:  660:           ||  sscanf (line, "%[^=] = '%[^\']'",   key, value) == 2) {
+branch  0 never executed
+branch  1 never executed
         -:  661:        /* Usual key=value with quotes, with or without comments */
     #####:  662:        strstrip(key);
+call    0 never executed
     #####:  663:        strlwc(key, key, len);
+call    0 never executed
         -:  664:        /* Don't strip spaces from values surrounded with quotes */
     #####:  665:        sta = LINE_VALUE ;
     #####:  666:    } else if (sscanf (line, "%[^=] = %[^;#]", key, value) == 2) {
+branch  0 never executed
+branch  1 never executed
         -:  667:        /* Usual key=value without quotes, with or without comments */
     #####:  668:        strstrip(key);
+call    0 never executed
     #####:  669:        strlwc(key, key, len);
+call    0 never executed
     #####:  670:        strstrip(value);
+call    0 never executed
         -:  671:        /*
         -:  672:         * sscanf cannot handle '' or "" as empty values
         -:  673:         * this is done here
         -:  674:         */
     #####:  675:        if (!strcmp(value, "\"\"") || (!strcmp(value, "''"))) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  676:            value[0]=0 ;
         -:  677:        }
     #####:  678:        sta = LINE_VALUE ;
     #####:  679:    } else if (sscanf(line, "%[^=] = %[;#]", key, value)==2
+branch  0 never executed
+branch  1 never executed
     #####:  680:           ||  sscanf(line, "%[^=] %[=]", key, value) == 2) {
+branch  0 never executed
+branch  1 never executed
         -:  681:        /*
         -:  682:         * Special cases:
         -:  683:         * key=
@@ -690,7 +910,9 @@
         -:  685:         * key=#
         -:  686:         */
     #####:  687:        strstrip(key);
+call    0 never executed
     #####:  688:        strlwc(key, key, len);
+call    0 never executed
     #####:  689:        value[0]=0 ;
     #####:  690:        sta = LINE_VALUE ;
         -:  691:    } else {
@@ -716,6 +938,7 @@
         -:  711:  The returned dictionary must be freed using iniparser_freedict().
         -:  712: */
         -:  713:/*--------------------------------------------------------------------------*/
+function iniparser_load called 0 returned 0% blocks executed 0%
     #####:  714:dictionary * iniparser_load(const char * ininame)
         -:  715:{
         -:  716:    FILE * in ;
@@ -735,13 +958,21 @@
         -:  730:    dictionary * dict ;
         -:  731:
     #####:  732:    if ((in=fopen(ininame, "r"))==NULL) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
     #####:  733:        iniparser_error_callback("iniparser: cannot open %s\n", ininame);
+call    0 never executed
     #####:  734:        return NULL ;
         -:  735:    }
         -:  736:
     #####:  737:    dict = dictionary_new(0) ;
+call    0 never executed
     #####:  738:    if (!dict) {
+branch  0 never executed
+branch  1 never executed
     #####:  739:        fclose(in);
+call    0 never executed
     #####:  740:        return NULL ;
         -:  741:    }
         -:  742:
@@ -752,31 +983,54 @@
     #####:  747:    last=0 ;
         -:  748:
     #####:  749:    while (fgets(line+last, ASCIILINESZ-last, in)!=NULL) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
     #####:  750:        lineno++ ;
     #####:  751:        len = (int)strlen(line)-1;
     #####:  752:        if (len<=0)
+branch  0 never executed
+branch  1 never executed
     #####:  753:            continue;
         -:  754:        /* Safety check against buffer overflows */
     #####:  755:        if (line[len]!='\n' && !feof(in)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
     #####:  756:            iniparser_error_callback(
+call    0 never executed
         -:  757:              "iniparser: input line too long in %s (%d)\n",
         -:  758:              ininame,
         -:  759:              lineno);
     #####:  760:            dictionary_del(dict);
+call    0 never executed
     #####:  761:            fclose(in);
+call    0 never executed
     #####:  762:            return NULL ;
         -:  763:        }
         -:  764:        /* Get rid of \n and spaces at end of line */
     #####:  765:        while ((len>=0) &&
+branch  0 never executed
+branch  1 never executed
     #####:  766:                ((line[len]=='\n') || (isspace(line[len])))) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  767:            line[len]=0 ;
     #####:  768:            len-- ;
         -:  769:        }
     #####:  770:        if (len < 0) { /* Line was entirely \n and/or spaces */
+branch  0 never executed
+branch  1 never executed
     #####:  771:            len = 0;
         -:  772:        }
         -:  773:        /* Detect multi-line */
     #####:  774:        if (line[len]=='\\') {
+branch  0 never executed
+branch  1 never executed
         -:  775:            /* Multi-line value */
     #####:  776:            last=len ;
     #####:  777:            continue ;
@@ -784,21 +1038,30 @@
     #####:  779:            last=0 ;
         -:  780:        }
     #####:  781:        switch (iniparser_line(line, section, key, val)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
     #####:  782:            case LINE_EMPTY:
         -:  783:            case LINE_COMMENT:
     #####:  784:            break ;
         -:  785:
     #####:  786:            case LINE_SECTION:
     #####:  787:            mem_err = dictionary_set(dict, section, NULL);
+call    0 never executed
     #####:  788:            break ;
         -:  789:
     #####:  790:            case LINE_VALUE:
     #####:  791:            sprintf(tmp, "%s:%s", section, key);
     #####:  792:            mem_err = dictionary_set(dict, tmp, val);
+call    0 never executed
     #####:  793:            break ;
         -:  794:
     #####:  795:            case LINE_ERROR:
     #####:  796:            iniparser_error_callback(
+call    0 never executed
         -:  797:              "iniparser: syntax error in %s (%d):\n-> %s\n",
         -:  798:              ininame,
         -:  799:              lineno,
@@ -812,15 +1075,22 @@
     #####:  807:        memset(line, 0, ASCIILINESZ);
     #####:  808:        last=0;
     #####:  809:        if (mem_err<0) {
+branch  0 never executed
+branch  1 never executed
     #####:  810:            iniparser_error_callback("iniparser: memory allocation failure\n");
+call    0 never executed
     #####:  811:            break ;
         -:  812:        }
         -:  813:    }
     #####:  814:    if (errs) {
+branch  0 never executed
+branch  1 never executed
     #####:  815:        dictionary_del(dict);
+call    0 never executed
     #####:  816:        dict = NULL ;
         -:  817:    }
     #####:  818:    fclose(in);
+call    0 never executed
     #####:  819:    return dict ;
         -:  820:}
         -:  821:
@@ -835,7 +1105,9 @@
         -:  830:  gets out of the current context.
         -:  831: */
         -:  832:/*--------------------------------------------------------------------------*/
+function iniparser_freedict called 0 returned 0% blocks executed 0%
     #####:  833:void iniparser_freedict(dictionary * d)
         -:  834:{
     #####:  835:    dictionary_del(d);
+call    0 never executed
     #####:  836:}

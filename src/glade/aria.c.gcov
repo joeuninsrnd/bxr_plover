@@ -1,5 +1,5 @@
         -:    0:Source:aria.c
-        -:    0:Graph:main.gcno
+        -:    0:Graph:./main.gcno
         -:    0:Data:-
         -:    0:Runs:0
         -:    0:Programs:0
@@ -108,6 +108,7 @@
         -:  103:};
         -:  104:
         -:  105:// Diffusion Layer
+function DL called 0 returned 0% blocks executed 0%
     #####:  106:void DL (const Byte *i, Byte *o)
         -:  107:{
         -:  108:	Byte T;
@@ -134,14 +135,19 @@
     #####:  129:	o[13] = i[ 3] ^ i[ 6] ^ i[ 8] ^ T;
     #####:  130:}
         -:  131:// Right-rotate 128 bit source string s by n bits and XOR it to target string t
+function RotXOR called 0 returned 0% blocks executed 0%
     #####:  132:void RotXOR (const Byte *s, int n, Byte *t)
         -:  133:{
         -:  134:	int i, q;
         -:  135:  
     #####:  136:	q = n/8; n %= 8;
     #####:  137:	for (i = 0; i < 16; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  138:		t[(q+i) % 16] ^= (s[i] >> n);
     #####:  139:		if (n != 0) t[(q+i+1) % 16] ^= (s[i] << (8-n));
+branch  0 never executed
+branch  1 never executed
         -:  140:	}
     #####:  141:}
         -:  142:
@@ -149,114 +155,222 @@
         -:  144:
         -:  145:// Encryption round key generation rountine
         -:  146:// w0 : master key, e : encryption round keys
+function EncKeySetup called 0 returned 0% blocks executed 0%
     #####:  147:int EncKeySetup(const Byte *w0, Byte *e, int keyBits) {
     #####:  148:	int  i, R=(keyBits+256)/32, q;
         -:  149:	Byte t[16], w1[16], w2[16], w3[16];
         -:  150:  
     #####:  151:	q = (keyBits - 128) / 64;
     #####:  152:	for (i = 0; i < 16; i++) t[i] = S[     i  % 4][KRK[q][i   ] ^ w0[i]];
+branch  0 never executed
+branch  1 never executed
     #####:  153:	DL (t, w1);
+call    0 never executed
     #####:  154:	if (R==14)
+branch  0 never executed
+branch  1 never executed
     #####:  155:		for (i = 0; i <  8; i++) w1[i] ^= w0[16+i];
+branch  0 never executed
+branch  1 never executed
     #####:  156:	else if (R==16)
+branch  0 never executed
+branch  1 never executed
     #####:  157:		for (i = 0; i < 16; i++) w1[i] ^= w0[16+i];
+branch  0 never executed
+branch  1 never executed
         -:  158:  
     #####:  159:	q = (q==2)? 0 : (q+1);
+branch  0 never executed
+branch  1 never executed
     #####:  160:	for (i = 0; i < 16; i++) t[i] = S[(2 + i) % 4][KRK[q][i] ^ w1[i]];
+branch  0 never executed
+branch  1 never executed
     #####:  161:	DL (t, w2);
+call    0 never executed
     #####:  162:	for (i = 0; i < 16; i++) w2[i] ^= w0[i];
+branch  0 never executed
+branch  1 never executed
         -:  163:  
     #####:  164:	q = (q==2)? 0 : (q+1);
+branch  0 never executed
+branch  1 never executed
     #####:  165:	for (i = 0; i < 16; i++) t[i] = S[     i  % 4][KRK[q][i] ^ w2[i]];
+branch  0 never executed
+branch  1 never executed
     #####:  166:	DL (t, w3);
+call    0 never executed
     #####:  167:	for (i = 0; i < 16; i++) w3[i] ^= w1[i];
+branch  0 never executed
+branch  1 never executed
         -:  168:  
     #####:  169:	for (i = 0; i < 16*(R+1); i++) e[i] = 0;
+branch  0 never executed
+branch  1 never executed
         -:  170:  
     #####:  171:	RotXOR (w0, 0, e      ); RotXOR (w1,  19, e      );
+call    0 never executed
+call    1 never executed
     #####:  172:	RotXOR (w1, 0, e +  16); RotXOR (w2,  19, e +  16);
+call    0 never executed
+call    1 never executed
     #####:  173:	RotXOR (w2, 0, e +  32); RotXOR (w3,  19, e +  32);
+call    0 never executed
+call    1 never executed
     #####:  174:	RotXOR (w3, 0, e +  48); RotXOR (w0,  19, e +  48);
+call    0 never executed
+call    1 never executed
     #####:  175:	RotXOR (w0, 0, e +  64); RotXOR (w1,  31, e +  64);
+call    0 never executed
+call    1 never executed
     #####:  176:	RotXOR (w1, 0, e +  80); RotXOR (w2,  31, e +  80);
+call    0 never executed
+call    1 never executed
     #####:  177:	RotXOR (w2, 0, e +  96); RotXOR (w3,  31, e +  96);
+call    0 never executed
+call    1 never executed
     #####:  178:	RotXOR (w3, 0, e + 112); RotXOR (w0,  31, e + 112);
+call    0 never executed
+call    1 never executed
     #####:  179:	RotXOR (w0, 0, e + 128); RotXOR (w1,  67, e + 128);
+call    0 never executed
+call    1 never executed
     #####:  180:	RotXOR (w1, 0, e + 144); RotXOR (w2,  67, e + 144);
+call    0 never executed
+call    1 never executed
     #####:  181:	RotXOR (w2, 0, e + 160); RotXOR (w3,  67, e + 160);
+call    0 never executed
+call    1 never executed
     #####:  182:	RotXOR (w3, 0, e + 176); RotXOR (w0,  67, e + 176);
+call    0 never executed
+call    1 never executed
     #####:  183:	RotXOR (w0, 0, e + 192); RotXOR (w1,  97, e + 192);
+call    0 never executed
+call    1 never executed
     #####:  184:	if (R > 12) {
+branch  0 never executed
+branch  1 never executed
     #####:  185:		RotXOR (w1, 0, e + 208); RotXOR (w2,  97, e + 208);
+call    0 never executed
+call    1 never executed
     #####:  186:		RotXOR (w2, 0, e + 224); RotXOR (w3,  97, e + 224);
+call    0 never executed
+call    1 never executed
         -:  187:	}
     #####:  188:	if (R > 14) {
+branch  0 never executed
+branch  1 never executed
     #####:  189:		RotXOR (w3, 0, e + 240); RotXOR (w0,  97, e + 240);
+call    0 never executed
+call    1 never executed
     #####:  190:		RotXOR (w0, 0, e + 256); RotXOR (w1, 109, e + 256);
+call    0 never executed
+call    1 never executed
         -:  191:	}
     #####:  192:	return R;
         -:  193:}
         -:  194:// Decryption round key generation rountine
         -:  195:// w0 : maskter key, d : decryption round keys
+function DecKeySetup called 0 returned 0% blocks executed 0%
     #####:  196:int DecKeySetup(const Byte *w0, Byte *d, int keyBits) {
         -:  197:	int  i, j, R;
         -:  198:	Byte t[16];
         -:  199:  
     #####:  200:	R=EncKeySetup(w0, d, keyBits);
+call    0 never executed
     #####:  201:	for (j = 0; j < 16; j++){
+branch  0 never executed
+branch  1 never executed
     #####:  202:		t[j] = d[j];
     #####:  203:		d[j] = d[16*R + j];
     #####:  204:		d[16*R + j] = t[j];
         -:  205:	}
     #####:  206:	for (i = 1; i <= R/2; i++){
+branch  0 never executed
+branch  1 never executed
     #####:  207:		DL (d + i*16, t);
+call    0 never executed
     #####:  208:		DL (d + (R-i)*16, d + i*16);
+call    0 never executed
     #####:  209:		for (j = 0; j < 16; j++) d[(R-i)*16 + j] = t[j];
+branch  0 never executed
+branch  1 never executed
         -:  210:	}
     #####:  211:	return R;
         -:  212:}
         -:  213:// Encryption and decryption rountine
         -:  214:// p: plain text, e: round keys, c: ciphertext
+function Crypt called 0 returned 0% blocks executed 0%
     #####:  215:void Crypt(const Byte *p, int R, const Byte *e, Byte *c)
         -:  216:{
         -:  217:	int i, j;
         -:  218:	Byte t[16];
         -:  219:  
     #####:  220:	for (j = 0; j < 16; j++) c[j] = p[j];
+branch  0 never executed
+branch  1 never executed
     #####:  221:	for (i = 0; i < R/2; i++)
+branch  0 never executed
+branch  1 never executed
         -:  222:	{
     #####:  223:		for (j = 0; j < 16; j++) t[j] = S[     j  % 4][e[j] ^ c[j]];
+branch  0 never executed
+branch  1 never executed
     #####:  224:		DL(t, c); e += 16;
+call    0 never executed
     #####:  225:		for (j = 0; j < 16; j++) t[j] = S[(2 + j) % 4][e[j] ^ c[j]];
+branch  0 never executed
+branch  1 never executed
     #####:  226:		DL(t, c); e += 16;
+call    0 never executed
         -:  227:	}
     #####:  228:	DL(c, t);
+call    0 never executed
     #####:  229:	for (j = 0; j < 16; j++) c[j] = e[j] ^ t[j];
+branch  0 never executed
+branch  1 never executed
     #####:  230:}
         -:  231:
+function printBlockOfLength called 0 returned 0% blocks executed 0%
     #####:  232:void printBlockOfLength(Byte *b, int len) {
         -:  233:	int i;
         -:  234:  
     #####:  235:	for (i=0; i<len; i++, b++) {
+branch  0 never executed
+branch  1 never executed
     #####:  236:		printf("%02x", *b);
+call    0 never executed
     #####:  237:		if (i%4==3 && i<len-1) printf(" ");
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
         -:  238:	}
     #####:  239:}
         -:  240:
+function printBlock called 0 returned 0% blocks executed 0%
     #####:  241:void printBlock(Byte *b) {
     #####:  242:  printBlockOfLength(b, 16);
+call    0 never executed
     #####:  243:}
         -:  244:
+function ARIA called 0 returned 0% blocks executed 0%
     #####:  245:char ARIA (Byte *p) {
         -:  246:	Byte rk[16*17], c[16], mk[32];
         -:  247:	int i;
         -:  248:
     #####:  249:	for (i=0; i<16; i++)
+branch  0 never executed
+branch  1 never executed
     #####:  250:		mk[i]=i*0x11;
     #####:  251:	for (i=16; i<24; i++)
+branch  0 never executed
+branch  1 never executed
     #####:  252:		mk[i]=(i-16)*0x11;
         -:  253:  
     #####:  254:	Crypt(p, EncKeySetup(mk, rk, 192), rk, c);
+call    0 never executed
+call    1 never executed
         -:  255:
     #####:  256:	return *p;
         -:  257:}

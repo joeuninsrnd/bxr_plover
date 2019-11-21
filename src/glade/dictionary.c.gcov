@@ -1,5 +1,5 @@
         -:    0:Source:dictionary.c
-        -:    0:Graph:main.gcno
+        -:    0:Graph:./main.gcno
         -:    0:Data:-
         -:    0:Runs:0
         -:    0:Programs:0
@@ -71,6 +71,7 @@
         -:   66:  @return   This function returns non-zero in case of failure
         -:   67: */
         -:   68:/*--------------------------------------------------------------------------*/
+function dictionary_grow called 0 returned 0% blocks executed 0%
     #####:   69:static int dictionary_grow(dictionary * d)
         -:   70:{
         -:   71:    char        ** new_val ;
@@ -81,12 +82,24 @@
     #####:   76:    new_key  = (char**) calloc(d->size * 2, sizeof *d->key);
     #####:   77:    new_hash = (unsigned*) calloc(d->size * 2, sizeof *d->hash);
     #####:   78:    if (!new_val || !new_key || !new_hash) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
         -:   79:        /* An allocation failed, leave the dictionary unchanged */
     #####:   80:        if (new_val)
+branch  0 never executed
+branch  1 never executed
     #####:   81:            free(new_val);
     #####:   82:        if (new_key)
+branch  0 never executed
+branch  1 never executed
     #####:   83:            free(new_key);
     #####:   84:        if (new_hash)
+branch  0 never executed
+branch  1 never executed
     #####:   85:            free(new_hash);
     #####:   86:        return -1 ;
         -:   87:    }
@@ -121,6 +134,7 @@
         -:  116:  by comparing the key itself in last resort.
         -:  117: */
         -:  118:/*--------------------------------------------------------------------------*/
+function dictionary_hash called 0 returned 0% blocks executed 0%
     #####:  119:unsigned dictionary_hash(const char * key)
         -:  120:{
         -:  121:    size_t      len ;
@@ -128,10 +142,14 @@
         -:  123:    size_t      i ;
         -:  124:
     #####:  125:    if (!key)
+branch  0 never executed
+branch  1 never executed
     #####:  126:        return 0 ;
         -:  127:
     #####:  128:    len = strlen(key);
     #####:  129:    for (hash=0, i=0 ; i<len ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  130:        hash += (unsigned)key[i] ;
     #####:  131:        hash += (hash<<10);
     #####:  132:        hash ^= (hash>>6) ;
@@ -153,16 +171,21 @@
         -:  148:  dictionary, give size=0.
         -:  149: */
         -:  150:/*-------------------------------------------------------------------------*/
+function dictionary_new called 0 returned 0% blocks executed 0%
     #####:  151:dictionary * dictionary_new(size_t size)
         -:  152:{
         -:  153:    dictionary  *   d ;
         -:  154:
         -:  155:    /* If no size was specified, allocate space for DICTMINSZ */
     #####:  156:    if (size<DICTMINSZ) size=DICTMINSZ ;
+branch  0 never executed
+branch  1 never executed
         -:  157:
     #####:  158:    d = (dictionary*) calloc(1, sizeof *d) ;
         -:  159:
     #####:  160:    if (d) {
+branch  0 never executed
+branch  1 never executed
     #####:  161:        d->size = size ;
     #####:  162:        d->val  = (char**) calloc(size, sizeof *d->val);
     #####:  163:        d->key  = (char**) calloc(size, sizeof *d->key);
@@ -180,15 +203,24 @@
         -:  175:  Deallocate a dictionary object and all memory associated to it.
         -:  176: */
         -:  177:/*--------------------------------------------------------------------------*/
+function dictionary_del called 0 returned 0% blocks executed 0%
     #####:  178:void dictionary_del(dictionary * d)
         -:  179:{
         -:  180:    ssize_t  i ;
         -:  181:
     #####:  182:    if (d==NULL) return ;
+branch  0 never executed
+branch  1 never executed
     #####:  183:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  184:        if (d->key[i]!=NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  185:            free(d->key[i]);
     #####:  186:        if (d->val[i]!=NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  187:            free(d->val[i]);
         -:  188:    }
     #####:  189:    free(d->val);
@@ -212,19 +244,29 @@
         -:  207:  dictionary object, you should not try to free it or modify it.
         -:  208: */
         -:  209:/*--------------------------------------------------------------------------*/
+function dictionary_get called 0 returned 0% blocks executed 0%
     #####:  210:const char * dictionary_get(const dictionary * d, const char * key, const char * def)
         -:  211:{
         -:  212:    unsigned    hash ;
         -:  213:    ssize_t      i ;
         -:  214:
     #####:  215:    hash = dictionary_hash(key);
+call    0 never executed
     #####:  216:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  217:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  218:            continue ;
         -:  219:        /* Compare hash */
     #####:  220:        if (hash==d->hash[i]) {
+branch  0 never executed
+branch  1 never executed
         -:  221:            /* Compare string, to avoid hash collisions */
     #####:  222:            if (!strcmp(key, d->key[i])) {
+branch  0 never executed
+branch  1 never executed
     #####:  223:                return d->val[i] ;
         -:  224:            }
         -:  225:        }
@@ -258,26 +300,47 @@
         -:  253:  This function returns non-zero in case of failure.
         -:  254: */
         -:  255:/*--------------------------------------------------------------------------*/
+function dictionary_set called 0 returned 0% blocks executed 0%
     #####:  256:int dictionary_set(dictionary * d, const char * key, const char * val)
         -:  257:{
         -:  258:    ssize_t         i ;
         -:  259:    unsigned       hash ;
         -:  260:
     #####:  261:    if (d==NULL || key==NULL) return -1 ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
         -:  262:
         -:  263:    /* Compute hash for this key */
     #####:  264:    hash = dictionary_hash(key) ;
+call    0 never executed
         -:  265:    /* Find if value is already in dictionary */
     #####:  266:    if (d->n>0) {
+branch  0 never executed
+branch  1 never executed
     #####:  267:        for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  268:            if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  269:                continue ;
     #####:  270:            if (hash==d->hash[i]) { /* Same hash value */
+branch  0 never executed
+branch  1 never executed
     #####:  271:                if (!strcmp(key, d->key[i])) {   /* Same key */
+branch  0 never executed
+branch  1 never executed
         -:  272:                    /* Found a value: modify and return */
     #####:  273:                    if (d->val[i]!=NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  274:                        free(d->val[i]);
     #####:  275:                    d->val[i] = (val ? xstrdup(val) : NULL);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
         -:  276:                    /* Value has been modified: return */
     #####:  277:                    return 0 ;
         -:  278:                }
@@ -287,8 +350,13 @@
         -:  282:    /* Add a new value */
         -:  283:    /* See if dictionary needs to grow */
     #####:  284:    if (d->n==d->size) {
+branch  0 never executed
+branch  1 never executed
         -:  285:        /* Reached maximum size: reallocate dictionary */
     #####:  286:        if (dictionary_grow(d) != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
     #####:  287:            return -1;
         -:  288:    }
         -:  289:
@@ -296,11 +364,19 @@
         -:  291:       d->size. Because d->n < d->size this will necessarily
         -:  292:       terminate. */
     #####:  293:    for (i=d->n ; d->key[i] ; ) {
+branch  0 never executed
+branch  1 never executed
     #####:  294:        if(++i == d->size) i = 0;
+branch  0 never executed
+branch  1 never executed
         -:  295:    }
         -:  296:    /* Copy key */
     #####:  297:    d->key[i]  = xstrdup(key);
+call    0 never executed
     #####:  298:    d->val[i]  = (val ? xstrdup(val) : NULL) ;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
     #####:  299:    d->hash[i] = hash;
     #####:  300:    d->n ++ ;
     #####:  301:    return 0 ;
@@ -317,35 +393,53 @@
         -:  312:  key cannot be found.
         -:  313: */
         -:  314:/*--------------------------------------------------------------------------*/
+function dictionary_unset called 0 returned 0% blocks executed 0%
     #####:  315:void dictionary_unset(dictionary * d, const char * key)
         -:  316:{
         -:  317:    unsigned    hash ;
         -:  318:    ssize_t      i ;
         -:  319:
     #####:  320:    if (key == NULL || d == NULL) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  321:        return;
         -:  322:    }
         -:  323:
     #####:  324:    hash = dictionary_hash(key);
+call    0 never executed
     #####:  325:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  326:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
     #####:  327:            continue ;
         -:  328:        /* Compare hash */
     #####:  329:        if (hash==d->hash[i]) {
+branch  0 never executed
+branch  1 never executed
         -:  330:            /* Compare string, to avoid hash collisions */
     #####:  331:            if (!strcmp(key, d->key[i])) {
+branch  0 never executed
+branch  1 never executed
         -:  332:                /* Found key */
     #####:  333:                break ;
         -:  334:            }
         -:  335:        }
         -:  336:    }
     #####:  337:    if (i>=d->size)
+branch  0 never executed
+branch  1 never executed
         -:  338:        /* Key not found */
     #####:  339:        return ;
         -:  340:
     #####:  341:    free(d->key[i]);
     #####:  342:    d->key[i] = NULL ;
     #####:  343:    if (d->val[i]!=NULL) {
+branch  0 never executed
+branch  1 never executed
     #####:  344:        free(d->val[i]);
     #####:  345:        d->val[i] = NULL ;
         -:  346:    }
@@ -366,20 +460,35 @@
         -:  361:  output file pointers.
         -:  362: */
         -:  363:/*--------------------------------------------------------------------------*/
+function dictionary_dump called 0 returned 0% blocks executed 0%
     #####:  364:void dictionary_dump(const dictionary * d, FILE * out)
         -:  365:{
         -:  366:    ssize_t  i ;
         -:  367:
     #####:  368:    if (d==NULL || out==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
     #####:  369:    if (d->n<1) {
+branch  0 never executed
+branch  1 never executed
     #####:  370:        fprintf(out, "empty dictionary\n");
+call    0 never executed
     #####:  371:        return ;
         -:  372:    }
     #####:  373:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
     #####:  374:        if (d->key[i]) {
+branch  0 never executed
+branch  1 never executed
     #####:  375:            fprintf(out, "%20s\t[%s]\n",
     #####:  376:                    d->key[i],
+call    0 never executed
     #####:  377:                    d->val[i] ? d->val[i] : "UNDEF");
+branch  0 never executed
+branch  1 never executed
         -:  378:        }
         -:  379:    }
     #####:  380:    return ;
