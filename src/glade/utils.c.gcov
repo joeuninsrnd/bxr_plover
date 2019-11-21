@@ -1,0 +1,193 @@
+        -:    0:Source:utils.c
+        -:    0:Graph:main.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:/*
+        -:    2: * ***** BEGIN LICENSE BLOCK *****
+        -:    3: * Version: MIT
+        -:    4: *
+        -:    5: * Portions created by Alan Antonuk are Copyright (c) 2012-2013
+        -:    6: * Alan Antonuk. All Rights Reserved.
+        -:    7: *
+        -:    8: * Portions created by VMware are Copyright (c) 2007-2012 VMware, Inc.
+        -:    9: * All Rights Reserved.
+        -:   10: *
+        -:   11: * Portions created by Tony Garnock-Jones are Copyright (c) 2009-2010
+        -:   12: * VMware, Inc. and Tony Garnock-Jones. All Rights Reserved.
+        -:   13: *
+        -:   14: * Permission is hereby granted, free of charge, to any person
+        -:   15: * obtaining a copy of this software and associated documentation
+        -:   16: * files (the "Software"), to deal in the Software without
+        -:   17: * restriction, including without limitation the rights to use, copy,
+        -:   18: * modify, merge, publish, distribute, sublicense, and/or sell copies
+        -:   19: * of the Software, and to permit persons to whom the Software is
+        -:   20: * furnished to do so, subject to the following conditions:
+        -:   21: *
+        -:   22: * The above copyright notice and this permission notice shall be
+        -:   23: * included in all copies or substantial portions of the Software.
+        -:   24: *
+        -:   25: * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        -:   26: * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        -:   27: * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        -:   28: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+        -:   29: * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+        -:   30: * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        -:   31: * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        -:   32: * SOFTWARE.
+        -:   33: * ***** END LICENSE BLOCK *****
+        -:   34: */
+        -:   35:
+        -:   36:#include <ctype.h>
+        -:   37:#include <stdarg.h>
+        -:   38:#include <stdio.h>
+        -:   39:#include <stdlib.h>
+        -:   40:#include <string.h>
+        -:   41:
+        -:   42:#include <amqp.h>
+        -:   43:#include <amqp_framing.h>
+        -:   44:#include <stdint.h>
+        -:   45:
+        -:   46:#include "utils.h"
+        -:   47:
+    #####:   48:void die(const char *fmt, ...) {
+        -:   49:  va_list ap;
+    #####:   50:  va_start(ap, fmt);
+    #####:   51:  vfprintf(stderr, fmt, ap);
+    #####:   52:  va_end(ap);
+    #####:   53:  fprintf(stderr, "\n");
+    #####:   54:  exit(1);
+        -:   55:}
+        -:   56:
+    #####:   57:void die_on_error(int x, char const *context) {
+    #####:   58:  if (x < 0) {
+    #####:   59:    fprintf(stderr, "%s: %s\n", context, amqp_error_string2(x));
+    #####:   60:    exit(1);
+        -:   61:  }
+    #####:   62:}
+        -:   63:
+    #####:   64:void die_on_amqp_error(amqp_rpc_reply_t x, char const *context) {
+    #####:   65:  switch (x.reply_type) {
+    #####:   66:    case AMQP_RESPONSE_NORMAL:
+    #####:   67:      return;
+        -:   68:
+    #####:   69:    case AMQP_RESPONSE_NONE:
+    #####:   70:      fprintf(stderr, "%s: missing RPC reply type!\n", context);
+    #####:   71:      break;
+        -:   72:
+    #####:   73:    case AMQP_RESPONSE_LIBRARY_EXCEPTION:
+    #####:   74:      fprintf(stderr, "%s: %s\n", context, amqp_error_string2(x.library_error));
+    #####:   75:      break;
+        -:   76:
+    #####:   77:    case AMQP_RESPONSE_SERVER_EXCEPTION:
+    #####:   78:      switch (x.reply.id) {
+    #####:   79:        case AMQP_CONNECTION_CLOSE_METHOD: {
+    #####:   80:          amqp_connection_close_t *m =
+        -:   81:              (amqp_connection_close_t *)x.reply.decoded;
+    #####:   82:          fprintf(stderr, "%s: server connection error %uh, message: %.*s\n",
+    #####:   83:                  context, m->reply_code, (int)m->reply_text.len,
+    #####:   84:                  (char *)m->reply_text.bytes);
+    #####:   85:          break;
+        -:   86:        }
+    #####:   87:        case AMQP_CHANNEL_CLOSE_METHOD: {
+    #####:   88:          amqp_channel_close_t *m = (amqp_channel_close_t *)x.reply.decoded;
+    #####:   89:          fprintf(stderr, "%s: server channel error %uh, message: %.*s\n",
+    #####:   90:                  context, m->reply_code, (int)m->reply_text.len,
+    #####:   91:                  (char *)m->reply_text.bytes);
+    #####:   92:          break;
+        -:   93:        }
+    #####:   94:        default:
+    #####:   95:          fprintf(stderr, "%s: unknown server error, method id 0x%08X\n",
+        -:   96:                  context, x.reply.id);
+    #####:   97:          break;
+        -:   98:      }
+    #####:   99:      break;
+        -:  100:  }
+        -:  101:
+    #####:  102:  exit(1);
+        -:  103:}
+        -:  104:
+    #####:  105:static void dump_row(long count, int numinrow, int *chs) {
+        -:  106:  int i;
+        -:  107:
+    #####:  108:  printf("%08lX:", count - numinrow);
+        -:  109:
+    #####:  110:  if (numinrow > 0) {
+    #####:  111:    for (i = 0; i < numinrow; i++) {
+    #####:  112:      if (i == 8) {
+    #####:  113:        printf(" :");
+        -:  114:      }
+    #####:  115:      printf(" %02X", chs[i]);
+        -:  116:    }
+    #####:  117:    for (i = numinrow; i < 16; i++) {
+    #####:  118:      if (i == 8) {
+    #####:  119:        printf(" :");
+        -:  120:      }
+    #####:  121:      printf("   ");
+        -:  122:    }
+    #####:  123:    printf("  ");
+    #####:  124:    for (i = 0; i < numinrow; i++) {
+    #####:  125:      if (isprint(chs[i])) {
+    #####:  126:        printf("%c", chs[i]);
+        -:  127:      } else {
+    #####:  128:        printf("%d", chs[i]); 
+        -:  129:      }
+        -:  130:    }
+        -:  131:  }
+    #####:  132:  printf("\n");
+    #####:  133:}
+        -:  134:
+    #####:  135:static int rows_eq(int *a, int *b) {
+        -:  136:  int i;
+        -:  137:
+    #####:  138:  for (i = 0; i < 16; i++)
+    #####:  139:    if (a[i] != b[i]) {
+    #####:  140:      return 0;
+        -:  141:    }
+        -:  142:
+    #####:  143:  return 1;
+        -:  144:}
+        -:  145:
+    #####:  146:void amqp_dump(void const *buffer, size_t len) {
+    #####:  147:  unsigned char *buf = (unsigned char *)buffer;
+    #####:  148:  long count = 0;
+    #####:  149:  int numinrow = 0;
+        -:  150:  int chs[16];
+    #####:  151:  int oldchs[16] = {0};
+    #####:  152:  int showed_dots = 0;
+        -:  153:  size_t i;
+        -:  154:
+    #####:  155:  for (i = 0; i < len; i++) {
+    #####:  156:    int ch = buf[i];
+        -:  157:
+    #####:  158:    if (numinrow == 16) {
+        -:  159:      int j;
+        -:  160:
+    #####:  161:      if (rows_eq(oldchs, chs)) {
+    #####:  162:        if (!showed_dots) {
+    #####:  163:          showed_dots = 1;
+    #####:  164:          printf(
+        -:  165:              "          .. .. .. .. .. .. .. .. : .. .. .. .. .. .. .. ..\n");
+        -:  166:        }
+        -:  167:      } else {
+    #####:  168:        showed_dots = 0;
+    #####:  169:        dump_row(count, numinrow, chs);
+        -:  170:      }
+        -:  171:
+    #####:  172:      for (j = 0; j < 16; j++) {
+    #####:  173:        oldchs[j] = chs[j];
+        -:  174:      }
+        -:  175:
+    #####:  176:      numinrow = 0;
+        -:  177:    }
+        -:  178:
+    #####:  179:    count++;
+    #####:  180:    chs[numinrow++] = ch;
+        -:  181:  }
+        -:  182:
+    #####:  183:  dump_row(count, numinrow, chs);
+        -:  184:
+    #####:  185:  if (numinrow != 0) {
+    #####:  186:    printf("%08lX:\n", count);
+        -:  187:  }
+    #####:  188:}
