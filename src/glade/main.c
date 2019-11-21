@@ -540,7 +540,7 @@ int func_Detect (gchar *path)
 		// 파일 //
 		else if (S_ISREG(buf.st_mode))
 		{
-			fp = fopen(filepath, "r+");
+			fp = fopen(filepath, "r");
 			if (NULL == fp)
 			{
 				printf("파일을 열수 없습니다.\n");
@@ -946,7 +946,7 @@ int func_file_eraser(int type)
 						
 					case 3 :
 						MsgTmp[0] = 'Z';
-						memset( msize, MsgTmp[0], ERASER_SIZE );printf("2 아니 어디서 죽냐 또~~~~~~~~\n");
+						memset( msize, MsgTmp[0], ERASER_SIZE );
 						break;
 						
 					case 4 :
@@ -992,10 +992,14 @@ int func_file_eraser(int type)
 // 암호화 #aria //
 void func_ARIA ()
 {
+	char message[1134];
 	FILE *fp;
-	uint cur = 0, sum = 0;
-	char	message[1134];
-	
+	long lSize;
+	unsigned char *buff;
+	uint cur = 0, sum = 0, i = 0;
+	uint arisize = 0;
+	unsigned char aribuf[16];
+
 	if( sfDs.fpath[0] == 0x00 )
 	{
 		func_gtk_dialog_modal(0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
@@ -1008,42 +1012,79 @@ void func_ARIA ()
 		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 		{
 			int res = 0;
-			
-			fp = fopen( sfDs.fpath, "r+");
-			fseek( fp, 0, SEEK_END);
-			long lSize = ftell(fp);
-			fseek( fp, 0, SEEK_SET);
 
-			unsigned char *buff = (unsigned char *)malloc( sizeof (char)*lSize);
-			memset(buff, 0, sizeof (char)*lSize);
-
-			while ((cur = fread(&buff[sum], sizeof(char) * 6, lSize - cur, fp)) > 0 )
+			fp = fopen(sfDs.fpath, "r");
+			if (NULL == fp)
 			{
-				ARIA(&buff[sum]);
-				fwrite(&buff[sum], sizeof(char) * 6, lSize - cur, fp);
+				printf("파일을 열수 없습니다.\n");
+				return;
+			}
+
+			fseek(fp, 0, SEEK_END);
+			lSize = ftell(fp);
+			rewind(fp);
+
+			buff = (unsigned char *) malloc( sizeof(char) *lSize);
+
+			while ((cur = fread(&buff[sum], sizeof(char), lSize - cur, fp)) > 0 )
+			{
 				sum += cur;
 			}
-			
+
 			if (sum != lSize)
 			{
 				printf("파일을 읽을수 없습니다.\n");
 			}
+			
+			while (arisize < sfDs.fsize)
+			{
+				buff += i;
+				printf("#어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+				memcpy (aribuf, buff, sizeof (aribuf));
+				printf("@어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+				ARIA (aribuf);
+				printf("0 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+				memcpy (buff, aribuf, sizeof (aribuf));
+				printf("1 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+				memset (aribuf, 0, sizeof (aribuf));
+				printf("2 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+				arisize += 16;
+				printf("3 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+				i += 16;
+				printf("4 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+			}
+			fclose(fp);
 
-			for(int i = 0; i <= chk_fcnt; i++)
+			fp = fopen(sfDs.fpath, "w+");
+			fwrite (buff, lSize, 1, fp);
+
+			for (int i = 0; i <= chk_fcnt; i++)
 			{
 				res = strcmp(fname, fDs[i].fname);
 
 				if(res == 0)
 				{
 					strcpy(fDs[i].stat, "암호화");
-					printf("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
+					printf("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", i, fDs[i].fname, fDs[i].stat);
 				}
 			}
-			
+
+			gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
+
+			printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+
+			d_view = d_create_view_and_model();
+			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
+			gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+
+			strcpy(sfDs.stat, "암호화");
+
 			fclose(fp);
-			printf("Close FILE\n");
-			free(buff);
+
 			chk_df = 5;
+			printf("Close FILE\n");
+			chk_fname[0] = 0; // 초기화 //
 		}
 		else
 		{
@@ -1053,6 +1094,8 @@ void func_ARIA ()
 
 	return;
 }
+// end of func_ARIA (); //
+
 
 // main_window function #mf //
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)

@@ -252,7 +252,6 @@ char ARIA (Byte *p) {
 		mk[i]=(i-16)*0x11;
   
 	Crypt(p, EncKeySetup(mk, rk, 192), rk, c);
-	printf("BEGIN basic encryption...\n");
 
 	return *p;
 }
