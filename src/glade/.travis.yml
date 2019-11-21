@@ -1,4 +1,13 @@
-language: cpp
+language: c
 
 script:
   - gcc -o bxr_plover main.c -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+  - clang -coverage -O0 main.c -o main
+  - ./main
+  - gcov main.c
+  
+env:
+  global:
+    - CODECOV_TOKEN="6a50fc10-c235-45c9-9104-dd165635ae8e
+after_success:
+- bash <(curl -s https://codecov.io/bash)
