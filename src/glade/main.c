@@ -1039,19 +1039,12 @@ void func_ARIA ()
 			while (arisize < sfDs.fsize)
 			{
 				buff += i;
-				printf("#어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 				memcpy (aribuf, buff, sizeof (aribuf));
-				printf("@어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 				ARIA (aribuf);
-				printf("0 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 				memcpy (buff, aribuf, sizeof (aribuf));
-				printf("1 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 				memset (aribuf, 0, sizeof (aribuf));
-				printf("2 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 				arisize += 16;
-				printf("3 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 				i += 16;
-				printf("4 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
 			}
 			fclose(fp);
 
