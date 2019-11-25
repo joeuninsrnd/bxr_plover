@@ -15,9 +15,7 @@
 #define	ERASER_ENC_SIZE	896		//1k
 
 int x,y,z; //지울거
-int nomatch;				// regex //
-const int n_matches = 200;		// "N_matches" is the maximum number of matches allowed. //
-
+const char *find_text;
 static gchar *dpath;			// default 경로 //
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
@@ -232,23 +230,17 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 	/* "P" is a pointer into the string which points to the end of the
 	previous match. */
 	const char *p = to_match;
-
+	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed. //
 	/* "M" contains the matches found. */
 	regmatch_t m[n_matches];
 
 	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
 	while (1)
 	{
+		int nomatch = 0;
 		nomatch = regexec (r, p, n_matches, m, 0);
 
-		if (nomatch)
-		{
-			//printf("No more matches.\n");
-			printf("[%d] JF reading\n", z++);
-			return 0;
-		}
-
-		else
+		if (nomatch != 1)
 		{
 			for (int i = 0; i < n_matches; i++)
 			{
@@ -265,7 +257,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 				if (i == 0)
 				{
 					int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
-					char buf_tmp[15] = {0,};
+					char buf_tmp[15];
 
 					// 주민번호, 외국인등록번호 유효성 검사 //
 					for (int j = 0; j < 14; j++)
@@ -279,17 +271,17 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 					chk = buf_tmp[13];
 					jtmp = 11 - (sum % 11); // 주민번호 //
-					fgtmp = 13 - (sum % 11); // 외국인번호 //
+					//fgtmp = 13 - (sum % 11); // 외국인번호 //
 
 					if (jtmp >= 10)
 					{
 						jtmp -= 10;
 					}
 
-					if (fgtmp >= 10)
-					{
-						fgtmp -= 10;
-					}
+					//if (fgtmp >= 10)
+					//{
+					//	fgtmp -= 10;
+					//}
 
 					// 주민번호 유효성 통과 //
 					if (jtmp == chk)
@@ -301,47 +293,52 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 							chk_fcnt++;
 						}
 
-					// 읽고있는중인 파일 이름 저장 //
-					strcpy (chk_fname, file->d_name);
+						// 읽고있는중인 파일 이름 저장 //
+						strcpy (chk_fname, file->d_name);
 
-					// 검출된 주민등록번호의 수 //
-					fDs[chk_fcnt].jcnt++;
+						// 검출된 주민등록번호의 수 //
+						fDs[chk_fcnt].jcnt++;
 
-					// data 구조체에 저장 //
-					strcpy (fDs[chk_fcnt].fpath, filepath);
-					strcpy (fDs[chk_fcnt].fname, file->d_name);
-					fDs [chk_fcnt].fsize = buf.st_size;
-					strcpy (fDs[chk_fcnt].stat, "일반");
+						// data 구조체에 저장 //
+						strcpy (fDs[chk_fcnt].fpath, filepath);
+						strcpy (fDs[chk_fcnt].fname, file->d_name);
+						fDs [chk_fcnt].fsize = buf.st_size;
+						strcpy (fDs[chk_fcnt].stat, "일반");
 
 					}
 
 					// 외국인등록번호 유효성 통과 //
-					if (fgtmp == chk)
-					{
-						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+					//if (fgtmp == chk)
+					//{
+						//int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
 
-						if (res != 0)
-						{
-							chk_fcnt++;
-						}
+						//if (res != 0)
+						//{
+						//	chk_fcnt++;
+						//}
 
 					// 읽고있는중인 파일 이름 저장 //
-					strcpy (chk_fname, file->d_name);
+					//strcpy (chk_fname, file->d_name);
 
 					// 검출된 외국인등록번호의 수 //
-					fDs[chk_fcnt].fgcnt++;
+					//fDs[chk_fcnt].fgcnt++;
 
 					// data 구조체에 저장 //
-					strcpy (fDs[chk_fcnt].fpath, filepath);
-					strcpy (fDs[chk_fcnt].fname, file->d_name);
-					fDs[chk_fcnt].fsize = buf.st_size;
-					strcpy (fDs[chk_fcnt].stat, "일반");
+					//strcpy (fDs[chk_fcnt].fpath, filepath);
+					//strcpy (fDs[chk_fcnt].fname, file->d_name);
+					//fDs[chk_fcnt].fsize = buf.st_size;
+					//strcpy (fDs[chk_fcnt].stat, "일반");
 
-					}
+					//}
 				}
 			}
 		}
 
+		else
+		{
+			printf("[%d] No more matches. %d\n", z++, nomatch);
+			return 0;
+		}
 		p += m[0].rm_eo;
 	}
 }
@@ -351,22 +348,15 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	const char *p = to_match;
-
+	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed. //
 	regmatch_t m[n_matches];
 
 	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
 	while (1)
 	{
-		nomatch = regexec(r, p, n_matches, m, 0);
+		int nomatch = regexec(r, p, n_matches, m, 0);
 
-		if (nomatch)
-		{
-			//printf("No more matches.\n");
-			printf ("[%d] D reading\n", x++);
-			return 0;
-		}
-
-		else
+		if (nomatch != 1)
 		{
 			for (int i = 0; i < n_matches; i++)
 			{
@@ -400,6 +390,11 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 				}
 			}
 		}
+		else
+		{
+			printf("No more matches.\n");
+			return 0;
+		}
 
 		p += m[0].rm_eo;
 	}
@@ -410,13 +405,13 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	const char *p = to_match;
-
+	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed. //
 	regmatch_t m[n_matches];
 
 	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
 	while (1)
 	{
-		nomatch = regexec (r, p, n_matches, m, 0);
+		int nomatch = regexec (r, p, n_matches, m, 0);
 
 		if (nomatch)
 		{
@@ -478,9 +473,7 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
 			match_regex_j(&r, to_match, filepath, file, buf);
-
 			break;
-
 		case 2:
 			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
 			compile_regex(&r, regex_text); //정규식 컴파일//
@@ -489,19 +482,19 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	*/
 
 	// 주민번호, 외국인등록번호 정규식 //
-	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
+	regex_text = "[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6}";
 	compile_regex(&r, regex_text); // 정규식 컴파일 //
-	match_regex_jnfg(&r, to_match, filepath, file, buf);
+	match_regex_jnfg(&r, find_text, filepath, file, buf);
 
 	// 운전면허 정규식 //
-	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
-	compile_regex (&r, regex_text); // 정규식 컴파일 //
-	match_regex_d (&r, to_match, filepath, file, buf);
+	//regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
+	//compile_regex (&r, regex_text); // 정규식 컴파일 //
+	//match_regex_d (&r, to_match, filepath, file, buf);
 
 	// 여권번호 정규식 //
-	regex_text = "[a-zA-Z]{2}[0-9]{7}";
-	compile_regex (&r, regex_text); // 정규식 컴파일 //
-	match_regex_p (&r, to_match, filepath, file, buf);
+	//regex_text = "[a-zA-Z]{2}[0-9]{7}";
+	//compile_regex (&r, regex_text); // 정규식 컴파일 //
+	//match_regex_p (&r, to_match, filepath, file, buf);
 
 	return;
 }
@@ -515,8 +508,7 @@ int func_Detect (gchar *path)
 	struct dirent *file = NULL;
 	struct stat buf;
 	char filepath[300];
-	char buffer[2097152];
-	const char *find_text;
+	char buffer[7320320] = {0,};
 
 	if ((dp = opendir(path)) == NULL)
 	{
@@ -551,10 +543,9 @@ int func_Detect (gchar *path)
 			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
 			while (feof (fp) == 0)
 			{
-				fread (buffer, sizeof (char), sizeof (buffer), fp);
+				fread (buffer, sizeof(char), sizeof (buffer), fp);
 				find_text = buffer;
 				check_kind_of_data (find_text, filepath, file, buf);
-				find_text = NULL;
 			}
 			// 메모리관리(초기화), 파일닫기 //
 			memset (buffer, 0, sizeof (buffer));
@@ -759,17 +750,13 @@ int func_Send()
 		amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
 								amqp_empty_table);
 		die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
-
-
 		{
 			amqp_frame_t frame;
 			int result;
-
 			amqp_basic_deliver_t *d;
 			amqp_basic_properties_t *p;
 			size_t body_target;
 			size_t body_received;
-
 			for (;;)
 			{
 				amqp_maybe_release_buffers(conn);
@@ -780,31 +767,26 @@ int func_Send()
 				{
 					break;
 				}
-
 				printf("Frame type: %u channel: %u\n", frame.frame_type, frame.channel);
 				if (frame.frame_type != AMQP_FRAME_METHOD)
 				{
 					continue;
 				}
-
 				printf("Method: %s\n", amqp_method_name(frame.payload.method.id));
 				if (frame.payload.method.id != AMQP_BASIC_DELIVER_METHOD)
 				{
 					continue;
 				}
-
 				d = (amqp_basic_deliver_t *)frame.payload.method.decoded;
 				printf("Delivery: %u exchange: %.*s routingkey: %.*s\n",
 					   (unsigned)d->delivery_tag, (int)d->exchange.len,
 					   (char *)d->exchange.bytes, (int)d->routing_key.len,
 					   (char *)d->routing_key.bytes);
-
 				result = amqp_simple_wait_frame(conn, &frame);
 				if (result < 0)
 				{
 					break;
 				}
-
 				if (frame.frame_type != AMQP_FRAME_HEADER)
 				{
 					fprintf(stderr, "Expected header!");
@@ -817,10 +799,8 @@ int func_Send()
 						 (char *)p->content_type.bytes);
 				}
 				printf("----\n");
-
 				body_target = (size_t)frame.payload.properties.body_size;
 				body_received = 0;
-
 				while (body_received < body_target)
 				{
 					result = amqp_simple_wait_frame(conn, &frame);
@@ -829,27 +809,22 @@ int func_Send()
 					{
 						break;
 					}
-
 					if (frame.frame_type != AMQP_FRAME_BODY)
 					{
 						fprintf(stderr, "Expected body!");
 						abort();
 					}
-
 					body_received += frame.payload.body_fragment.len;
 					assert(body_received <= body_target);
-
 					amqp_dump(frame.payload.body_fragment.bytes,
 								frame.payload.body_fragment.len);
 				}
-
 				if (body_received != body_target)
 				{
 					// Can only happen when amqp_simple_wait_frame returns <= 0 //
 					// We break here to close the connection //
 					break;
 				}
-
 				// everything was fine, we can quit now because we received the reply //
 				break;
 			}
@@ -998,11 +973,11 @@ void func_ARIA ()
 	char message[1134];
 	FILE *fp;
 	long lSize;
-	unsigned char *buff;
-	uint cur = 0, sum = 0, i = 0;
+	unsigned char *buff = NULL;
+	uint cur = 0, sum = 0;
 	uint arisize = 0;
 	unsigned char aribuf[16];
-
+	
 	if (sfDs.fpath[0] == 0x00)
 	{
 		func_gtk_dialog_modal (0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
@@ -1015,6 +990,7 @@ void func_ARIA ()
 		if (func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 		{
 			int res = 0;
+			int i = 16;
 
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
@@ -1038,22 +1014,21 @@ void func_ARIA ()
 			{
 				printf("파일을 읽을수 없습니다.\n");
 			}
-			
+
 			while (arisize < sfDs.fsize)
 			{
-				buff += i;
 				memcpy (aribuf, buff, sizeof (aribuf));
 				ARIA (aribuf);
 				memcpy (buff, aribuf, sizeof (aribuf));
-				memset (aribuf, 0, sizeof (aribuf));
-				arisize += 16;
-				i += 16;
+				//memset (aribuf, 0, sizeof (aribuf));
+				buff += i;
+				arisize += i;
+				
 			}
 			fclose (fp);
-
+			printf("arisize: %d\n", arisize);
 			fp = fopen (sfDs.fpath, "w+");
 			fwrite (buff, lSize, 1, fp);
-
 			for (int i = 0; i <= chk_fcnt; i++)
 			{
 				res = strcmp (fname, fDs[i].fname);

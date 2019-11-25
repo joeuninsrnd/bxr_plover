@@ -20,21 +20,21 @@
         -:   15:#define	ERASER_ENC_SIZE	896		//1k
         -:   16:
         -:   17:int x,y,z; //지울거
-        -:   18:int nomatch;					// regex //
-        -:   19:const int n_matches = 200;	// "N_matches" is the maximum number of matches allowed. //
+        -:   18:int nomatch;				// regex //
+        -:   19:const int n_matches = 200;		// "N_matches" is the maximum number of matches allowed. //
         -:   20:
-        -:   21:static gchar *dpath;		//	default 경로	//
-        -:   22:static gchar *path;			// 	검사 파일경로	//
-        -:   23:static gchar *name;			// 	등록 유저이름	//
-        -:   24:static gchar *job;			//	등록 직급이름	//
-        -:   25:static gchar *vs_dept;		//	등록 부서이름	//
+        -:   21:static gchar *dpath;			// default 경로 //
+        -:   22:static gchar *path;			// 검사 파일경로 //
+        -:   23:static gchar *name;			// 등록 유저이름 //
+        -:   24:static gchar *job;			// 등록 직급이름 //
+        -:   25:static gchar *vs_dept;			// 등록 부서이름 //
         -:   26:
         -:   27:static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개//
         -:   28:static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
-        -:   29:static char	chk_uuid[40];			// INI UUID 확인 //
-        -:   30:static char	set_uuid[40];			// UUID 저장 //
-        -:   31:static int	chk_df = 0;			// chk data flag //
-        -:   32:static const char	*chk_ver;		// chk version //
+        -:   29:static char	chk_uuid[40];		// INI UUID 확인 //
+        -:   30:static char	set_uuid[40];		// UUID 저장 //
+        -:   31:static int	chk_df = 0;		// chk data flag //
+        -:   32:static const char	*chk_ver;	// chk version //
         -:   33:static gchar	*fname;
         -:   34:static GtkTreeViewColumn	*dcol;
         -:   35:static GtkCellRenderer		*drenderer;
@@ -54,24 +54,24 @@
         -:   49:			*window;
         -:   50:						
         -:   51:GtkEntry		*e_name_entry,
-        -:   52:				*e_jobtitle_entry,
-        -:   53:				*e_department_entry,
-        -:   54:				*d_detect_entry,
-        -:   55:				*s_detect_entry,
-        -:   56:				*s_ip_entry,
-        -:   57:				*s_port_entry;
+        -:   52:			*e_jobtitle_entry,
+        -:   53:			*e_department_entry,
+        -:   54:			*d_detect_entry,
+        -:   55:			*s_detect_entry,
+        -:   56:			*s_ip_entry,
+        -:   57:			*s_port_entry;
         -:   58:
         -:   59:GtkScrolledWindow	*d_scrolledwindow,
         -:   60:			*dept_scrolledwindow;
         -:   61:
-        -:   62:GtkWidget *filechooserdialog;
+        -:   62:GtkWidget 		*filechooserdialog;
         -:   63:
-        -:   64:GtkWidget *d_view;
+        -:   64:GtkWidget		 *d_view;
         -:   65:
-        -:   66:GtkTreeStore	*dtreestore;
-        -:   67:GtkTreeIter	diter;
+        -:   66:GtkTreeStore		*dtreestore;
+        -:   67:GtkTreeIter		diter;
         -:   68:
-        -:   69:GtkBuilder	*builder;
+        -:   69:GtkBuilder		*builder;
         -:   70:
         -:   71:// Create IniFile //
 function func_CreateIni called 0 returned 0% blocks executed 0%
@@ -79,770 +79,773 @@ function func_CreateIni called 0 returned 0% blocks executed 0%
         -:   73:{
         -:   74:    FILE    *   ini ;
         -:   75:
-    #####:   76:    if ((ini=fopen("plover.ini", "w"))==NULL) {
+    #####:   76:    if ((ini = fopen ("plover.ini", "w")) == NULL)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-    #####:   77:        fprintf(stderr, "iniparser: cannot create plover.ini\n");
+        -:   77:    {
+    #####:   78:        fprintf(stderr, "iniparser: cannot create plover.ini\n");
 call    0 never executed
-    #####:   78:        return ;
-        -:   79:    }
-        -:   80:
-    #####:   81:    fprintf(ini,
+    #####:   79:        return ;
+        -:   80:    }
+        -:   81:
+    #####:   82:    fprintf(ini,
 call    0 never executed
-        -:   82:    "[USERINFO]\n"
-        -:   83:    "\n"
-        -:   84:    "UUID	=	%s;\n"
-        -:   85:    "\n", uDs.uuid);
-        -:   86:
-    #####:   87:    fclose(ini);
+        -:   83:    "[USERINFO]\n"
+        -:   84:    "\n"
+        -:   85:    "UUID	=	%s;\n"
+        -:   86:    "\n", uDs.uuid);
+        -:   87:
+    #####:   88:    fclose(ini);
 call    0 never executed
-        -:   88:}
-        -:   89:// end of func_MakeIni(); //
-        -:   90:
-        -:   91:// Parse IniFile //
+        -:   89:}
+        -:   90:// end of func_MakeIni(); //
+        -:   91:
+        -:   92:// Parse IniFile //
 function func_ParseIni called 0 returned 0% blocks executed 0%
-    #####:   92:int  func_ParseIni(char * ini_name)
-        -:   93:{
-        -:   94:    dictionary  *   ini ;
-        -:   95:
-        -:   96:    /* Some temporary variables to hold query results */
-        -:   97:
-    #####:   98:    ini = iniparser_load(ini_name);
+    #####:   93:int  func_ParseIni (char * ini_name)
+        -:   94:{
+        -:   95:    dictionary *ini;
+        -:   96:
+        -:   97:    /* Some temporary variables to hold query results */
+        -:   98:
+    #####:   99:    ini = iniparser_load(ini_name);
 call    0 never executed
-    #####:   99:    if (ini==NULL) {
+    #####:  100:    if (ini==NULL)
 branch  0 never executed
 branch  1 never executed
-    #####:  100:        fprintf(stderr, "cannot parse file: %s\n", ini_name);
+        -:  101:    {
+    #####:  102:        fprintf(stderr, "cannot parse file: %s\n", ini_name);
 call    0 never executed
-    #####:  101:        return -1 ;
-        -:  102:    }
-    #####:  103:    iniparser_dump(ini, stderr);
+    #####:  103:        return -1 ;
+        -:  104:    }
+    #####:  105:    iniparser_dump (ini, stderr);
 call    0 never executed
-        -:  104:
-        -:  105:    /* Get attributes */	
-    #####:  106:    INI_UUID = iniparser_getstring(ini, "USERINFO:UUID", NULL);
+        -:  106:
+        -:  107:    /* Get attributes */	
+    #####:  108:    INI_UUID = iniparser_getstring (ini, "USERINFO:UUID", NULL);
 call    0 never executed
-    #####:  107:    strcpy(chk_uuid ,INI_UUID);
-    #####:  108:    printf("********** INI FILE **********.\n");
+    #####:  109:    strcpy (chk_uuid ,INI_UUID);
+    #####:  110:    printf ("********** INI FILE **********.\n");
 call    0 never executed
-    #####:  109:    printf("INI UUID:	[%s]\n", INI_UUID ? INI_UUID : "UNDEF");
+    #####:  111:    printf ("INI UUID:	[%s]\n", INI_UUID ? INI_UUID : "UNDEF");
 branch  0 never executed
 branch  1 never executed
 call    2 never executed
-        -:  110:    
-        -:  111:    //i = iniparser_getint(ini, "a:b", -1);
-        -:  112:    //printf("a:	[%d]\n", i);
-        -:  113:
-    #####:  114:    iniparser_freedict(ini);
+        -:  112:    
+        -:  113:    //i = iniparser_getint(ini, "a:b", -1);
+        -:  114:    //printf("a:	[%d]\n", i);
+        -:  115:
+    #####:  116:    iniparser_freedict (ini);
 call    0 never executed
-    #####:  115:    return 0 ;
-        -:  116:}
-        -:  117:// end of func_ParseIni(); //
-        -:  118:
-        -:  119:// Version Check #fvc//
+    #####:  117:    return 0 ;
+        -:  118:}
+        -:  119:// end of func_ParseIni(); //
+        -:  120:
+        -:  121:// Version Check #fvc//
 function func_VerChk called 0 returned 0% blocks executed 0%
-    #####:  120:int func_VerChk()
-        -:  121:{
-    #####:  122:	func_Send();
+    #####:  122:int func_VerChk()
+        -:  123:{
+    #####:  124:	func_Send();
 call    0 never executed
-        -:  123:	//gtk_label_set_text(GTK_LABEL(e_verion_label), chk_ver); // fuc_send()의 flag(0)에서 chk_ver에 버전data넣어야함
-    #####:  124:	chk_df = 1; // 사용자 확인해야함 //
-        -:  125:
-    #####:  126:	return chk_df;
-        -:  127:}
-        -:  128:// end of func_VerChk(); //
-        -:  129:
-        -:  130:// 계정이 있는지 확인: 1=없다 2=있다 #fuc //
+        -:  125:	//gtk_label_set_text(GTK_LABEL(e_verion_label), chk_ver); // fuc_send()의 flag(0)에서 chk_ver에 버전data넣어야함
+    #####:  126:	chk_df = 1; // 사용자 확인해야함 //
+        -:  127:
+    #####:  128:	return chk_df;
+        -:  129:}
+        -:  130:// end of func_VerChk(); //
+        -:  131:
+        -:  132:// 계정이 있는지 확인: 1=없다 2=있다 #fuc //
 function func_UsrChk called 0 returned 0% blocks executed 0%
-    #####:  131:int func_UsrChk()
-        -:  132:{
-        -:  133:	int tmp;
-        -:  134:
-    #####:  135:	chk_df = 1;
-    #####:  136:	func_Send();
+    #####:  133:int func_UsrChk()
+        -:  134:{
+        -:  135:	int tmp;
+        -:  136:
+    #####:  137:	chk_df = 1;
+    #####:  138:	func_Send();
 call    0 never executed
-    #####:  137:	tmp = strcmp(chk_uuid, uDs.uuid); // 클라이언트 흐름 다시 생각해보기. 실행부터
-        -:  138:
-    #####:  139:	if (tmp == 0)
+    #####:  139:	tmp = strcmp (chk_uuid, uDs.uuid); // 클라이언트 흐름 다시 생각해보기. 실행부터
+        -:  140:
+    #####:  141:	if (tmp == 0)
 branch  0 never executed
 branch  1 never executed
-        -:  140:	{
-    #####:  141:		printf("사용자님 안녕하세요!\n");
+        -:  142:	{
+    #####:  143:		printf ("사용자님 안녕하세요!\n");
 call    0 never executed
-    #####:  142:		chk_df = 2;
-        -:  143:	}
-        -:  144:	else
-        -:  145:	{
-    #####:  146:		printf("사용자 등록을 해주세요!\n");
+    #####:  144:		chk_df = 2;
+        -:  145:	}
+        -:  146:	else
+        -:  147:	{
+    #####:  148:		printf ("사용자 등록을 해주세요!\n");
 call    0 never executed
-    #####:  147:		chk_df = 1;
-        -:  148:	}
-        -:  149:	 
-        -:  150:
-    #####:  151:	if (chk_df == 1)
+    #####:  149:		chk_df = 1;
+        -:  150:	}
+        -:  151:	 
+        -:  152:
+    #####:  153:	if (chk_df == 1)
 branch  0 never executed
 branch  1 never executed
-        -:  152:	{
-    #####:  153:		gtk_widget_show(enrollment_window); // 사용자 등록 창 //
+        -:  154:	{
+    #####:  155:		gtk_widget_show (enrollment_window); // 사용자 등록 창 //
 call    0 never executed
-    #####:  154:		gtk_main();
+    #####:  156:		gtk_main();
 call    0 never executed
-        -:  155:	}
-    #####:  156:	if (chk_df == 2)
+        -:  157:	}
+    #####:  158:	if (chk_df == 2)
 branch  0 never executed
 branch  1 never executed
-        -:  157:	{
-    #####:  158:		gtk_widget_show(main_window); 		// 메인 창 //
+        -:  159:	{
+    #####:  160:		gtk_widget_show (main_window); 		// 메인 창 //
 call    0 never executed
-    #####:  159:		gtk_main();
+    #####:  161:		gtk_main();
 call    0 never executed
-        -:  160:	}
-        -:  161:	
-    #####:  162:	return chk_df;
-        -:  163:}
-        -:  164:/* end of func_UsrChk(); */
-        -:  165:
-        -:  166:// 사용자 UUID parsing #fuu//
+        -:  162:	}
+        -:  163:	
+    #####:  164:	return chk_df;
+        -:  165:}
+        -:  166:/* end of func_UsrChk(); */
+        -:  167:
+        -:  168:// 사용자 UUID parsing #fuu//
 function func_Uuid called 0 returned 0% blocks executed 0%
-    #####:  167:int func_Uuid()
-        -:  168:{
-    #####:  169:	FILE *uidfp = NULL;
-        -:  170:    char strbuf[300];
-    #####:  171:    char *pstr = NULL;
-        -:  172:
-    #####:  173:	uidfp = fopen("/etc/fstab", "r");
-call    0 never executed
+    #####:  169:int func_Uuid()
+        -:  170:{
+    #####:  171:	FILE *uidfp = NULL;
+        -:  172:	char strbuf[300];
+    #####:  173:	char *pstr = NULL;
         -:  174:
-    #####:  175:	if (NULL == uidfp)
+    #####:  175:	uidfp = fopen ("/etc/fstab", "r");
+call    0 never executed
+        -:  176:
+    #####:  177:	if (NULL == uidfp)
 branch  0 never executed
 branch  1 never executed
-        -:  176:	{
-    #####:  177:        printf("fstab 파일을 열수 없습니다.\n");
+        -:  178:	{
+    #####:  179:        printf ("fstab 파일을 열수 없습니다.\n");
 call    0 never executed
-    #####:  178:		return 1;
-        -:  179:	}
-        -:  180:
-    #####:  181:	while (feof (uidfp) == 0)
+    #####:  180:		return 1;
+        -:  181:	}
+        -:  182:
+    #####:  183:	while (feof (uidfp) == 0)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -:  182:	{
-    #####:  183:		pstr = fgets( strbuf, sizeof(strbuf), uidfp);
+        -:  184:	{
+    #####:  185:		pstr = fgets (strbuf, sizeof(strbuf), uidfp);
 call    0 never executed
-        -:  184:
-    #####:  185:		if(pstr != 0) // \n만나면 문자 더이상 안 읽어서 안해주면 seg fault 뜸 //
+        -:  186:
+    #####:  187:		if (pstr != 0) // \n만나면 문자 더이상 안 읽어서 안해주면 seg fault 뜸 //
 branch  0 never executed
 branch  1 never executed
-        -:  186:		{
-    #####:  187:			if(pstr[0] == 'U' && pstr[42] == '/')
+        -:  188:		{
+    #####:  189:			if (pstr[0] == 'U' && pstr[42] == '/')
 branch  0 never executed
 branch  1 never executed
 branch  2 never executed
 branch  3 never executed
-        -:  188:			{
-    #####:  189:				for (int i = 0; i < 36; i++)
+        -:  190:			{
+    #####:  191:				for (int i = 0; i < 36; i++)
 branch  0 never executed
 branch  1 never executed
-        -:  190:				{ 
-    #####:  191:					set_uuid[i] = pstr[i+5];
-        -:  192:				}
-    #####:  193:				strcpy(uDs.uuid, set_uuid);
-    #####:  194:				strcpy(sfDs.uuid, set_uuid);
-    #####:  195:				printf("UUID: [%s]\n", uDs.uuid);
+        -:  192:				{ 
+    #####:  193:					set_uuid[i] = pstr[i+5];
+        -:  194:				}
+    #####:  195:				strcpy (uDs.uuid, set_uuid);
+    #####:  196:				strcpy (sfDs.uuid, set_uuid);
+    #####:  197:				printf ("UUID: [%s]\n", uDs.uuid);
 call    0 never executed
-        -:  196:			}
-        -:  197:		}
-        -:  198:    }
-        -:  199:    
-    #####:  200:    memset(strbuf, 0, sizeof(strbuf));
-    #####:  201:	fclose(uidfp);
+        -:  198:			}
+        -:  199:		}
+        -:  200:    }
+        -:  201:    
+    #####:  202:    memset (strbuf, 0, sizeof(strbuf));
+    #####:  203:	fclose (uidfp);
 call    0 never executed
-        -:  202:
-    #####:  203:	return 0;
-        -:  204:}
-        -:  205:// end of func_Uuid()(); //
-        -:  206:
-        -:  207:// 정규식 컴파일 //
+        -:  204:
+    #####:  205:	return 0;
+        -:  206:}
+        -:  207:// end of func_Uuid()(); //
+        -:  208:
+        -:  209:// 정규식 컴파일 //
 function compile_regex called 0 returned 0% blocks executed 0%
-    #####:  208:int compile_regex (regex_t *r, const char *regex_text)
-        -:  209:{
-    #####:  210:	int status = regcomp(r, regex_text, REG_EXTENDED|REG_NEWLINE);
+    #####:  210:int compile_regex (regex_t *r, const char *regex_text)
+        -:  211:{
+    #####:  212:	int status = regcomp (r, regex_text, REG_EXTENDED|REG_NEWLINE);
 call    0 never executed
-        -:  211:
-    #####:  212:	if (status != 0)
+        -:  213:
+    #####:  214:	if (status != 0)
 branch  0 never executed
 branch  1 never executed
-        -:  213:	{
-        -:  214:		char error_message[MAX_ERROR_MSG];
-        -:  215:
-    #####:  216:		regerror(status, r, error_message, MAX_ERROR_MSG);
-call    0 never executed
+        -:  215:	{
+        -:  216:		char error_message[MAX_ERROR_MSG];
         -:  217:
-    #####:  218:		printf("Regex error compiling '%s': %s\n", regex_text, error_message);
+    #####:  218:		regerror (status, r, error_message, MAX_ERROR_MSG);
 call    0 never executed
         -:  219:
-    #####:  220:		return 1;
-        -:  221:	}
-        -:  222:
-    #####:  223:	return 0;
-        -:  224:}
-        -:  225:/* end of compile_regex(); */
-        -:  226:
-        -:  227:// 주민등록번호, 외국인등록번호 정규식 #jfr //
+    #####:  220:		printf ("Regex error compiling '%s': %s\n", regex_text, error_message);
+call    0 never executed
+        -:  221:
+    #####:  222:		return 1;
+        -:  223:	}
+        -:  224:
+    #####:  225:	return 0;
+        -:  226:}
+        -:  227:/* end of compile_regex(); */
+        -:  228:
+        -:  229:// 주민등록번호, 외국인등록번호 정규식 #jfr //
 function match_regex_jnfg called 0 returned 0% blocks executed 0%
-    #####:  228:char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
-    #####:  229:{
-        -:  230:	/* "P" is a pointer into the string which points to the end of the
-        -:  231:	previous match. */
-    #####:  232:	const char *p = to_match;
-        -:  233:
-        -:  234:	/* "M" contains the matches found. */
-    #####:  235:	regmatch_t m[n_matches];
-        -:  236:
-        -:  237:	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
-        -:  238:	while (1)
-        -:  239:	{
-    #####:  240:		nomatch = regexec(r, p, n_matches, m, 0);
+    #####:  230:char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+    #####:  231:{
+        -:  232:	/* "P" is a pointer into the string which points to the end of the
+        -:  233:	previous match. */
+    #####:  234:	const char *p = to_match;
+        -:  235:
+        -:  236:	/* "M" contains the matches found. */
+    #####:  237:	regmatch_t m[n_matches];
+        -:  238:
+        -:  239:	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
+        -:  240:	while (1)
+        -:  241:	{
+    #####:  242:		nomatch = regexec (r, p, n_matches, m, 0);
 call    0 never executed
-        -:  241:
-    #####:  242:		if (nomatch)
+        -:  243:
+    #####:  244:		if (nomatch)
 branch  0 never executed
 branch  1 never executed
-        -:  243:		{
-        -:  244:			//printf("No more matches.\n");
-    #####:  245:			printf("[%d] JF reading\n", z++);
+        -:  245:		{
+        -:  246:			//printf("No more matches.\n");
+    #####:  247:			printf("[%d] JF reading\n", z++);
 call    0 never executed
-    #####:  246:			return 0;
-        -:  247:		}
-        -:  248:
-        -:  249:		else
-        -:  250:		{
-    #####:  251:			for (int i = 0; i < n_matches; i++)
+    #####:  248:			return 0;
+        -:  249:		}
+        -:  250:
+        -:  251:		else
+        -:  252:		{
+    #####:  253:			for (int i = 0; i < n_matches; i++)
 branch  0 never executed
 branch  1 never executed
-        -:  252:			{
-        -:  253:				int start;
-        -:  254:
-    #####:  255:				if (m[i].rm_so == -1)
+        -:  254:			{
+        -:  255:				int start;
+        -:  256:
+    #####:  257:				if (m[i].rm_so == -1)
 branch  0 never executed
 branch  1 never executed
-        -:  256:				{
-    #####:  257:					break;
-        -:  258:				}
-        -:  259:
-    #####:  260:				start = m[i].rm_so + (p - to_match);
+        -:  258:				{
+    #####:  259:					break;
+        -:  260:				}
         -:  261:
-        -:  262:				// 주민번호, 외국인등록번호 정규식 검사 통과 //
-    #####:  263:				if (i == 0)
+    #####:  262:				start = m[i].rm_so + (p - to_match);
+        -:  263:
+        -:  264:				// 주민번호, 외국인등록번호 정규식 검사 통과 //
+    #####:  265:				if (i == 0)
 branch  0 never executed
 branch  1 never executed
-        -:  264:				{
-    #####:  265:					int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
-    #####:  266:					char buf_tmp[15] = {0,};
-        -:  267:
-        -:  268:					// 주민번호, 외국인등록번호 유효성 검사 //
-    #####:  269:					for (int j = 0; j < 14; j++)
+        -:  266:				{
+    #####:  267:					int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
+    #####:  268:					char buf_tmp[15] = {0,};
+        -:  269:
+        -:  270:					// 주민번호, 외국인등록번호 유효성 검사 //
+    #####:  271:					for (int j = 0; j < 14; j++)
 branch  0 never executed
 branch  1 never executed
-        -:  270:					{
-    #####:  271:						buf_tmp[j] = *(to_match + start + j);
-    #####:  272:						buf_tmp[j] -= 48;
-        -:  273:					}
-        -:  274:
-    #####:  275:					sum = buf_tmp[0]*2 + buf_tmp[1]*3 + buf_tmp[2]*4 + buf_tmp[3]*5 + buf_tmp[4]*6 + buf_tmp[5]*7
-    #####:  276:					+ buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
-        -:  277:
-    #####:  278:					chk = buf_tmp[13];
-    #####:  279:					jtmp = 11 - (sum % 11); // 주민번호 //
-    #####:  280:					fgtmp = 13 - (sum % 11); // 외국인번호 //
-        -:  281:
-    #####:  282:					if (jtmp >= 10)
+        -:  272:					{
+    #####:  273:						buf_tmp[j] = *(to_match + start + j);
+    #####:  274:						buf_tmp[j] -= 48;
+        -:  275:					}
+        -:  276:
+    #####:  277:					sum = buf_tmp[0]*2 + buf_tmp[1]*3 + buf_tmp[2]*4 + buf_tmp[3]*5 + buf_tmp[4]*6 + buf_tmp[5]*7
+    #####:  278:					+ buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
+        -:  279:
+    #####:  280:					chk = buf_tmp[13];
+    #####:  281:					jtmp = 11 - (sum % 11); // 주민번호 //
+    #####:  282:					fgtmp = 13 - (sum % 11); // 외국인번호 //
+        -:  283:
+    #####:  284:					if (jtmp >= 10)
 branch  0 never executed
 branch  1 never executed
-        -:  283:					{
-    #####:  284:						jtmp -= 10;
-        -:  285:					}
-        -:  286:
-    #####:  287:					if (fgtmp >= 10)
+        -:  285:					{
+    #####:  286:						jtmp -= 10;
+        -:  287:					}
+        -:  288:
+    #####:  289:					if (fgtmp >= 10)
 branch  0 never executed
 branch  1 never executed
-        -:  288:					{
-    #####:  289:						fgtmp -= 10;
-        -:  290:					}
-        -:  291:
-        -:  292:					// 주민번호 유효성 통과 //
-    #####:  293:					if (jtmp == chk)
+        -:  290:					{
+    #####:  291:						fgtmp -= 10;
+        -:  292:					}
+        -:  293:
+        -:  294:					// 주민번호 유효성 통과 //
+    #####:  295:					if (jtmp == chk)
 branch  0 never executed
 branch  1 never executed
-        -:  294:					{
-    #####:  295:						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
-        -:  296:
-    #####:  297:						if (res != 0)
+        -:  296:					{
+    #####:  297:						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+        -:  298:
+    #####:  299:						if (res != 0)
 branch  0 never executed
 branch  1 never executed
-        -:  298:						{
-    #####:  299:							chk_fcnt++;
-        -:  300:						}
-        -:  301:
-        -:  302:					// 읽고있는중인 파일 이름 저장 //
-    #####:  303:					strcpy(chk_fname, file->d_name);
-        -:  304:
-        -:  305:					// 검출된 주민등록번호의 수 //
-    #####:  306:					fDs[chk_fcnt].jcnt++;
-        -:  307:
-        -:  308:					// data 구조체에 저장 //
-    #####:  309:					strcpy(fDs[chk_fcnt].fpath, filepath);
-    #####:  310:					strcpy(fDs[chk_fcnt].fname, file->d_name);
-    #####:  311:					fDs[chk_fcnt].fsize = buf.st_size;
-    #####:  312:					strcpy(fDs[chk_fcnt].stat, "일반");
-        -:  313:
-        -:  314:					}
+        -:  300:						{
+    #####:  301:							chk_fcnt++;
+        -:  302:						}
+        -:  303:
+        -:  304:					// 읽고있는중인 파일 이름 저장 //
+    #####:  305:					strcpy (chk_fname, file->d_name);
+        -:  306:
+        -:  307:					// 검출된 주민등록번호의 수 //
+    #####:  308:					fDs[chk_fcnt].jcnt++;
+        -:  309:
+        -:  310:					// data 구조체에 저장 //
+    #####:  311:					strcpy (fDs[chk_fcnt].fpath, filepath);
+    #####:  312:					strcpy (fDs[chk_fcnt].fname, file->d_name);
+    #####:  313:					fDs [chk_fcnt].fsize = buf.st_size;
+    #####:  314:					strcpy (fDs[chk_fcnt].stat, "일반");
         -:  315:
-        -:  316:					// 외국인등록번호 유효성 통과 //
-    #####:  317:					if (fgtmp == chk)
+        -:  316:					}
+        -:  317:
+        -:  318:					// 외국인등록번호 유효성 통과 //
+    #####:  319:					if (fgtmp == chk)
 branch  0 never executed
 branch  1 never executed
-        -:  318:					{
-    #####:  319:						int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
-        -:  320:
-    #####:  321:						if (res != 0)
+        -:  320:					{
+    #####:  321:						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+        -:  322:
+    #####:  323:						if (res != 0)
 branch  0 never executed
 branch  1 never executed
-        -:  322:						{
-    #####:  323:							chk_fcnt++;
-        -:  324:						}
-        -:  325:
-        -:  326:					// 읽고있는중인 파일 이름 저장 //
-    #####:  327:					strcpy(chk_fname, file->d_name);
-        -:  328:
-        -:  329:					// 검출된 외국인등록번호의 수 //
-    #####:  330:					fDs[chk_fcnt].fgcnt++;
-        -:  331:
-        -:  332:					// data 구조체에 저장 //
-    #####:  333:					strcpy(fDs[chk_fcnt].fpath, filepath);
-    #####:  334:					strcpy(fDs[chk_fcnt].fname, file->d_name);
-    #####:  335:					fDs[chk_fcnt].fsize = buf.st_size;
-    #####:  336:					strcpy(fDs[chk_fcnt].stat, "일반");
-        -:  337:
-        -:  338:					}
-        -:  339:				}
-        -:  340:			}
-        -:  341:		}
-        -:  342:
-    #####:  343:		p += m[0].rm_eo;
-        -:  344:	}
-        -:  345:}
-        -:  346:/* end of match_regex_jnfg(); */
-        -:  347:
-        -:  348:// 운전면허 정규식 #dr //
+        -:  324:						{
+    #####:  325:							chk_fcnt++;
+        -:  326:						}
+        -:  327:
+        -:  328:					// 읽고있는중인 파일 이름 저장 //
+    #####:  329:					strcpy (chk_fname, file->d_name);
+        -:  330:
+        -:  331:					// 검출된 외국인등록번호의 수 //
+    #####:  332:					fDs[chk_fcnt].fgcnt++;
+        -:  333:
+        -:  334:					// data 구조체에 저장 //
+    #####:  335:					strcpy (fDs[chk_fcnt].fpath, filepath);
+    #####:  336:					strcpy (fDs[chk_fcnt].fname, file->d_name);
+    #####:  337:					fDs[chk_fcnt].fsize = buf.st_size;
+    #####:  338:					strcpy (fDs[chk_fcnt].stat, "일반");
+        -:  339:
+        -:  340:					}
+        -:  341:				}
+        -:  342:			}
+        -:  343:		}
+        -:  344:
+    #####:  345:		p += m[0].rm_eo;
+        -:  346:	}
+        -:  347:}
+        -:  348:/* end of match_regex_jnfg(); */
+        -:  349:
+        -:  350:// 운전면허 정규식 #dr //
 function match_regex_d called 0 returned 0% blocks executed 0%
-    #####:  349:char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
-    #####:  350:{
-    #####:  351:	const char *p = to_match;
-        -:  352:
-    #####:  353:	regmatch_t m[n_matches];
+    #####:  351:char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+    #####:  352:{
+    #####:  353:	const char *p = to_match;
         -:  354:
-        -:  355:	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
-        -:  356:	while (1)
-        -:  357:	{
-    #####:  358:		nomatch = regexec(r, p, n_matches, m, 0);
+    #####:  355:	regmatch_t m[n_matches];
+        -:  356:
+        -:  357:	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
+        -:  358:	while (1)
+        -:  359:	{
+    #####:  360:		nomatch = regexec(r, p, n_matches, m, 0);
 call    0 never executed
-        -:  359:
-    #####:  360:		if (nomatch)
+        -:  361:
+    #####:  362:		if (nomatch)
 branch  0 never executed
 branch  1 never executed
-        -:  361:		{
-        -:  362:			//printf("No more matches.\n");
-    #####:  363:			printf("[%d] D reading\n", x++);
+        -:  363:		{
+        -:  364:			//printf("No more matches.\n");
+    #####:  365:			printf ("[%d] D reading\n", x++);
 call    0 never executed
-    #####:  364:			return 0;
-        -:  365:		}
-        -:  366:
-        -:  367:		else
-        -:  368:		{
-    #####:  369:			for (int i = 0; i < n_matches; i++)
+    #####:  366:			return 0;
+        -:  367:		}
+        -:  368:
+        -:  369:		else
+        -:  370:		{
+    #####:  371:			for (int i = 0; i < n_matches; i++)
 branch  0 never executed
 branch  1 never executed
-        -:  370:			{
-    #####:  371:				if (m[i].rm_so == -1)
+        -:  372:			{
+    #####:  373:				if (m[i].rm_so == -1)
 branch  0 never executed
 branch  1 never executed
-        -:  372:				{
-    #####:  373:				    break;
-        -:  374:				}
-        -:  375:
-        -:  376:				//운전면허 정규식 검사 통과//
-    #####:  377:				if (i == 0)
+        -:  374:				{
+    #####:  375:				    break;
+        -:  376:				}
+        -:  377:
+        -:  378:				//운전면허 정규식 검사 통과//
+    #####:  379:				if (i == 0)
 branch  0 never executed
 branch  1 never executed
-        -:  378:				{
-    #####:  379:					int res = strcmp(chk_fname, file->d_name); //같은파일 = 0 //
-        -:  380:
-    #####:  381:					if (res != 0)
+        -:  380:				{
+    #####:  381:					int res = strcmp (chk_fname, file->d_name); //같은파일 = 0 //
+        -:  382:
+    #####:  383:					if (res != 0)
 branch  0 never executed
 branch  1 never executed
-        -:  382:					{
-    #####:  383:						chk_fcnt++;
-        -:  384:					}
-        -:  385:
-        -:  386:					// 읽고있는중인 파일 이름 저장 //
-    #####:  387:					strcpy(chk_fname, file->d_name);
-        -:  388:
-        -:  389:					// 검출된 운전면허의 수 //
-    #####:  390:					fDs[chk_fcnt].dcnt++;
-        -:  391:
-        -:  392:					// data 구조체에 저장 //
-    #####:  393:					strcpy(fDs[chk_fcnt].fpath, filepath);
-    #####:  394:					strcpy(fDs[chk_fcnt].fname, file->d_name);
-    #####:  395:					fDs[chk_fcnt].fsize = buf.st_size;
-    #####:  396:					strcpy(fDs[chk_fcnt].stat, "일반");
-        -:  397:
-        -:  398:				}
-        -:  399:			}
-        -:  400:		}
-        -:  401:
-    #####:  402:		p += m[0].rm_eo;
-        -:  403:	}
-        -:  404:}
-        -:  405:/* end of match_regex_d(); */
-        -:  406:
-        -:  407:// 여권번호 정규식 #pr //
+        -:  384:					{
+    #####:  385:						chk_fcnt++;
+        -:  386:					}
+        -:  387:
+        -:  388:					// 읽고있는중인 파일 이름 저장 //
+    #####:  389:					strcpy (chk_fname, file->d_name);
+        -:  390:
+        -:  391:					// 검출된 운전면허의 수 //
+    #####:  392:					fDs[chk_fcnt].dcnt++;
+        -:  393:
+        -:  394:					// data 구조체에 저장 //
+    #####:  395:					strcpy (fDs[chk_fcnt].fpath, filepath);
+    #####:  396:					strcpy (fDs[chk_fcnt].fname, file->d_name);
+    #####:  397:					fDs[chk_fcnt].fsize = buf.st_size;
+    #####:  398:					strcpy (fDs[chk_fcnt].stat, "일반");
+        -:  399:
+        -:  400:				}
+        -:  401:			}
+        -:  402:		}
+        -:  403:
+    #####:  404:		p += m[0].rm_eo;
+        -:  405:	}
+        -:  406:}
+        -:  407:/* end of match_regex_d(); */
+        -:  408:
+        -:  409:// 여권번호 정규식 #pr //
 function match_regex_p called 0 returned 0% blocks executed 0%
-    #####:  408:char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
-    #####:  409:{
-    #####:  410:	const char *p = to_match;
-        -:  411:
-    #####:  412:	regmatch_t m[n_matches];
+    #####:  410:char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+    #####:  411:{
+    #####:  412:	const char *p = to_match;
         -:  413:
-        -:  414:	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
-        -:  415:	while (1)
-        -:  416:	{
-    #####:  417:		nomatch = regexec(r, p, n_matches, m, 0);
+    #####:  414:	regmatch_t m[n_matches];
+        -:  415:
+        -:  416:	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
+        -:  417:	while (1)
+        -:  418:	{
+    #####:  419:		nomatch = regexec (r, p, n_matches, m, 0);
 call    0 never executed
-        -:  418:
-    #####:  419:		if (nomatch)
+        -:  420:
+    #####:  421:		if (nomatch)
 branch  0 never executed
 branch  1 never executed
-        -:  420:		{
-        -:  421:			//printf("No more matches.\n");
-    #####:  422:			printf("[%d] P reading\n", y++);
+        -:  422:		{
+        -:  423:			//printf("No more matches.\n");
+    #####:  424:			printf("[%d] P reading\n", y++);
 call    0 never executed
-    #####:  423:			return 0;
-        -:  424:		}
-        -:  425:
-        -:  426:		else
-        -:  427:		{
-    #####:  428:			for (int i = 0; i < n_matches; i++)
+    #####:  425:			return 0;
+        -:  426:		}
+        -:  427:
+        -:  428:		else
+        -:  429:		{
+    #####:  430:			for (int i = 0; i < n_matches; i++)
 branch  0 never executed
 branch  1 never executed
-        -:  429:			{
-    #####:  430:				if (m[i].rm_so == -1)
+        -:  431:			{
+    #####:  432:				if (m[i].rm_so == -1)
 branch  0 never executed
 branch  1 never executed
-        -:  431:				{
-    #####:  432:					break;
-        -:  433:				}
-        -:  434:
-        -:  435:				// 운전면허 정규식 검사 통과 //
-    #####:  436:				if (i == 0)
+        -:  433:				{
+    #####:  434:					break;
+        -:  435:				}
+        -:  436:
+        -:  437:				// 운전면허 정규식 검사 통과 //
+    #####:  438:				if (i == 0)
 branch  0 never executed
 branch  1 never executed
-        -:  437:				{
-    #####:  438:					int res = strcmp(chk_fname, file->d_name); // 같은파일 = 0 //
-        -:  439:
-    #####:  440:					if (res != 0)
+        -:  439:				{
+    #####:  440:					int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+        -:  441:
+    #####:  442:					if (res != 0)
 branch  0 never executed
 branch  1 never executed
-        -:  441:					{
-    #####:  442:						chk_fcnt++;
-        -:  443:					}
-        -:  444:
-        -:  445:					// 읽고있는중인 파일 이름 저장 //
-    #####:  446:					strcpy(chk_fname, file->d_name);
-        -:  447:
-        -:  448:					// 검출된 운전면허의 수 //
-    #####:  449:					fDs[chk_fcnt].pcnt++;
-        -:  450:
-        -:  451:					// data 구조체에 저장 //
-    #####:  452:					strcpy(fDs[chk_fcnt].fpath, filepath);
-    #####:  453:					strcpy(fDs[chk_fcnt].fname, file->d_name);
-    #####:  454:					fDs[chk_fcnt].fsize = buf.st_size;
-    #####:  455:					strcpy(fDs[chk_fcnt].stat, "일반");
-        -:  456:
-        -:  457:				}
-        -:  458:			}
-        -:  459:		}
-        -:  460:
-    #####:  461:		p += m[0].rm_eo;
-        -:  462:	}
-        -:  463:}
-        -:  464:/* end of match_regex_p(); */
-        -:  465:
-        -:  466:// data 종류 확인 //
+        -:  443:					{
+    #####:  444:						chk_fcnt++;
+        -:  445:					}
+        -:  446:
+        -:  447:					// 읽고있는중인 파일 이름 저장 //
+    #####:  448:					strcpy (chk_fname, file->d_name);
+        -:  449:
+        -:  450:					// 검출된 운전면허의 수 //
+    #####:  451:					fDs[chk_fcnt].pcnt++;
+        -:  452:
+        -:  453:					// data 구조체에 저장 //
+    #####:  454:					strcpy (fDs[chk_fcnt].fpath, filepath);
+    #####:  455:					strcpy (fDs[chk_fcnt].fname, file->d_name);
+    #####:  456:					fDs[chk_fcnt].fsize = buf.st_size;
+    #####:  457:					strcpy (fDs[chk_fcnt].stat, "일반");
+        -:  458:
+        -:  459:				}
+        -:  460:			}
+        -:  461:		}
+        -:  462:
+    #####:  463:		p += m[0].rm_eo;
+        -:  464:	}
+        -:  465:}
+        -:  466:/* end of match_regex_p(); */
+        -:  467:
+        -:  468:// data 종류 확인 //
 function check_kind_of_data called 0 returned 0% blocks executed 0%
-    #####:  467:void check_kind_of_data (const char *to_match, char *filepath, struct dirent *file, struct stat buf)
-        -:  468:{
-        -:  469:	regex_t r;
-        -:  470:	const char *regex_text;
-        -:  471:
-        -:  472:	/*
-        -:  473:	switch(data_flag) //나중에 민감정보 종류 선택 검출 할 때 사용
-        -:  474:	{
-        -:  475:		case 1:
-        -:  476:			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
-        -:  477:			compile_regex(&r, regex_text); //정규식 컴파일//
-        -:  478:			match_regex_j(&r, to_match, filepath, file, buf);
-        -:  479:
-        -:  480:			break;
+    #####:  469:void check_kind_of_data (const char *to_match, char *filepath, struct dirent *file, struct stat buf)
+        -:  470:{
+        -:  471:	regex_t r;
+        -:  472:	const char *regex_text;
+        -:  473:
+        -:  474:	/*
+        -:  475:	switch(data_flag) //나중에 민감정보 종류 선택 검출 할 때 사용
+        -:  476:	{
+        -:  477:		case 1:
+        -:  478:			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
+        -:  479:			compile_regex(&r, regex_text); //정규식 컴파일//
+        -:  480:			match_regex_j(&r, to_match, filepath, file, buf);
         -:  481:
-        -:  482:		case 2:
-        -:  483:			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
-        -:  484:			compile_regex(&r, regex_text); //정규식 컴파일//
-        -:  485:			//match_regex_d(&r, to_match, filepath, file, buf);
-        -:  486:	}
-        -:  487:	*/
-        -:  488:
-        -:  489:	// 주민번호, 외국인등록번호 정규식 //
-    #####:  490:	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
-    #####:  491:	compile_regex(&r, regex_text); // 정규식 컴파일 //
+        -:  482:			break;
+        -:  483:
+        -:  484:		case 2:
+        -:  485:			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
+        -:  486:			compile_regex(&r, regex_text); //정규식 컴파일//
+        -:  487:			//match_regex_d(&r, to_match, filepath, file, buf);
+        -:  488:	}
+        -:  489:	*/
+        -:  490:
+        -:  491:	// 주민번호, 외국인등록번호 정규식 //
+    #####:  492:	regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})";
+    #####:  493:	compile_regex(&r, regex_text); // 정규식 컴파일 //
 call    0 never executed
-    #####:  492:	match_regex_jnfg(&r, to_match, filepath, file, buf);
+    #####:  494:	match_regex_jnfg(&r, to_match, filepath, file, buf);
 call    0 never executed
-        -:  493:
-        -:  494:	// 운전면허 정규식 //
-    #####:  495:	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
-    #####:  496:	compile_regex(&r, regex_text); // 정규식 컴파일 //
+        -:  495:
+        -:  496:	// 운전면허 정규식 //
+    #####:  497:	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
+    #####:  498:	compile_regex (&r, regex_text); // 정규식 컴파일 //
 call    0 never executed
-    #####:  497:	match_regex_d(&r, to_match, filepath, file, buf);
+    #####:  499:	match_regex_d (&r, to_match, filepath, file, buf);
 call    0 never executed
-        -:  498:
-        -:  499:	// 여권번호 정규식 //
-    #####:  500:	regex_text = "[a-zA-Z]{2}[0-9]{7}";
-    #####:  501:	compile_regex(&r, regex_text); // 정규식 컴파일 //
+        -:  500:
+        -:  501:	// 여권번호 정규식 //
+    #####:  502:	regex_text = "[a-zA-Z]{2}[0-9]{7}";
+    #####:  503:	compile_regex (&r, regex_text); // 정규식 컴파일 //
 call    0 never executed
-    #####:  502:	match_regex_p(&r, to_match, filepath, file, buf);
+    #####:  504:	match_regex_p (&r, to_match, filepath, file, buf);
 call    0 never executed
-        -:  503:
-    #####:  504:	return;
-        -:  505:}
-        -:  506:/* end of check_kind_of_data(); */
-        -:  507:
-        -:  508:// 폴더, 파일 스캔 후 검출 #fd //
+        -:  505:
+    #####:  506:	return;
+        -:  507:}
+        -:  508:/* end of check_kind_of_data(); */
+        -:  509:
+        -:  510:// 폴더, 파일 스캔 후 검출 #fd //
 function func_Detect called 0 returned 0% blocks executed 0%
-    #####:  509:int func_Detect (gchar *path)
-        -:  510:{
-    #####:  511:	DIR *dp = NULL;
-    #####:  512:	FILE *fp = NULL;
-    #####:  513:	struct dirent *file = NULL;
-        -:  514:	struct stat buf;
-        -:  515:	char filepath[300];
-        -:  516:	char buffer[2097152];
-        -:  517:	const char *find_text;
-        -:  518:
-    #####:  519:	if ((dp = opendir(path)) == NULL)
+    #####:  511:int func_Detect (gchar *path)
+        -:  512:{
+    #####:  513:	DIR *dp = NULL;
+    #####:  514:	FILE *fp = NULL;
+    #####:  515:	struct dirent *file = NULL;
+        -:  516:	struct stat buf;
+        -:  517:	char filepath[300];
+        -:  518:	char buffer[2097152];
+        -:  519:	const char *find_text;
+        -:  520:
+    #####:  521:	if ((dp = opendir(path)) == NULL)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -:  520:	{
-    #####:  521:		printf("폴더를 열수 없습니다.\n");
+        -:  522:	{
+    #####:  523:		printf("폴더를 열수 없습니다.\n");
 call    0 never executed
-    #####:  522:		return -1;
-        -:  523:	}
-    #####:  524:	while ((file = readdir(dp)) != NULL)
+    #####:  524:		return -1;
+        -:  525:	}
+    #####:  526:	while ((file = readdir(dp)) != NULL)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -:  525:	{
-        -:  526:	// filepath에 현재 path넣기 //
-    #####:  527:	sprintf(filepath, "%s/%s", path, file->d_name);
-    #####:  528:	lstat(filepath, &buf);
+        -:  527:	{
+        -:  528:	// filepath에 현재 path넣기 //
+    #####:  529:	sprintf (filepath, "%s/%s", path, file->d_name);
+    #####:  530:	lstat (filepath, &buf);
 call    0 never executed
-        -:  529:		// 폴더 //
-    #####:  530:		if (S_ISDIR(buf.st_mode))
+        -:  531:		// 폴더 //
+    #####:  532:		if (S_ISDIR (buf.st_mode))
 branch  0 never executed
 branch  1 never executed
-        -:  531:		{
-        -:  532:			// .이거하고 ..이거 제외 //
-    #####:  533:			if ((!strcmp(file->d_name, ".")) || (!strcmp(file->d_name, "..")))
+        -:  533:		{
+        -:  534:			// .이거하고 ..이거 제외 //
+    #####:  535:			if ((!strcmp (file->d_name, ".")) || (!strcmp (file->d_name, "..")))
 branch  0 never executed
 branch  1 never executed
 branch  2 never executed
 branch  3 never executed
-        -:  534:			{
-    #####:  535:				continue;
-        -:  536:			}
-        -:  537:			// 안에 폴더로 재귀함수 //
-    #####:  538:			func_Detect(filepath);
+        -:  536:			{
+    #####:  537:				continue;
+        -:  538:			}
+        -:  539:			// 안에 폴더로 재귀함수 //
+    #####:  540:			func_Detect(filepath);
 call    0 never executed
-        -:  539:		}
-        -:  540:		// 파일 //
-    #####:  541:		else if (S_ISREG(buf.st_mode))
+        -:  541:		}
+        -:  542:		// 파일 //
+    #####:  543:		else if (S_ISREG (buf.st_mode))
 branch  0 never executed
 branch  1 never executed
-        -:  542:		{
-    #####:  543:			fp = fopen(filepath, "r");
+        -:  544:		{
+    #####:  545:			fp = fopen (filepath, "r");
 call    0 never executed
-    #####:  544:			if (NULL == fp)
+    #####:  546:			if (NULL == fp)
 branch  0 never executed
 branch  1 never executed
-        -:  545:			{
-    #####:  546:				printf("파일을 열수 없습니다.\n");
+        -:  547:			{
+    #####:  548:				printf("파일을 열수 없습니다.\n");
 call    0 never executed
-    #####:  547:				return 1;
-        -:  548:			}
-        -:  549:			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
-    #####:  550:			while (feof(fp) == 0)
+    #####:  549:				return 1;
+        -:  550:			}
+        -:  551:			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
+    #####:  552:			while (feof (fp) == 0)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -:  551:			{
-    #####:  552:				fread(buffer, sizeof(char), sizeof(buffer), fp);
+        -:  553:			{
+    #####:  554:				fread (buffer, sizeof (char), sizeof (buffer), fp);
 call    0 never executed
-    #####:  553:				find_text = buffer;
-    #####:  554:				check_kind_of_data(find_text, filepath, file, buf);
+    #####:  555:				find_text = buffer;
+    #####:  556:				check_kind_of_data (find_text, filepath, file, buf);
 call    0 never executed
-    #####:  555:				find_text = NULL;
-        -:  556:			}
-        -:  557:			// 메모리관리(초기화), 파일닫기 //
-    #####:  558:			memset(buffer, 0, sizeof(buffer));
-    #####:  559:			fclose(fp);
+    #####:  557:				find_text = NULL;
+        -:  558:			}
+        -:  559:			// 메모리관리(초기화), 파일닫기 //
+    #####:  560:			memset (buffer, 0, sizeof (buffer));
+    #####:  561:			fclose (fp);
 call    0 never executed
-    #####:  560:			printf("Close FILE\n");
+    #####:  562:			printf ("Close FILE\n");
 call    0 never executed
-    #####:  561:			chk_fname[0] = 0; // 초기화 //
-        -:  562:		}
-        -:  563:	}
-        -:  564:
-    #####:  565:	closedir(dp);
-call    0 never executed
+    #####:  563:			chk_fname[0] = 0; // 초기화 //
+        -:  564:		}
+        -:  565:	}
         -:  566:
-    #####:  567:	printf("Close DIR\n");
+    #####:  567:	closedir (dp);
 call    0 never executed
         -:  568:
-    #####:  569:	return  0;
-        -:  570:}
-        -:  571:/* end of func_Detect(); */
-        -:  572:
-        -:  573:// RabbitMQ 소켓, 채널 열기 //
+    #####:  569:	printf ("Close DIR\n");
+call    0 never executed
+        -:  570:
+    #####:  571:	return  0;
+        -:  572:}
+        -:  573:/* end of func_Detect(); */
+        -:  574:
+        -:  575:// RabbitMQ 소켓, 채널 열기 //
 function func_SetRabbit called 0 returned 0% blocks executed 0%
-    #####:  574:int func_SetRabbit()
-        -:  575:{
-    #####:  576:	port		=	PORT;
-    #####:  577:	vhost		=	VHOST;
-    #####:  578:	username	=	USERNAME;
-    #####:  579:	password	=	PASSWORD;
-        -:  580:
-        -:  581:	/*
-        -:  582:	 establish a channel that is used to connect RabbitMQ server
-        -:  583:	*/
-    #####:  584:	conn = amqp_new_connection();
+    #####:  576:int func_SetRabbit()
+        -:  577:{
+    #####:  578:	port		=	PORT;
+    #####:  579:	vhost		=	VHOST;
+    #####:  580:	username	=	USERNAME;
+    #####:  581:	password	=	PASSWORD;
+        -:  582:
+        -:  583:	/*
+        -:  584:	 establish a channel that is used to connect RabbitMQ server
+        -:  585:	*/
+    #####:  586:	conn = amqp_new_connection();
 call    0 never executed
-        -:  585:
-    #####:  586:	socket = amqp_tcp_socket_new(conn);
+        -:  587:
+    #####:  588:	socket = amqp_tcp_socket_new (conn);
 call    0 never executed
-    #####:  587:	if (!socket)
+    #####:  589:	if (!socket)
 branch  0 never executed
 branch  1 never executed
-        -:  588:	{
-    #####:  589:	die("creating TCP socket");
+        -:  590:	{
+    #####:  591:		die ("creating TCP socket");
 call    0 never executed
-        -:  590:	}
-    #####:  591:	status = amqp_socket_open(socket, HOSTNAME, port);
+        -:  592:	}
+    #####:  593:	status = amqp_socket_open (socket, HOSTNAME, port);
 call    0 never executed
-    #####:  592:	if (status)
+        -:  594:	
+    #####:  595:	if (status)
 branch  0 never executed
 branch  1 never executed
-        -:  593:	{
-    #####:  594:	die("opening TCP socket");
+        -:  596:	{
+    #####:  597:		die("opening TCP socket");
 call    0 never executed
-        -:  595:	}
-        -:  596:
-        -:  597:
-    #####:  598:	die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-call    0 never executed
-call    1 never executed
-        -:  599:																		"guest", "guest"),
-        -:  600:																		"Logging in");
-        -:  601:	/*die_on_amqp_error(amqp_login(conn, vhost, 200, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-        -:  602:																		username, password),
-        -:  603:																		"Logging in");*/
-        -:  604:					
-    #####:  605:	amqp_channel_open(conn, 1);
-call    0 never executed
-    #####:  606:	die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
+        -:  598:	}
+        -:  599:
+        -:  600:
+    #####:  601:	die_on_amqp_error (amqp_login (conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
 call    0 never executed
 call    1 never executed
-        -:  607:
-        -:  608:	/*
-        -:  609:	 create private reply_to queue
-        -:  610:	*/
-        -:  611:	{
-    #####:  612:		amqp_queue_declare_ok_t *r = amqp_queue_declare(
+        -:  602:																		"guest", "guest"),
+        -:  603:																		"Logging in");
+        -:  604:	/*die_on_amqp_error(amqp_login(conn, vhost, 200, 131072, 0, AMQP_SASL_METHOD_PLAIN,
+        -:  605:																		username, password),
+        -:  606:																		"Logging in");*/
+        -:  607:					
+    #####:  608:	amqp_channel_open (conn, 1);
 call    0 never executed
-        -:  613:			conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
-        -:  614:
-    #####:  615:		die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
+    #####:  609:	die_on_amqp_error (amqp_get_rpc_reply (conn), "Opening channel");
 call    0 never executed
 call    1 never executed
-        -:  616:
-    #####:  617:		reply_to_queue = amqp_bytes_malloc_dup(r->queue);
+        -:  610:
+        -:  611:	/*
+        -:  612:	 create private reply_to queue
+        -:  613:	*/
+        -:  614:	{
+    #####:  615:		amqp_queue_declare_ok_t *r = amqp_queue_declare (
 call    0 never executed
-    #####:  618:		if (reply_to_queue.bytes == NULL)
+        -:  616:			conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
+        -:  617:
+    #####:  618:		die_on_amqp_error (amqp_get_rpc_reply (conn), "Declaring queue");
+call    0 never executed
+call    1 never executed
+        -:  619:
+    #####:  620:		reply_to_queue = amqp_bytes_malloc_dup (r->queue);
+call    0 never executed
+    #####:  621:		if (reply_to_queue.bytes == NULL)
 branch  0 never executed
 branch  1 never executed
-        -:  619:		{
-    #####:  620:			fprintf(stderr, "Out of memory while copying queue name");
+        -:  622:		{
+    #####:  623:			fprintf (stderr, "Out of memory while copying queue name");
 call    0 never executed
-    #####:  621:			return 1;
-        -:  622:		}
-        -:  623:	}
-        -:  624:
-    #####:  625:	return 0;
-        -:  626:}
+    #####:  624:			return 1;
+        -:  625:		}
+        -:  626:	}
         -:  627:
-        -:  628:// 전송 #fs //
+    #####:  628:	return 0;
+        -:  629:}
+        -:  630:
+        -:  631:// 전송 #fs //
 function func_Send called 0 returned 0% blocks executed 0%
-    #####:  629:int func_Send()
-        -:  630:{
-        -:  631:	static char *enc;
-        -:  632:	char message[1024];
-    #####:  633:	gdouble percent = 0.0;
-    #####:  634:	size_t in_len = 0;
-        -:  635:	//routingkey = "ka"; // TRCODE //
-        -:  636:
-        -:  637:	/*
-        -:  638:	 send the message
-        -:  639:	*/
-        -:  640:	{
-        -:  641:		/*
-        -:  642:		  set properties
-        -:  643:		*/
-        -:  644:		amqp_basic_properties_t props;
-    #####:  645:		props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
-        -:  646:					   AMQP_BASIC_DELIVERY_MODE_FLAG | AMQP_BASIC_REPLY_TO_FLAG |
-        -:  647:					   AMQP_BASIC_CORRELATION_ID_FLAG;
-    #####:  648:		props.content_type = amqp_cstring_bytes("text/plain");
+    #####:  632:int func_Send()
+        -:  633:{
+        -:  634:	static char *enc;
+        -:  635:	char message[1024];
+    #####:  636:	gdouble percent = 0.0;
+    #####:  637:	size_t in_len = 0;
+        -:  638:	//routingkey = "ka"; // TRCODE //
+        -:  639:
+        -:  640:	/*
+        -:  641:	 send the message
+        -:  642:	*/
+        -:  643:	{
+        -:  644:		/*
+        -:  645:		  set properties
+        -:  646:		*/
+        -:  647:		amqp_basic_properties_t props;
+    #####:  648:		props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
+        -:  649:					   AMQP_BASIC_DELIVERY_MODE_FLAG | AMQP_BASIC_REPLY_TO_FLAG |
+        -:  650:					   AMQP_BASIC_CORRELATION_ID_FLAG;
+    #####:  651:		props.content_type = amqp_cstring_bytes("text/plain");
 call    0 never executed
-    #####:  649:		props.delivery_mode = 2; /* persistent delivery mode */
-    #####:  650:		props.reply_to = amqp_bytes_malloc_dup(reply_to_queue);
+    #####:  652:		props.delivery_mode = 2; /* persistent delivery mode */
+    #####:  653:		props.reply_to = amqp_bytes_malloc_dup(reply_to_queue);
 call    0 never executed
-        -:  651:		
-    #####:  652:		if (props.reply_to.bytes == NULL)
+        -:  654:		
+    #####:  655:		if (props.reply_to.bytes == NULL)
 branch  0 never executed
 branch  1 never executed
-        -:  653:		{
-    #####:  654:			fprintf(stderr, "Out of memory while copying queue name");
+        -:  656:		{
+    #####:  657:			fprintf (stderr, "Out of memory while copying queue name");
 call    0 never executed
-    #####:  655:			return 1;
-        -:  656:		}
-    #####:  657:		props.correlation_id = amqp_cstring_bytes("1");
+    #####:  658:			return 1;
+        -:  659:		}
+    #####:  660:		props.correlation_id = amqp_cstring_bytes ("1");
 call    0 never executed
-        -:  658:
-        -:  659:		/*
-        -:  660:		  publish // 어떤데이터를 보낼지 chk_df로 구분 #data_sending
-        -:  661:		*/
-    #####:  662:		switch(chk_df)
+        -:  661:
+        -:  662:		/*
+        -:  663:		  publish // 어떤데이터를 보낼지 chk_df로 구분 #data_sending
+        -:  664:		*/
+    #####:  665:		switch (chk_df)
 branch  0 never executed
 branch  1 never executed
 branch  2 never executed
@@ -850,352 +853,352 @@ branch  3 never executed
 branch  4 never executed
 branch  5 never executed
 branch  6 never executed
-        -:  663:		{
-    #####:  664:			case 0:	// 버전 확인 //
-    #####:  665:				printf("##### 버전 확인 #####\n");
+        -:  666:		{
+    #####:  667:			case 0:	// 버전 확인 //
+    #####:  668:				printf ("##### 버전 확인 #####\n");
 call    0 never executed
-        -:  666:				//routingkey = "BPVCHK0R"; // TRCODE //
-    #####:  667:				routingkey = "ka";
-    #####:  668:				enc = "Version Check";
-    #####:  669:				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
-call    0 never executed
-call    1 never executed
-call    2 never executed
-call    3 never executed
-call    4 never executed
-        -:  670:									amqp_cstring_bytes(routingkey), 0, 0,
-        -:  671:									&props, amqp_cstring_bytes(enc)), "Publishing");
-    #####:  672:				break;
-        -:  673:
-    #####:  674:			case 1:	// 사용자 확인 //
-    #####:  675:				printf("##### 사용자 확인 #####\n");
-call    0 never executed
-    #####:  676:				routingkey = "ka"; // TRCODE //
-    #####:  677:				enc = "User Check";
-    #####:  678:				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+        -:  669:				//routingkey = "BPVCHK0R"; // TRCODE //
+    #####:  670:				routingkey = "ka";
+    #####:  671:				enc = "Version Check";
+    #####:  672:				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 call    0 never executed
 call    1 never executed
 call    2 never executed
 call    3 never executed
 call    4 never executed
-        -:  679:									amqp_cstring_bytes(routingkey), 0, 0,
-        -:  680:									&props, amqp_cstring_bytes(enc)), "Publishing");
-    #####:  681:				break;
-        -:  682:			
-    #####:  683:			case 2:	// 사용자 등록 //
-    #####:  684:				printf("##### 사용자 등록 #####\n");
+        -:  673:									amqp_cstring_bytes (routingkey), 0, 0,
+        -:  674:									&props, amqp_cstring_bytes (enc)), "Publishing");
+    #####:  675:				break;
+        -:  676:
+    #####:  677:			case 1:	// 사용자 확인 //
+    #####:  678:				printf ("##### 사용자 확인 #####\n");
 call    0 never executed
-        -:  685:				//routingkey = "BPDEPT0R"; // TRCODE //
-    #####:  686:				routingkey = "ka";
-    #####:  687:				in_len = sizeof(uDs);
-    #####:  688:				enc = b64_encode((unsigned char *)&uDs, in_len, enc);
-call    0 never executed
-    #####:  689:				printf("[enc_data: %s]\n", enc);
-call    0 never executed
-    #####:  690:				printf("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
-call    0 never executed
-        -:  691:				
-    #####:  692:				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+    #####:  679:				routingkey = "ka"; // TRCODE //
+    #####:  680:				enc = "User Check";
+    #####:  681:				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 call    0 never executed
 call    1 never executed
 call    2 never executed
 call    3 never executed
 call    4 never executed
-        -:  693:									amqp_cstring_bytes(routingkey), 0, 0,
-        -:  694:									&props, amqp_cstring_bytes(enc)), "Publishing");
-    #####:  695:				break;
-        -:  696:
-    #####:  697:			case 3:	// 검출 결과 //
-    #####:  698:				printf("##### 검출 결과  #####\n");
+        -:  682:									amqp_cstring_bytes (routingkey), 0, 0,
+        -:  683:									&props, amqp_cstring_bytes (enc)), "Publishing");
+    #####:  684:				break;
+        -:  685:			
+    #####:  686:			case 2:	// 사용자 등록 //
+    #####:  687:				printf("##### 사용자 등록 #####\n");
 call    0 never executed
-    #####:  699:				routingkey = "ka"; // TRCODE //
-    #####:  700:				memset(message, 0x00, strlen(message));
-    #####:  701:				for(int i = 0; i <= chk_fcnt; i++)
+        -:  688:				//routingkey = "BPDEPT0R"; // TRCODE //
+    #####:  689:				routingkey = "ka";
+    #####:  690:				in_len = sizeof (uDs);
+    #####:  691:				enc = b64_encode ((unsigned char *)&uDs, in_len, enc);
+call    0 never executed
+    #####:  692:				printf ("[enc_data: %s]\n", enc);
+call    0 never executed
+    #####:  693:				printf ("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
+call    0 never executed
+        -:  694:				
+    #####:  695:				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -:  696:									amqp_cstring_bytes (routingkey), 0, 0,
+        -:  697:									&props, amqp_cstring_bytes (enc)), "Publishing");
+    #####:  698:				break;
+        -:  699:
+    #####:  700:			case 3:	// 검출 결과 //
+    #####:  701:				printf ("##### 검출 결과  #####\n");
+call    0 never executed
+    #####:  702:				routingkey = "ka"; // TRCODE //
+    #####:  703:				memset (message, 0x00, strlen(message));
+    #####:  704:				for (int i = 0; i <= chk_fcnt; i++)
 branch  0 never executed
 branch  1 never executed
-        -:  702:				{
-    #####:  703:					percent = 100.0;
-    #####:  704:					strcpy(fDs[i].uuid, uDs.uuid);
-    #####:  705:					in_len = sizeof(fDs[i]);
-        -:  706:					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
-    #####:  707:					enc = b64_encode((unsigned char *)&fDs[i], in_len, enc);
+        -:  705:				{
+    #####:  706:					percent = 100.0;
+    #####:  707:					strcpy (fDs[i].uuid, uDs.uuid);
+    #####:  708:					in_len = sizeof(fDs[i]);
+        -:  709:					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
+    #####:  710:					enc = b64_encode ((unsigned char *)&fDs[i], in_len, enc);
 call    0 never executed
-    #####:  708:					printf("[enc_data: %s]\n", enc);
+    #####:  711:					printf ("[enc_data: %s]\n", enc);
 call    0 never executed
-    #####:  709:					printf("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
-    #####:  710:								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
+    #####:  712:					printf ("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
+    #####:  713:								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
 call    0 never executed
-    #####:  711:					sprintf( message, "%.0f%% Complete", percent);
-    #####:  712:					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
-call    0 never executed
-call    1 never executed
-    #####:  713:					gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+    #####:  714:					sprintf ( message, "%.0f%% Complete", percent);
+    #####:  715:					gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), percent);
 call    0 never executed
 call    1 never executed
-        -:  714:
-    #####:  715:					die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+    #####:  716:					gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
 call    0 never executed
 call    1 never executed
-call    2 never executed
-call    3 never executed
-call    4 never executed
-        -:  716:									amqp_cstring_bytes(routingkey), 0, 0,
-        -:  717:									&props, amqp_cstring_bytes(enc)), "Publishing");
-        -:  718:				}
-    #####:  719:				break;
-        -:  720:
-    #####:  721:			case 4:	// 파일 삭제 //
-    #####:  722:				printf("##### 파일 삭제  #####\n");
-call    0 never executed
-    #####:  723:				routingkey = "ka"; // TRCODE //
-    #####:  724:				in_len = sizeof(sfDs);
-    #####:  725:				enc = b64_encode((unsigned char *)&sfDs, in_len, enc);
-call    0 never executed
-    #####:  726:				printf("[enc_data: %s]\n", enc);
-call    0 never executed
-        -:  727:				
-    #####:  728:				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+        -:  717:
+    #####:  718:					die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 call    0 never executed
 call    1 never executed
 call    2 never executed
 call    3 never executed
 call    4 never executed
-        -:  729:									amqp_cstring_bytes(routingkey), 0, 0,
-        -:  730:									&props, amqp_cstring_bytes(enc)), "Publishing");
-    #####:  731:				break;
-        -:  732:				
-    #####:  733:			case 5:	// 파일 암호화 //
-    #####:  734:				printf("##### 파일 암호화  #####\n");
+        -:  719:									amqp_cstring_bytes (routingkey), 0, 0,
+        -:  720:									&props, amqp_cstring_bytes (enc)), "Publishing");
+        -:  721:				}
+    #####:  722:				break;
+        -:  723:
+    #####:  724:			case 4:	// 파일 삭제 //
+    #####:  725:				printf ("##### 파일 삭제  #####\n");
 call    0 never executed
-    #####:  735:				routingkey = "ka"; // TRCODE //
-    #####:  736:				in_len = sizeof(sfDs);
-    #####:  737:				enc = b64_encode((unsigned char *)&sfDs, in_len, enc);
+    #####:  726:				routingkey = "ka"; // TRCODE //
+    #####:  727:				in_len = sizeof (sfDs);
+    #####:  728:				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
 call    0 never executed
-    #####:  738:				printf("[enc_data: %s]\n", enc);
+    #####:  729:				printf ("[enc_data: %s]\n", enc);
 call    0 never executed
-        -:  739:				
-    #####:  740:				die_on_error(amqp_basic_publish(conn, 1, amqp_cstring_bytes(EXCHANGE),
+        -:  730:				
+    #####:  731:				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 call    0 never executed
 call    1 never executed
 call    2 never executed
 call    3 never executed
 call    4 never executed
-        -:  741:									amqp_cstring_bytes(routingkey), 0, 0,
-        -:  742:									&props, amqp_cstring_bytes(enc)), "Publishing");
-    #####:  743:				break;
-        -:  744:
-        -:  745:		}
-        -:  746:
-    #####:  747:		amqp_bytes_free(props.reply_to);
+        -:  732:									amqp_cstring_bytes (routingkey), 0, 0,
+        -:  733:									&props, amqp_cstring_bytes (enc)), "Publishing");
+    #####:  734:				break;
+        -:  735:				
+    #####:  736:			case 5:	// 파일 암호화 //
+    #####:  737:				printf ("##### 파일 암호화  #####\n");
 call    0 never executed
-        -:  748:	}
-        -:  749:	
-        -:  750:	
-        -:  751:	/*
-        -:  752:	wait an answer //응답도 case이용해서 flag별로 구분해야 할듯
-        -:  753:	*/
+    #####:  738:				routingkey = "ka"; // TRCODE //
+    #####:  739:				in_len = sizeof (sfDs);
+    #####:  740:				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
+call    0 never executed
+    #####:  741:				printf ("[enc_data: %s]\n", enc);
+call    0 never executed
+        -:  742:				
+    #####:  743:				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -:  744:									amqp_cstring_bytes (routingkey), 0, 0,
+        -:  745:									&props, amqp_cstring_bytes (enc)), "Publishing");
+    #####:  746:				break;
+        -:  747:
+        -:  748:		}
+        -:  749:
+    #####:  750:		amqp_bytes_free (props.reply_to);
+call    0 never executed
+        -:  751:	}
+        -:  752:	
+        -:  753:	
         -:  754:	/*
-        -:  755:	{
-        -:  756:		amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
-        -:  757:								amqp_empty_table);
-        -:  758:		die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
-        -:  759:
-        -:  760:
-        -:  761:		{
-        -:  762:			amqp_frame_t frame;
-        -:  763:			int result;
-        -:  764:
-        -:  765:			amqp_basic_deliver_t *d;
-        -:  766:			amqp_basic_properties_t *p;
-        -:  767:			size_t body_target;
-        -:  768:			size_t body_received;
-        -:  769:
-        -:  770:			for (;;)
-        -:  771:			{
-        -:  772:				amqp_maybe_release_buffers(conn);
-        -:  773:				result = amqp_simple_wait_frame(conn, &frame);
-        -:  774:				printf("Result: %d\n", result);
-        -:  775:			
-        -:  776:				if (result < 0)
-        -:  777:				{
-        -:  778:					break;
-        -:  779:				}
-        -:  780:
-        -:  781:				printf("Frame type: %u channel: %u\n", frame.frame_type, frame.channel);
-        -:  782:				if (frame.frame_type != AMQP_FRAME_METHOD)
-        -:  783:				{
-        -:  784:					continue;
-        -:  785:				}
-        -:  786:
-        -:  787:				printf("Method: %s\n", amqp_method_name(frame.payload.method.id));
-        -:  788:				if (frame.payload.method.id != AMQP_BASIC_DELIVER_METHOD)
-        -:  789:				{
-        -:  790:					continue;
-        -:  791:				}
-        -:  792:
-        -:  793:				d = (amqp_basic_deliver_t *)frame.payload.method.decoded;
-        -:  794:				printf("Delivery: %u exchange: %.*s routingkey: %.*s\n",
-        -:  795:					   (unsigned)d->delivery_tag, (int)d->exchange.len,
-        -:  796:					   (char *)d->exchange.bytes, (int)d->routing_key.len,
-        -:  797:					   (char *)d->routing_key.bytes);
-        -:  798:
-        -:  799:				result = amqp_simple_wait_frame(conn, &frame);
-        -:  800:				if (result < 0)
-        -:  801:				{
-        -:  802:					break;
-        -:  803:				}
-        -:  804:
-        -:  805:				if (frame.frame_type != AMQP_FRAME_HEADER)
-        -:  806:				{
-        -:  807:					fprintf(stderr, "Expected header!");
-        -:  808:					abort();
-        -:  809:				}
-        -:  810:				p = (amqp_basic_properties_t *)frame.payload.properties.decoded;
-        -:  811:				if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG)
-        -:  812:				{
-        -:  813:					printf("Content-type: %.*s\n", (int)p->content_type.len,
-        -:  814:						 (char *)p->content_type.bytes);
-        -:  815:				}
-        -:  816:				printf("----\n");
-        -:  817:
-        -:  818:				body_target = (size_t)frame.payload.properties.body_size;
-        -:  819:				body_received = 0;
+        -:  755:	wait an answer //응답도 case이용해서 flag별로 구분해야 할듯
+        -:  756:	*/
+        -:  757:	/*
+        -:  758:	{
+        -:  759:		amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0,
+        -:  760:								amqp_empty_table);
+        -:  761:		die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
+        -:  762:
+        -:  763:
+        -:  764:		{
+        -:  765:			amqp_frame_t frame;
+        -:  766:			int result;
+        -:  767:
+        -:  768:			amqp_basic_deliver_t *d;
+        -:  769:			amqp_basic_properties_t *p;
+        -:  770:			size_t body_target;
+        -:  771:			size_t body_received;
+        -:  772:
+        -:  773:			for (;;)
+        -:  774:			{
+        -:  775:				amqp_maybe_release_buffers(conn);
+        -:  776:				result = amqp_simple_wait_frame(conn, &frame);
+        -:  777:				printf("Result: %d\n", result);
+        -:  778:			
+        -:  779:				if (result < 0)
+        -:  780:				{
+        -:  781:					break;
+        -:  782:				}
+        -:  783:
+        -:  784:				printf("Frame type: %u channel: %u\n", frame.frame_type, frame.channel);
+        -:  785:				if (frame.frame_type != AMQP_FRAME_METHOD)
+        -:  786:				{
+        -:  787:					continue;
+        -:  788:				}
+        -:  789:
+        -:  790:				printf("Method: %s\n", amqp_method_name(frame.payload.method.id));
+        -:  791:				if (frame.payload.method.id != AMQP_BASIC_DELIVER_METHOD)
+        -:  792:				{
+        -:  793:					continue;
+        -:  794:				}
+        -:  795:
+        -:  796:				d = (amqp_basic_deliver_t *)frame.payload.method.decoded;
+        -:  797:				printf("Delivery: %u exchange: %.*s routingkey: %.*s\n",
+        -:  798:					   (unsigned)d->delivery_tag, (int)d->exchange.len,
+        -:  799:					   (char *)d->exchange.bytes, (int)d->routing_key.len,
+        -:  800:					   (char *)d->routing_key.bytes);
+        -:  801:
+        -:  802:				result = amqp_simple_wait_frame(conn, &frame);
+        -:  803:				if (result < 0)
+        -:  804:				{
+        -:  805:					break;
+        -:  806:				}
+        -:  807:
+        -:  808:				if (frame.frame_type != AMQP_FRAME_HEADER)
+        -:  809:				{
+        -:  810:					fprintf(stderr, "Expected header!");
+        -:  811:					abort();
+        -:  812:				}
+        -:  813:				p = (amqp_basic_properties_t *)frame.payload.properties.decoded;
+        -:  814:				if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG)
+        -:  815:				{
+        -:  816:					printf("Content-type: %.*s\n", (int)p->content_type.len,
+        -:  817:						 (char *)p->content_type.bytes);
+        -:  818:				}
+        -:  819:				printf("----\n");
         -:  820:
-        -:  821:				while (body_received < body_target)
-        -:  822:				{
-        -:  823:					result = amqp_simple_wait_frame(conn, &frame);
-        -:  824:					
-        -:  825:					if (result < 0)
-        -:  826:					{
-        -:  827:						break;
-        -:  828:					}
-        -:  829:
-        -:  830:					if (frame.frame_type != AMQP_FRAME_BODY)
-        -:  831:					{
-        -:  832:						fprintf(stderr, "Expected body!");
-        -:  833:						abort();
-        -:  834:					}
-        -:  835:
-        -:  836:					body_received += frame.payload.body_fragment.len;
-        -:  837:					assert(body_received <= body_target);
+        -:  821:				body_target = (size_t)frame.payload.properties.body_size;
+        -:  822:				body_received = 0;
+        -:  823:
+        -:  824:				while (body_received < body_target)
+        -:  825:				{
+        -:  826:					result = amqp_simple_wait_frame(conn, &frame);
+        -:  827:					
+        -:  828:					if (result < 0)
+        -:  829:					{
+        -:  830:						break;
+        -:  831:					}
+        -:  832:
+        -:  833:					if (frame.frame_type != AMQP_FRAME_BODY)
+        -:  834:					{
+        -:  835:						fprintf(stderr, "Expected body!");
+        -:  836:						abort();
+        -:  837:					}
         -:  838:
-        -:  839:					amqp_dump(frame.payload.body_fragment.bytes,
-        -:  840:								frame.payload.body_fragment.len);
-        -:  841:				}
-        -:  842:
-        -:  843:				if (body_received != body_target)
-        -:  844:				{
-        -:  845:					// Can only happen when amqp_simple_wait_frame returns <= 0 //
-        -:  846:					// We break here to close the connection //
-        -:  847:					break;
-        -:  848:				}
-        -:  849:
-        -:  850:				// everything was fine, we can quit now because we received the reply //
-        -:  851:				break;
-        -:  852:			}
-        -:  853:		}
-        -:  854:	}
-        -:  855:	*/
-        -:  856:
-        -:  857:
-        -:  858:	/*
-        -:  859:	 closing
-        -:  860:	*/
-        -:  861:	//die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS), "Closing channel");
-        -:  862:															
-        -:  863:	//die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS), "Closing connection");
-        -:  864:															
-        -:  865:	//die_on_error(amqp_destroy_connection(conn), "Ending connection");
-        -:  866:
-    #####:  867:	return TRUE;
-        -:  868:}
-        -:  869:/* end of func_Send(); */
-        -:  870:
-        -:  871:// gtk_dialog_modal //
+        -:  839:					body_received += frame.payload.body_fragment.len;
+        -:  840:					assert(body_received <= body_target);
+        -:  841:
+        -:  842:					amqp_dump(frame.payload.body_fragment.bytes,
+        -:  843:								frame.payload.body_fragment.len);
+        -:  844:				}
+        -:  845:
+        -:  846:				if (body_received != body_target)
+        -:  847:				{
+        -:  848:					// Can only happen when amqp_simple_wait_frame returns <= 0 //
+        -:  849:					// We break here to close the connection //
+        -:  850:					break;
+        -:  851:				}
+        -:  852:
+        -:  853:				// everything was fine, we can quit now because we received the reply //
+        -:  854:				break;
+        -:  855:			}
+        -:  856:		}
+        -:  857:	}
+        -:  858:	*/
+        -:  859:
+        -:  860:
+        -:  861:	/*
+        -:  862:	 closing
+        -:  863:	*/
+        -:  864:	//die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS), "Closing channel");
+        -:  865:															
+        -:  866:	//die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS), "Closing connection");
+        -:  867:															
+        -:  868:	//die_on_error(amqp_destroy_connection(conn), "Ending connection");
+        -:  869:
+    #####:  870:	return TRUE;
+        -:  871:}
+        -:  872:/* end of func_Send(); */
+        -:  873:
+        -:  874:// gtk_dialog_modal //
 function func_gtk_dialog_modal called 0 returned 0% blocks executed 0%
-    #####:  872:int func_gtk_dialog_modal(int type, GtkWidget *widget, char *message)
-        -:  873:{
-        -:  874:	GtkWidget *dialog, *label, *content_area;
-    #####:  875:	GtkDialogFlags flags = GTK_DIALOG_MODAL;
-    #####:  876:	int	rtn = GTK_RESPONSE_REJECT;
-        -:  877:
-    #####:  878:	switch(type)
+    #####:  875:int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
+        -:  876:{
+        -:  877:	GtkWidget *dialog, *label, *content_area;
+    #####:  878:	GtkDialogFlags flags = GTK_DIALOG_MODAL;
+    #####:  879:	int	rtn = GTK_RESPONSE_REJECT;
+        -:  880:
+    #####:  881:	switch (type)
 branch  0 never executed
 branch  1 never executed
 branch  2 never executed
-        -:  879:	{
-    #####:  880:		case 0 :
-    #####:  881:			dialog = gtk_dialog_new_with_buttons("Dialog", GTK_WINDOW(widget), flags, 
+        -:  882:	{
+    #####:  883:		case 0 :
+    #####:  884:			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags, 
 call    0 never executed
 call    1 never executed
-        -:  882:						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
-    #####:  883:			break;
-        -:  884:
-    #####:  885:		case 1 :
-    #####:  886:			dialog = gtk_dialog_new_with_buttons("Dialog", GTK_WINDOW(widget), flags,
+        -:  885:						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
+    #####:  886:			break;
+        -:  887:
+    #####:  888:		case 1 :
+    #####:  889:			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags,
 call    0 never executed
 call    1 never executed
-        -:  887:						("_OK"), GTK_RESPONSE_ACCEPT, 
-        -:  888:						("_Cancel"), GTK_RESPONSE_REJECT, NULL );
-    #####:  889:			break;
-        -:  890:
-    #####:  891:		default :
+        -:  890:						("_OK"), GTK_RESPONSE_ACCEPT, 
+        -:  891:						("_Cancel"), GTK_RESPONSE_REJECT, NULL);
     #####:  892:			break;
-        -:  893:	}
-        -:  894:
-    #####:  895:	label=gtk_label_new(message);
+        -:  893:
+    #####:  894:		default :
+    #####:  895:			break;
+        -:  896:	}
+        -:  897:
+    #####:  898:	label=gtk_label_new (message);
 call    0 never executed
-    #####:  896:	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-call    0 never executed
-call    1 never executed
-    #####:  897:	gtk_container_add (GTK_CONTAINER (content_area), label);
-call    0 never executed
-call    1 never executed
-    #####:  898:	gtk_widget_show_all(dialog);
-call    0 never executed
-        -:  899:
-    #####:  900:	rtn = gtk_dialog_run(GTK_DIALOG(dialog));
+    #####:  899:	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 call    0 never executed
 call    1 never executed
-    #####:  901:	gtk_widget_destroy(dialog);
+    #####:  900:	gtk_container_add (GTK_CONTAINER (content_area), label);
 call    0 never executed
-    #####:  902:	return(rtn);	
-        -:  903:}
-        -:  904:
-        -:  905:// 삭제 #delete //
+call    1 never executed
+    #####:  901:	gtk_widget_show_all (dialog);
+call    0 never executed
+        -:  902:
+    #####:  903:	rtn = gtk_dialog_run (GTK_DIALOG (dialog));
+call    0 never executed
+call    1 never executed
+    #####:  904:	gtk_widget_destroy (dialog);
+call    0 never executed
+    #####:  905:	return (rtn);	
+        -:  906:}
+        -:  907:
+        -:  908:// 삭제 #delete //
 function func_file_eraser called 0 returned 0% blocks executed 0%
-    #####:  906:int func_file_eraser(int type)
-        -:  907:{
-        -:  908:	FILE *fp;
-    #####:  909:	int mode = R_OK | W_OK;
-        -:  910:	char MsgTmp[5];
-    #####:  911:	uint size = 0;
-        -:  912:	char *msize;
-        -:  913:
-    #####:  914:	if( access( sfDs.fpath, mode ) != 0 )
+    #####:  909:int func_file_eraser (int type)
+        -:  910:{
+        -:  911:	FILE *fp;
+    #####:  912:	int mode = R_OK | W_OK;
+        -:  913:	char MsgTmp[5];
+    #####:  914:	uint size = 0;
+        -:  915:	char *msize;
+        -:  916:
+    #####:  917:	if (access (sfDs.fpath, mode) != 0 )
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -:  915:	{
-    #####:  916:		func_gtk_dialog_modal(0, window, "\n    파일이 삭제 가능한 상태가 아닙니다.    \n");
+        -:  918:	{
+    #####:  919:		func_gtk_dialog_modal (0, window, "\n    파일이 삭제 가능한 상태가 아닙니다.    \n");
 call    0 never executed
-        -:  917:	}
-        -:  918:	
-        -:  919:	else
-        -:  920:	{
-    #####:  921:		msize = malloc(ERASER_SIZE);
-    #####:  922:		fp = fopen(sfDs.fpath, "w");
+        -:  920:	}
+        -:  921:	
+        -:  922:	else
+        -:  923:	{
+    #####:  924:		msize = malloc (ERASER_SIZE);
+    #####:  925:		fp = fopen (sfDs.fpath, "w");
 call    0 never executed
-        -:  923:
-    #####:  924:		for( int i=0 ; i < type ; i++ )
+        -:  926:
+    #####:  927:		for (int i=0 ; i < type ; i++)
 branch  0 never executed
 branch  1 never executed
-        -:  925:		{
-    #####:  926:			while (size<sfDs.fsize)
+        -:  928:		{
+    #####:  929:			while (size < sfDs.fsize)
 branch  0 never executed
 branch  1 never executed
-        -:  927:			{
-    #####:  928:				switch(i)
+        -:  930:			{
+    #####:  931:				switch (i)
 branch  0 never executed
 branch  1 never executed
 branch  2 never executed
@@ -1204,1302 +1207,1288 @@ branch  4 never executed
 branch  5 never executed
 branch  6 never executed
 branch  7 never executed
-        -:  929:				{
-    #####:  930:					case 0 :
-    #####:  931:						MsgTmp[0] = 'A';
-    #####:  932:						memset( msize, MsgTmp[0], ERASER_SIZE );
-    #####:  933:						break;
-        -:  934:						
-    #####:  935:					case 1 :
-    #####:  936:						MsgTmp[0] = '^';
-    #####:  937:						memset( msize, MsgTmp[0], ERASER_SIZE );
-    #####:  938:						break;
-        -:  939:						
-    #####:  940:					case 2 :
-    #####:  941:						srand(time(NULL));
+        -:  932:				{
+    #####:  933:					case 0 :
+    #####:  934:						MsgTmp[0] = 'A';
+    #####:  935:						memset( msize, MsgTmp[0], ERASER_SIZE );
+    #####:  936:						break;
+        -:  937:						
+    #####:  938:					case 1 :
+    #####:  939:						MsgTmp[0] = '^';
+    #####:  940:						memset( msize, MsgTmp[0], ERASER_SIZE );
+    #####:  941:						break;
+        -:  942:						
+    #####:  943:					case 2 :
+    #####:  944:						srand(time(NULL));
 call    0 never executed
 call    1 never executed
-    #####:  942:						if( size < ERASER_SIZE )
+    #####:  945:						if( size < ERASER_SIZE )
 branch  0 never executed
 branch  1 never executed
-    #####:  943:							for( int j=0 ; j < ERASER_SIZE ; j++ )
+    #####:  946:							for( int j=0 ; j < ERASER_SIZE ; j++ )
 branch  0 never executed
 branch  1 never executed
-    #####:  944:								msize[j] = 'A' + (random() % 26);
+    #####:  947:								msize[j] = 'A' + (random() % 26);
 call    0 never executed
-    #####:  945:						break;
-        -:  946:						
-    #####:  947:					case 3 :
-    #####:  948:						MsgTmp[0] = 'Z';
-    #####:  949:						memset( msize, MsgTmp[0], ERASER_SIZE );
-    #####:  950:						break;
-        -:  951:						
-    #####:  952:					case 4 :
-    #####:  953:						MsgTmp[0] = 'A';
-    #####:  954:						memset( msize, MsgTmp[0], ERASER_SIZE );
-    #####:  955:						break;
-        -:  956:						
-    #####:  957:					case 5 :
-    #####:  958:						MsgTmp[0] = '^';
-    #####:  959:						memset( msize, MsgTmp[0], ERASER_SIZE );
-    #####:  960:						break;
-        -:  961:						
-    #####:  962:					case 6 :
-    #####:  963:						srand(time(NULL));
+    #####:  948:						break;
+        -:  949:						
+    #####:  950:					case 3 :
+    #####:  951:						MsgTmp[0] = 'Z';
+    #####:  952:						memset( msize, MsgTmp[0], ERASER_SIZE );
+    #####:  953:						break;
+        -:  954:						
+    #####:  955:					case 4 :
+    #####:  956:						MsgTmp[0] = 'A';
+    #####:  957:						memset( msize, MsgTmp[0], ERASER_SIZE );
+    #####:  958:						break;
+        -:  959:						
+    #####:  960:					case 5 :
+    #####:  961:						MsgTmp[0] = '^';
+    #####:  962:						memset( msize, MsgTmp[0], ERASER_SIZE );
+    #####:  963:						break;
+        -:  964:						
+    #####:  965:					case 6 :
+    #####:  966:						srand(time(NULL));
 call    0 never executed
 call    1 never executed
-    #####:  964:						if( size < ERASER_SIZE )
+    #####:  967:						if( size < ERASER_SIZE )
 branch  0 never executed
 branch  1 never executed
-    #####:  965:							for( int j=0 ; j < ERASER_SIZE ; j++ )
+    #####:  968:							for( int j=0 ; j < ERASER_SIZE ; j++ )
 branch  0 never executed
 branch  1 never executed
-    #####:  966:								msize[j] = 'A' + (random() % 26);
+    #####:  969:								msize[j] = 'A' + (random() % 26);
 call    0 never executed
-    #####:  967:						break;
-        -:  968:						
-    #####:  969:					default :
     #####:  970:						break;
-        -:  971:				}
-        -:  972:				
-    #####:  973:				size += ERASER_SIZE;
-        -:  974:			}
-        -:  975:
-    #####:  976:			fseek( fp, 0L, SEEK_SET );
+        -:  971:						
+    #####:  972:					default :
+    #####:  973:						break;
+        -:  974:				}
+        -:  975:				
+    #####:  976:				size += ERASER_SIZE;
+        -:  977:			}
+        -:  978:
+    #####:  979:			fseek (fp, 0L, SEEK_SET);
 call    0 never executed
-        -:  977:		}
-        -:  978:		
-    #####:  979:		fclose(fp);
+        -:  980:		}
+        -:  981:		
+    #####:  982:		fclose (fp);
 call    0 never executed
-    #####:  980:		free(msize);
-        -:  981:	}
-        -:  982:
-    #####:  983:	remove( sfDs.fpath );
-call    0 never executed
-    #####:  984:	func_gtk_dialog_modal(0, window, "\n    삭제가 완료되었습니다.    \n");
-call    0 never executed
+    #####:  983:		free (msize);
+        -:  984:	}
         -:  985:
-    #####:  986:	chk_df = 4;
-        -:  987:
-    #####:  988:	return( TRUE );
-        -:  989:}
-        -:  990:// end of func_file_eraser(); //
-        -:  991:
-        -:  992:// 암호화 #aria //
+    #####:  986:	remove (sfDs.fpath);
+call    0 never executed
+    #####:  987:	func_gtk_dialog_modal (0, window, "\n    삭제가 완료되었습니다.    \n");
+call    0 never executed
+        -:  988:
+    #####:  989:	chk_df = 4;
+        -:  990:
+    #####:  991:	return (TRUE);
+        -:  992:}
+        -:  993:// end of func_file_eraser(); //
+        -:  994:
+        -:  995:// 암호화 #aria //
 function func_ARIA called 0 returned 0% blocks executed 0%
-    #####:  993:void func_ARIA ()
-        -:  994:{
-        -:  995:	char message[1134];
-        -:  996:	FILE *fp;
-        -:  997:	long lSize;
-        -:  998:	unsigned char *buff;
-    #####:  999:	uint cur = 0, sum = 0, i = 0;
-    #####: 1000:	uint arisize = 0;
-        -: 1001:	unsigned char aribuf[16];
-        -: 1002:
-    #####: 1003:	if( sfDs.fpath[0] == 0x00 )
+    #####:  996:void func_ARIA ()
+        -:  997:{
+        -:  998:	char message[1134];
+        -:  999:	FILE *fp;
+        -: 1000:	long lSize;
+        -: 1001:	unsigned char *buff;
+    #####: 1002:	uint cur = 0, sum = 0, i = 0;
+    #####: 1003:	uint arisize = 0;
+        -: 1004:	unsigned char aribuf[16];
+        -: 1005:
+    #####: 1006:	if (sfDs.fpath[0] == 0x00)
 branch  0 never executed
 branch  1 never executed
-        -: 1004:	{
-    #####: 1005:		func_gtk_dialog_modal(0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
+        -: 1007:	{
+    #####: 1008:		func_gtk_dialog_modal (0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
 call    0 never executed
-        -: 1006:	}
-        -: 1007:	else
-        -: 1008:	{
-    #####: 1009:		sprintf( message, 
-        -: 1010:			"\n 아래 파일을 암호화 하시겠습니까?\n    [ %s ]    \n", sfDs.fpath);
-        -: 1011:    
-    #####: 1012:		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
+        -: 1009:	}
+        -: 1010:	else
+        -: 1011:	{
+    #####: 1012:		sprintf (message, 
+        -: 1013:			"\n 아래 파일을 암호화 하시겠습니까?\n    [ %s ]    \n", sfDs.fpath);
+        -: 1014:    
+    #####: 1015:		if (func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -: 1013:		{
-    #####: 1014:			int res = 0;
-        -: 1015:
-    #####: 1016:			fp = fopen(sfDs.fpath, "r");
+        -: 1016:		{
+    #####: 1017:			int res = 0;
+        -: 1018:
+    #####: 1019:			fp = fopen (sfDs.fpath, "r");
 call    0 never executed
-    #####: 1017:			if (NULL == fp)
+    #####: 1020:			if (NULL == fp)
 branch  0 never executed
 branch  1 never executed
-        -: 1018:			{
-    #####: 1019:				printf("파일을 열수 없습니다.\n");
+        -: 1021:			{
+    #####: 1022:				printf("파일을 열수 없습니다.\n");
 call    0 never executed
-    #####: 1020:				return;
-        -: 1021:			}
-        -: 1022:
-    #####: 1023:			fseek(fp, 0, SEEK_END);
+    #####: 1023:				return;
+        -: 1024:			}
+        -: 1025:
+    #####: 1026:			fseek (fp, 0, SEEK_END);
 call    0 never executed
-    #####: 1024:			lSize = ftell(fp);
+    #####: 1027:			lSize = ftell (fp);
 call    0 never executed
-    #####: 1025:			rewind(fp);
+    #####: 1028:			rewind (fp);
 call    0 never executed
-        -: 1026:
-    #####: 1027:			buff = (unsigned char *) malloc( sizeof(char) *lSize);
-        -: 1028:
-    #####: 1029:			while ((cur = fread(&buff[sum], sizeof(char), lSize - cur, fp)) > 0 )
+        -: 1029:
+    #####: 1030:			buff = (unsigned char *) malloc (sizeof (char) *lSize);
+        -: 1031:
+    #####: 1032:			while ((cur = fread (&buff[sum], sizeof (char), lSize - cur, fp)) > 0 )
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -: 1030:			{
-    #####: 1031:				sum += cur;
-        -: 1032:			}
-        -: 1033:
-    #####: 1034:			if (sum != lSize)
+        -: 1033:			{
+    #####: 1034:				sum += cur;
+        -: 1035:			}
+        -: 1036:
+    #####: 1037:			if (sum != lSize)
 branch  0 never executed
 branch  1 never executed
-        -: 1035:			{
-    #####: 1036:				printf("파일을 읽을수 없습니다.\n");
+        -: 1038:			{
+    #####: 1039:				printf("파일을 읽을수 없습니다.\n");
 call    0 never executed
-        -: 1037:			}
-        -: 1038:			
-    #####: 1039:			while (arisize < sfDs.fsize)
+        -: 1040:			}
+        -: 1041:			
+    #####: 1042:			while (arisize < sfDs.fsize)
 branch  0 never executed
 branch  1 never executed
-        -: 1040:			{
-    #####: 1041:				buff += i;
-    #####: 1042:				printf("#어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
-call    0 never executed
-    #####: 1043:				memcpy (aribuf, buff, sizeof (aribuf));
-    #####: 1044:				printf("@어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
-call    0 never executed
-    #####: 1045:				ARIA (aribuf);
-call    0 never executed
-    #####: 1046:				printf("0 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+        -: 1043:			{
+    #####: 1044:				buff += i;
+    #####: 1045:				memcpy (aribuf, buff, sizeof (aribuf));
+    #####: 1046:				ARIA (aribuf);
 call    0 never executed
     #####: 1047:				memcpy (buff, aribuf, sizeof (aribuf));
-    #####: 1048:				printf("1 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+    #####: 1048:				memset (aribuf, 0, sizeof (aribuf));
+    #####: 1049:				arisize += 16;
+    #####: 1050:				i += 16;
+        -: 1051:			}
+    #####: 1052:			fclose (fp);
 call    0 never executed
-    #####: 1049:				memset (aribuf, 0, sizeof (aribuf));
-    #####: 1050:				printf("2 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+        -: 1053:
+    #####: 1054:			fp = fopen (sfDs.fpath, "w+");
 call    0 never executed
-    #####: 1051:				arisize += 16;
-    #####: 1052:				printf("3 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
+    #####: 1055:			fwrite (buff, lSize, 1, fp);
 call    0 never executed
-    #####: 1053:				i += 16;
-    #####: 1054:				printf("4 어디서 죽었니이이ㅣ이ㅣ잉이이이잉이이\n");
-call    0 never executed
-        -: 1055:			}
-    #####: 1056:			fclose(fp);
-call    0 never executed
-        -: 1057:
-    #####: 1058:			fp = fopen(sfDs.fpath, "w+");
-call    0 never executed
-    #####: 1059:			fwrite (buff, lSize, 1, fp);
-call    0 never executed
+        -: 1056:
+    #####: 1057:			for (int i = 0; i <= chk_fcnt; i++)
+branch  0 never executed
+branch  1 never executed
+        -: 1058:			{
+    #####: 1059:				res = strcmp (fname, fDs[i].fname);
         -: 1060:
-    #####: 1061:			for (int i = 0; i <= chk_fcnt; i++)
+    #####: 1061:				if (res == 0)
 branch  0 never executed
 branch  1 never executed
-        -: 1062:			{
-    #####: 1063:				res = strcmp(fname, fDs[i].fname);
-        -: 1064:
-    #####: 1065:				if(res == 0)
-branch  0 never executed
-branch  1 never executed
-        -: 1066:				{
-    #####: 1067:					strcpy(fDs[i].stat, "암호화");
-    #####: 1068:					printf("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", i, fDs[i].fname, fDs[i].stat);
+        -: 1062:				{
+    #####: 1063:					strcpy (fDs[i].stat, "암호화");
+    #####: 1064:					printf ("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", i, fDs[i].fname, fDs[i].stat);
 call    0 never executed
-        -: 1069:				}
-        -: 1070:			}
-        -: 1071:
-    #####: 1072:			gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+        -: 1065:				}
+        -: 1066:			}
+        -: 1067:
+    #####: 1068:			gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 call    0 never executed
 call    1 never executed
-        -: 1073:			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
-        -: 1074:
-    #####: 1075:			printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+        -: 1069:			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
+        -: 1070:
+    #####: 1071:			printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+call    0 never executed
+        -: 1072:
+    #####: 1073:			d_view = d_create_view_and_model();
+call    0 never executed
+    #####: 1074:			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
+call    0 never executed
+call    1 never executed
+    #####: 1075:			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 call    0 never executed
         -: 1076:
-    #####: 1077:			d_view = d_create_view_and_model();
-call    0 never executed
-    #####: 1078:			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
-call    0 never executed
-call    1 never executed
-    #####: 1079:			gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+    #####: 1077:			strcpy (sfDs.stat, "암호화");
+        -: 1078:
+    #####: 1079:			fclose (fp);
 call    0 never executed
         -: 1080:
-    #####: 1081:			strcpy(sfDs.stat, "암호화");
-        -: 1082:
-    #####: 1083:			fclose(fp);
+    #####: 1081:			chk_df = 5;
+    #####: 1082:			printf ("Close FILE\n");
 call    0 never executed
-        -: 1084:
-    #####: 1085:			chk_df = 5;
-    #####: 1086:			printf("Close FILE\n");
+    #####: 1083:			chk_fname[0] = 0; // 초기화 //
+        -: 1084:		}
+        -: 1085:		else
+        -: 1086:		{
+    #####: 1087:			printf ("취소 되었습니다.\n");
 call    0 never executed
-    #####: 1087:			chk_fname[0] = 0; // 초기화 //
         -: 1088:		}
-        -: 1089:		else
-        -: 1090:		{
-    #####: 1091:			printf("취소 되었습니다.\n");
-call    0 never executed
-        -: 1092:		}
-        -: 1093:	}
+        -: 1089:	}
+        -: 1090:
+    #####: 1091:	return;
+        -: 1092:}
+        -: 1093:// end of func_ARIA (); //
         -: 1094:
-    #####: 1095:	return;
-        -: 1096:}
-        -: 1097:// end of func_ARIA (); //
-        -: 1098:
-        -: 1099:
-        -: 1100:// main_window function #mf //
+        -: 1095:
+        -: 1096:// main_window function #mf //
 function m_detect_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1101:void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
-        -: 1102:{
-    #####: 1103:	gtk_widget_show(detect_window);
+    #####: 1097:void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
+        -: 1098:{
+    #####: 1099:	gtk_widget_show (detect_window);
 call    0 never executed
-        -: 1104:	
-    #####: 1105:	return;
-        -: 1106:}
-        -: 1107:
+        -: 1100:	
+    #####: 1101:	return;
+        -: 1102:}
+        -: 1103:
 function m_setting_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1108:void m_setting_btn_clicked (GtkButton *m_setting_btn, gpointer *data)
-        -: 1109:{
-    #####: 1110:	gtk_widget_show(setting_window);
+    #####: 1104:void m_setting_btn_clicked (GtkButton *m_setting_btn, gpointer *data)
+        -: 1105:{
+    #####: 1106:	gtk_widget_show (setting_window);
 call    0 never executed
-        -: 1111:
-    #####: 1112:	return;
-        -: 1113:}
-        -: 1114:
+        -: 1107:
+    #####: 1108:	return;
+        -: 1109:}
+        -: 1110:
 function m_window_destroy called 0 returned 0% blocks executed 0%
-    #####: 1115:void m_window_destroy()
-        -: 1116:{
-    #####: 1117:	gtk_main_quit();
+    #####: 1111:void m_window_destroy()
+        -: 1112:{
+    #####: 1113:	gtk_main_quit();
 call    0 never executed
+        -: 1114:
+    #####: 1115:	return;
+        -: 1116:}
+        -: 1117:/* end of main_window function */
         -: 1118:
-    #####: 1119:	return;
-        -: 1120:}
-        -: 1121:/* end of main_window function */
-        -: 1122:
-        -: 1123:
-        -: 1124:
-        -: 1125:// detect_window function #df //
+        -: 1119:
+        -: 1120:
+        -: 1121:// detect_window function #df //
 function d_detect_entry_activate called 0 returned 0% blocks executed 0%
-    #####: 1126:void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
-        -: 1127:{
-    #####: 1128:	path = (gchar *)gtk_entry_get_text(d_detect_entry);
+    #####: 1122:void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
+        -: 1123:{
+    #####: 1124:	path = (gchar *)gtk_entry_get_text (d_detect_entry);
 call    0 never executed
-    #####: 1129:	g_print("선택한 폴더 위치: %s\n", path);
+    #####: 1125:	g_print ("선택한 폴더 위치: %s\n", path);
 call    0 never executed
+        -: 1126:
+    #####: 1127:	return;
+        -: 1128:}
+        -: 1129:
         -: 1130:
-    #####: 1131:	return;
-        -: 1132:}
-        -: 1133:
-        -: 1134:
 function d_folder_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1135:void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
-        -: 1136:{
-    #####: 1137:    filechooserdialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
+    #####: 1131:void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
+        -: 1132:{
+    #####: 1133:    filechooserdialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW (data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
 call    0 never executed
 call    1 never executed
-        -: 1138:			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
+        -: 1134:			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
+        -: 1135:
+    #####: 1136:    gtk_widget_show_all (filechooserdialog);
+call    0 never executed
+        -: 1137:    
+    #####: 1138:	gint resp = gtk_dialog_run (GTK_DIALOG (filechooserdialog));
+call    0 never executed
+call    1 never executed
         -: 1139:
-    #####: 1140:    gtk_widget_show_all(filechooserdialog);
-call    0 never executed
-        -: 1141:    
-    #####: 1142:	gint resp = gtk_dialog_run(GTK_DIALOG(filechooserdialog));
-call    0 never executed
-call    1 never executed
-        -: 1143:
-    #####: 1144:    if( resp == GTK_RESPONSE_ACCEPT)
+    #####: 1140:    if (resp == GTK_RESPONSE_ACCEPT)
 branch  0 never executed
 branch  1 never executed
-        -: 1145:    {
-    #####: 1146:		path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+        -: 1141:    {
+    #####: 1142:		path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filechooserdialog));
 call    0 never executed
 call    1 never executed
-        -: 1147:    } 
-        -: 1148:
-    #####: 1149:	gtk_entry_set_text(GTK_ENTRY (data), path);
+        -: 1143:    } 
+        -: 1144:
+    #####: 1145:	gtk_entry_set_text (GTK_ENTRY (data), path);
 call    0 never executed
 call    1 never executed
-        -: 1150:
+        -: 1146:
+        -: 1147:
+    #####: 1148:	gtk_widget_destroy (filechooserdialog);
+call    0 never executed
+        -: 1149:
+    #####: 1150:	g_print ("선택한 폴더 위치: %s\n", path);
+call    0 never executed
         -: 1151:
-    #####: 1152:	gtk_widget_destroy(filechooserdialog);
-call    0 never executed
-        -: 1153:
-    #####: 1154:	g_print("선택한 폴더 위치: %s\n", path);
-call    0 never executed
-        -: 1155:
-    #####: 1156:	return;
-        -: 1157:}
-        -: 1158:
-        -: 1159:	// treeview function #tf//
-        -: 1160:enum
-        -: 1161:{
-        -: 1162:	d_treeview_num = 0,
-        -: 1163:	d_treeview_filename,
-        -: 1164:	d_treeview_jcnt,
-        -: 1165:	d_treeview_dcnt,
-        -: 1166:	d_treeview_fgcnt,
-        -: 1167:	d_treeview_pcnt,
-        -: 1168:	d_treeview_stat,
-        -: 1169:	d_treeview_size,
-        -: 1170:	d_treeview_fileloca,
-        -: 1171:	NUM_COLS
-        -: 1172:} ;
-        -: 1173:
-        -: 1174:gboolean
+    #####: 1152:	return;
+        -: 1153:}
+        -: 1154:
+        -: 1155:	// treeview function #tf//
+        -: 1156:enum
+        -: 1157:{
+        -: 1158:	d_treeview_num = 0,
+        -: 1159:	d_treeview_filename,
+        -: 1160:	d_treeview_jcnt,
+        -: 1161:	d_treeview_dcnt,
+        -: 1162:	d_treeview_fgcnt,
+        -: 1163:	d_treeview_pcnt,
+        -: 1164:	d_treeview_stat,
+        -: 1165:	d_treeview_size,
+        -: 1166:	d_treeview_fileloca,
+        -: 1167:	NUM_COLS
+        -: 1168:} ;
+        -: 1169:
+        -: 1170:gboolean
 function d_view_selection_func called 0 returned 0% blocks executed 0%
-    #####: 1175:d_view_selection_func 	(GtkTreeSelection *selection,
-        -: 1176:							GtkTreeModel     *model,
-        -: 1177:							GtkTreePath      *path,
-        -: 1178:							gboolean          path_currently_selected,
-        -: 1179:							gpointer          userdata)
-        -: 1180:{
-        -: 1181:	GtkTreeIter iter;
-        -: 1182:	gchar *stat, *fpath;
-        -: 1183:	uint fsize;
-        -: 1184:	
-    #####: 1185:	if (gtk_tree_model_get_iter(model, &iter, path))
+    #####: 1171:d_view_selection_func 	(GtkTreeSelection *selection,
+        -: 1172:							GtkTreeModel     *model,
+        -: 1173:							GtkTreePath      *path,
+        -: 1174:							gboolean          path_currently_selected,
+        -: 1175:							gpointer          userdata)
+        -: 1176:{
+        -: 1177:	GtkTreeIter iter;
+        -: 1178:	gchar *stat, *fpath;
+        -: 1179:	uint fsize;
+        -: 1180:	
+    #####: 1181:	if (gtk_tree_model_get_iter (model, &iter, path))
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -: 1186:	{
-    #####: 1187:		if (!path_currently_selected)
+        -: 1182:	{
+    #####: 1183:		if (!path_currently_selected)
 branch  0 never executed
 branch  1 never executed
-        -: 1188:		{
-        -: 1189:			// set select data //
-    #####: 1190:			gtk_tree_model_get(model, &iter, d_treeview_filename, 	&fname, -1);
+        -: 1184:		{
+        -: 1185:			// set select data //
+    #####: 1186:			gtk_tree_model_get (model, &iter, d_treeview_filename, 	&fname, -1);
 call    0 never executed
-    #####: 1191:			gtk_tree_model_get(model, &iter, d_treeview_size,			&fsize, -1);
+    #####: 1187:			gtk_tree_model_get (model, &iter, d_treeview_size,			&fsize, -1);
 call    0 never executed
-    #####: 1192:			gtk_tree_model_get(model, &iter, d_treeview_stat,			&stat, -1);
+    #####: 1188:			gtk_tree_model_get (model, &iter, d_treeview_stat,			&stat, -1);
 call    0 never executed
-    #####: 1193:			gtk_tree_model_get(model, &iter, d_treeview_fileloca,	&fpath, -1);
+    #####: 1189:			gtk_tree_model_get (model, &iter, d_treeview_fileloca,	&fpath, -1);
 call    0 never executed
-        -: 1194:
-        -: 1195:			// input data in structure //
-    #####: 1196:			strcpy(sfDs.fname, fname);
-    #####: 1197:			sfDs.fsize = fsize;
-    #####: 1198:			strcpy(sfDs.stat, stat);
-    #####: 1199:			strcpy(sfDs.fpath, fpath);
-        -: 1200:
-    #####: 1201:			g_print ("파일위치: [%s], 파일크기: [%d] 선택.\n", sfDs.fpath, sfDs.fsize);
+        -: 1190:
+        -: 1191:			// input data in structure //
+    #####: 1192:			strcpy (sfDs.fname, fname);
+    #####: 1193:			sfDs.fsize = fsize;
+    #####: 1194:			strcpy (sfDs.stat, stat);
+    #####: 1195:			strcpy (sfDs.fpath, fpath);
+        -: 1196:
+    #####: 1197:			g_print ("파일위치: [%s], 파일크기: [%d] 선택.\n", sfDs.fpath, sfDs.fsize);
 call    0 never executed
-        -: 1202:
+        -: 1198:
+        -: 1199:		}
+        -: 1200:		else
+        -: 1201:		{
+    #####: 1202:			g_print ("파일위치: [%s] 선택 해제.\n", sfDs.fpath);
+call    0 never executed
         -: 1203:		}
-        -: 1204:		else
-        -: 1205:		{
-    #####: 1206:			g_print ("파일위치: [%s] 선택 해제.\n", sfDs.fpath);
-call    0 never executed
-        -: 1207:		}
-        -: 1208:	}
+        -: 1204:	}
+        -: 1205:
+    #####: 1206:	return TRUE; /* allow selection state to change */
+        -: 1207:}
+        -: 1208:
         -: 1209:
-    #####: 1210:	return TRUE; /* allow selection state to change */
-        -: 1211:}
-        -: 1212:
-        -: 1213:
-        -: 1214:static GtkTreeModel *
+        -: 1210:static GtkTreeModel *
 function d_create_and_fill_model called 0 returned 0% blocks executed 0%
-    #####: 1215:d_create_and_fill_model (void)
-        -: 1216:{
-    #####: 1217:	dtreestore = gtk_tree_store_new(NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
+    #####: 1211:d_create_and_fill_model (void)
+        -: 1212:{
+    #####: 1213:	dtreestore = gtk_tree_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
 call    0 never executed
-        -: 1218:					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
-        -: 1219:
-    #####: 1220:	for(int i = 0; i <= chk_fcnt; i++)
+        -: 1214:					G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
+        -: 1215:
+    #####: 1216:	for (int i = 0; i <= chk_fcnt; i++)
 branch  0 never executed
 branch  1 never executed
-        -: 1221:	{
-    #####: 1222:		gtk_tree_store_append(dtreestore, &diter, NULL);
+        -: 1217:	{
+    #####: 1218:		gtk_tree_store_append (dtreestore, &diter, NULL);
 call    0 never executed
-    #####: 1223:		gtk_tree_store_set (dtreestore, &diter,
-        -: 1224:					  d_treeview_num, i + 1,
-    #####: 1225:					  d_treeview_filename,	fDs[i].fname,
-        -: 1226:					  d_treeview_jcnt,	fDs[i].jcnt,
-        -: 1227:					  d_treeview_dcnt,	fDs[i].dcnt,
-        -: 1228:					  d_treeview_fgcnt,	fDs[i].fgcnt,
-        -: 1229:					  d_treeview_pcnt,	fDs[i]. pcnt,
-    #####: 1230:					  d_treeview_stat,	fDs[i].stat,
-        -: 1231:					  d_treeview_size,	fDs[i].fsize,
-    #####: 1232:					  d_treeview_fileloca,	fDs[i].fpath,
+    #####: 1219:		gtk_tree_store_set (dtreestore, &diter,
+        -: 1220:					  d_treeview_num, i + 1,
+    #####: 1221:					  d_treeview_filename,	fDs[i].fname,
+        -: 1222:					  d_treeview_jcnt,	fDs[i].jcnt,
+        -: 1223:					  d_treeview_dcnt,	fDs[i].dcnt,
+        -: 1224:					  d_treeview_fgcnt,	fDs[i].fgcnt,
+        -: 1225:					  d_treeview_pcnt,	fDs[i]. pcnt,
+    #####: 1226:					  d_treeview_stat,	fDs[i].stat,
+        -: 1227:					  d_treeview_size,	fDs[i].fsize,
+    #####: 1228:					  d_treeview_fileloca,	fDs[i].fpath,
 call    0 never executed
-        -: 1233:					  -1);
-        -: 1234:	}
-        -: 1235:
-    #####: 1236:	return GTK_TREE_MODEL(dtreestore);
+        -: 1229:					  -1);
+        -: 1230:	}
+        -: 1231:
+    #####: 1232:	return GTK_TREE_MODEL (dtreestore);
 call    0 never executed
-        -: 1237:}
-        -: 1238:
-        -: 1239:static GtkWidget *
+        -: 1233:}
+        -: 1234:
+        -: 1235:static GtkWidget *
 function d_create_view_and_model called 0 returned 0% blocks executed 0%
-    #####: 1240:d_create_view_and_model (void)
-        -: 1241:{
-        -: 1242:	GtkTreeViewColumn	*col;
-        -: 1243:	GtkCellRenderer		*renderer;
-        -: 1244:	GtkWidget		*d_view;
-        -: 1245:	GtkTreeModel		*model;
-        -: 1246:	GtkTreeSelection	*selection;
-        -: 1247:	
-    #####: 1248:	d_view = gtk_tree_view_new();
+    #####: 1236:d_create_view_and_model (void)
+        -: 1237:{
+        -: 1238:	GtkTreeViewColumn	*col;
+        -: 1239:	GtkCellRenderer		*renderer;
+        -: 1240:	GtkWidget		*d_view;
+        -: 1241:	GtkTreeModel		*model;
+        -: 1242:	GtkTreeSelection	*selection;
+        -: 1243:	
+    #####: 1244:	d_view = gtk_tree_view_new();
 call    0 never executed
-        -: 1249:
-        -: 1250:	// Column #컬럼명 //
-    #####: 1251:	col = gtk_tree_view_column_new();
+        -: 1245:
+        -: 1246:	// Column #컬럼명 //
+    #####: 1247:	col = gtk_tree_view_column_new();
 call    0 never executed
-        -: 1252:
-    #####: 1253:	gtk_tree_view_column_set_title(col, "번호");
+        -: 1248:
+    #####: 1249:	gtk_tree_view_column_set_title (col, "번호");
 call    0 never executed
-        -: 1254:
-        -: 1255:	// pack tree view column into tree view //
-    #####: 1256:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
-call    0 never executed
-call    1 never executed
-        -: 1257:
-    #####: 1258:	renderer = gtk_cell_renderer_text_new();
-call    0 never executed
-        -: 1259:
-        -: 1260:	// pack cell renderer into tree view column //
-    #####: 1261:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-call    0 never executed
-        -: 1262:	
-    #####: 1263:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_num);
-call    0 never executed
-        -: 1264:
-        -: 1265:	// --- Column #파일 이름 --- //
-    #####: 1266:	col = gtk_tree_view_column_new();
-call    0 never executed
-    #####: 1267:	gtk_tree_view_column_set_title(col, "파일 이름");
-call    0 never executed
-    #####: 1268:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
+        -: 1250:
+        -: 1251:	// pack tree view column into tree view //
+    #####: 1252:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
 call    0 never executed
 call    1 never executed
-    #####: 1269:	renderer = gtk_cell_renderer_text_new();
+        -: 1253:
+    #####: 1254:	renderer = gtk_cell_renderer_text_new();
 call    0 never executed
-    #####: 1270:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+        -: 1255:
+        -: 1256:	// pack cell renderer into tree view column //
+    #####: 1257:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
 call    0 never executed
-    #####: 1271:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_filename);
+        -: 1258:	
+    #####: 1259:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_num);
 call    0 never executed
-        -: 1272:
-        -: 1273:	// --- Column #주민번호 개수 --- //
-    #####: 1274:	col = gtk_tree_view_column_new();
+        -: 1260:
+        -: 1261:	// --- Column #파일 이름 --- //
+    #####: 1262:	col = gtk_tree_view_column_new();
 call    0 never executed
-    #####: 1275:	gtk_tree_view_column_set_title(col, "주민번호");
+    #####: 1263:	gtk_tree_view_column_set_title (col, "파일 이름");
 call    0 never executed
-    #####: 1276:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
-call    0 never executed
-call    1 never executed
-    #####: 1277:	renderer = gtk_cell_renderer_text_new();
-call    0 never executed
-    #####: 1278:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-call    0 never executed
-    #####: 1279:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_jcnt);
-call    0 never executed
-        -: 1280:
-        -: 1281:	// --- Column #운전면허 개수 --- //
-    #####: 1282:	col = gtk_tree_view_column_new();
-call    0 never executed
-    #####: 1283:	gtk_tree_view_column_set_title(col, "운전면허");
-call    0 never executed
-    #####: 1284:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
+    #####: 1264:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
 call    0 never executed
 call    1 never executed
-    #####: 1285:	renderer = gtk_cell_renderer_text_new();
+    #####: 1265:	renderer = gtk_cell_renderer_text_new();
 call    0 never executed
-    #####: 1286:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+    #####: 1266:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
 call    0 never executed
-    #####: 1287:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_dcnt);
+    #####: 1267:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_filename);
 call    0 never executed
-        -: 1288:	
-        -: 1289:	// --- Column #외국인등록번호 개수 --- //
-    #####: 1290:	col = gtk_tree_view_column_new();
+        -: 1268:
+        -: 1269:	// --- Column #주민번호 개수 --- //
+    #####: 1270:	col = gtk_tree_view_column_new();
 call    0 never executed
-    #####: 1291:	gtk_tree_view_column_set_title(col, "외국인등록");
+    #####: 1271:	gtk_tree_view_column_set_title (col, "주민번호");
 call    0 never executed
-    #####: 1292:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
-call    0 never executed
-call    1 never executed
-    #####: 1293:	renderer = gtk_cell_renderer_text_new();
-call    0 never executed
-    #####: 1294:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-call    0 never executed
-    #####: 1295:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fgcnt);
-call    0 never executed
-        -: 1296:	
-        -: 1297:	// --- Column #여권번호 개수 --- //
-    #####: 1298:	col = gtk_tree_view_column_new();
-call    0 never executed
-    #####: 1299:	gtk_tree_view_column_set_title(col, "여권번호");
-call    0 never executed
-    #####: 1300:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
+    #####: 1272:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
 call    0 never executed
 call    1 never executed
-    #####: 1301:	renderer = gtk_cell_renderer_text_new();
+    #####: 1273:	renderer = gtk_cell_renderer_text_new();
 call    0 never executed
-    #####: 1302:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+    #####: 1274:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
 call    0 never executed
-    #####: 1303:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_pcnt);
+    #####: 1275:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_jcnt);
 call    0 never executed
-        -: 1304:
-        -: 1305:	// --- Column #상태 --- //
-    #####: 1306:	dcol = gtk_tree_view_column_new();
+        -: 1276:
+        -: 1277:	// --- Column #운전면허 개수 --- //
+    #####: 1278:	col = gtk_tree_view_column_new();
 call    0 never executed
-    #####: 1307:	gtk_tree_view_column_set_title(dcol, "상태");
+    #####: 1279:	gtk_tree_view_column_set_title (col, "운전면허");
 call    0 never executed
-    #####: 1308:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), dcol);
-call    0 never executed
-call    1 never executed
-    #####: 1309:	drenderer = gtk_cell_renderer_text_new();
-call    0 never executed
-    #####: 1310:	gtk_tree_view_column_pack_start(dcol, drenderer, TRUE);
-call    0 never executed
-    #####: 1311:	gtk_tree_view_column_add_attribute(dcol, drenderer, "text", d_treeview_stat);
-call    0 never executed
-        -: 1312:	
-        -: 1313:	// --- Column #파일 크기 --- //
-    #####: 1314:	col = gtk_tree_view_column_new();
-call    0 never executed
-    #####: 1315:	gtk_tree_view_column_set_title(col, "파일 크기");
-call    0 never executed
-    #####: 1316:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
+    #####: 1280:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
 call    0 never executed
 call    1 never executed
-    #####: 1317:	renderer = gtk_cell_renderer_text_new();
+    #####: 1281:	renderer = gtk_cell_renderer_text_new();
 call    0 never executed
-    #####: 1318:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+    #####: 1282:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
 call    0 never executed
-    #####: 1319:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_size);
+    #####: 1283:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_dcnt);
 call    0 never executed
-        -: 1320:	
-        -: 1321:	// --- Column #파일 위치 --- //
-    #####: 1322:	col = gtk_tree_view_column_new();
+        -: 1284:	
+        -: 1285:	// --- Column #외국인등록번호 개수 --- //
+    #####: 1286:	col = gtk_tree_view_column_new();
 call    0 never executed
-    #####: 1323:	gtk_tree_view_column_set_title(col, "파일 위치");
+    #####: 1287:	gtk_tree_view_column_set_title (col, "외국인등록");
 call    0 never executed
-    #####: 1324:	gtk_tree_view_append_column(GTK_TREE_VIEW(d_view), col);
-call    0 never executed
-call    1 never executed
-    #####: 1325:	renderer = gtk_cell_renderer_text_new();
-call    0 never executed
-    #####: 1326:	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-call    0 never executed
-    #####: 1327:	gtk_tree_view_column_add_attribute(col, renderer, "text", d_treeview_fileloca);
-call    0 never executed
-        -: 1328:	
-    #####: 1329:	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(d_view));
+    #####: 1288:	gtk_tree_view_append_column (GTK_TREE_VIEW(d_view), col);
 call    0 never executed
 call    1 never executed
-        -: 1330:	
-    #####: 1331:	gtk_tree_selection_set_select_function(selection, d_view_selection_func, NULL, NULL);
+    #####: 1289:	renderer = gtk_cell_renderer_text_new();
+call    0 never executed
+    #####: 1290:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
+call    0 never executed
+    #####: 1291:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_fgcnt);
+call    0 never executed
+        -: 1292:	
+        -: 1293:	// --- Column #여권번호 개수 --- //
+    #####: 1294:	col = gtk_tree_view_column_new();
+call    0 never executed
+    #####: 1295:	gtk_tree_view_column_set_title (col, "여권번호");
+call    0 never executed
+    #####: 1296:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
+call    0 never executed
+call    1 never executed
+    #####: 1297:	renderer = gtk_cell_renderer_text_new();
+call    0 never executed
+    #####: 1298:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
+call    0 never executed
+    #####: 1299:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_pcnt);
+call    0 never executed
+        -: 1300:
+        -: 1301:	// --- Column #상태 --- //
+    #####: 1302:	dcol = gtk_tree_view_column_new();
+call    0 never executed
+    #####: 1303:	gtk_tree_view_column_set_title (dcol, "상태");
+call    0 never executed
+    #####: 1304:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), dcol);
+call    0 never executed
+call    1 never executed
+    #####: 1305:	drenderer = gtk_cell_renderer_text_new();
+call    0 never executed
+    #####: 1306:	gtk_tree_view_column_pack_start (dcol, drenderer, TRUE);
+call    0 never executed
+    #####: 1307:	gtk_tree_view_column_add_attribute (dcol, drenderer, "text", d_treeview_stat);
+call    0 never executed
+        -: 1308:	
+        -: 1309:	// --- Column #파일 크기 --- //
+    #####: 1310:	col = gtk_tree_view_column_new();
+call    0 never executed
+    #####: 1311:	gtk_tree_view_column_set_title (col, "파일 크기");
+call    0 never executed
+    #####: 1312:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
+call    0 never executed
+call    1 never executed
+    #####: 1313:	renderer = gtk_cell_renderer_text_new();
+call    0 never executed
+    #####: 1314:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
+call    0 never executed
+    #####: 1315:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_size);
+call    0 never executed
+        -: 1316:	
+        -: 1317:	// --- Column #파일 위치 --- //
+    #####: 1318:	col = gtk_tree_view_column_new();
+call    0 never executed
+    #####: 1319:	gtk_tree_view_column_set_title (col, "파일 위치");
+call    0 never executed
+    #####: 1320:	gtk_tree_view_append_column (GTK_TREE_VIEW (d_view), col);
+call    0 never executed
+call    1 never executed
+    #####: 1321:	renderer = gtk_cell_renderer_text_new();
+call    0 never executed
+    #####: 1322:	gtk_tree_view_column_pack_start (col, renderer, TRUE);
+call    0 never executed
+    #####: 1323:	gtk_tree_view_column_add_attribute (col, renderer, "text", d_treeview_fileloca);
+call    0 never executed
+        -: 1324:	
+    #####: 1325:	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (d_view));
+call    0 never executed
+call    1 never executed
+        -: 1326:	
+    #####: 1327:	gtk_tree_selection_set_select_function (selection, d_view_selection_func, NULL, NULL);
+call    0 never executed
+        -: 1328:
+        -: 1329:
+        -: 1330:
+    #####: 1331:	model = d_create_and_fill_model();
 call    0 never executed
         -: 1332:
-        -: 1333:
-        -: 1334:
-    #####: 1335:	model = d_create_and_fill_model();
-call    0 never executed
-        -: 1336:
-    #####: 1337:	gtk_tree_view_set_model(GTK_TREE_VIEW(d_view), model);
+    #####: 1333:	gtk_tree_view_set_model (GTK_TREE_VIEW (d_view), model);
 call    0 never executed
 call    1 never executed
-        -: 1338:
-    #####: 1339:	g_object_unref(model); // destroy model automatically with view //
+        -: 1334:
+    #####: 1335:	g_object_unref (model); // destroy model automatically with view //
 call    0 never executed
-        -: 1340:
-    #####: 1341:	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(d_view)),
+        -: 1336:
+    #####: 1337:	gtk_tree_selection_set_mode(gtk_tree_view_get_selection (GTK_TREE_VIEW (d_view)),
 call    0 never executed
 call    1 never executed
 call    2 never executed
-        -: 1342:							  GTK_SELECTION_SINGLE);
+        -: 1338:							  GTK_SELECTION_SINGLE);
+        -: 1339:
+    #####: 1340:	return d_view;
+        -: 1341:}
+        -: 1342:	/* end of treeview function */
         -: 1343:
-    #####: 1344:	return d_view;
-        -: 1345:}
-        -: 1346:	/* end of treeview function */
-        -: 1347:
-        -: 1348:
+        -: 1344:
 function d_detect_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1349:void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
-        -: 1350:{
-    #####: 1351:	chk_df = 3;
-    #####: 1352:	chk_fcnt = -1; 						// 파일개수 count 초기화
-    #####: 1353:	memset (&fDs, 0, sizeof (fDs));		// 구조체 초기화
-        -: 1354:	
-    #####: 1355:	func_Detect(path);
+    #####: 1345:void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
+        -: 1346:{
+    #####: 1347:	chk_df = 3;
+    #####: 1348:	chk_fcnt = -1; 						// 파일개수 count 초기화
+    #####: 1349:	memset (&fDs, 0, sizeof (fDs));		// 구조체 초기화
+        -: 1350:	
+    #####: 1351:	func_Detect (path);
 call    0 never executed
-    #####: 1356:	func_Send();
+    #####: 1352:	func_Send();
 call    0 never executed
-        -: 1357:
-    #####: 1358:	gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
-call    0 never executed
-call    1 never executed
-    #####: 1359:	d_view = d_create_view_and_model();
-call    0 never executed
-    #####: 1360:	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
+        -: 1353:
+    #####: 1354:	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 call    0 never executed
 call    1 never executed
-    #####: 1361:	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
+    #####: 1355:	d_view = d_create_view_and_model();
 call    0 never executed
-        -: 1362:
-    #####: 1363:	return;
-        -: 1364:}
-        -: 1365:
+    #####: 1356:	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
+call    0 never executed
+call    1 never executed
+    #####: 1357:	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
+call    0 never executed
+        -: 1358:
+    #####: 1359:	return;
+        -: 1360:}
+        -: 1361:
 function d_option_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1366:void d_option_btn_clicked (GtkButton *d_option_btn, gpointer *data)
-        -: 1367:{
-    #####: 1368:	gtk_widget_show(setting_window);
+    #####: 1362:void d_option_btn_clicked (GtkButton *d_option_btn, gpointer *data)
+        -: 1363:{
+    #####: 1364:	gtk_widget_show (setting_window);
 call    0 never executed
-        -: 1369:	
-    #####: 1370:	return;
-        -: 1371:}
-        -: 1372:
+        -: 1365:	
+    #####: 1366:	return;
+        -: 1367:}
+        -: 1368:
 function d_encrypt_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1373:void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현//
-        -: 1374:{
-    #####: 1375:	func_ARIA();
+    #####: 1369:void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현//
+        -: 1370:{
+    #####: 1371:	func_ARIA();
 call    0 never executed
-        -: 1376:
-    #####: 1377:	gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+        -: 1372:
+    #####: 1373:	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 call    0 never executed
 call    1 never executed
-        -: 1378:	//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
-        -: 1379:
-    #####: 1380:	printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+        -: 1374:	//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
+        -: 1375:
+    #####: 1376:	printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+call    0 never executed
+        -: 1377:
+    #####: 1378:	d_view = d_create_view_and_model();
+call    0 never executed
+    #####: 1379:	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
+call    0 never executed
+call    1 never executed
+    #####: 1380:	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 call    0 never executed
         -: 1381:
-    #####: 1382:	d_view = d_create_view_and_model();
+    #####: 1382:	strcpy(sfDs.stat, "암호화");
+    #####: 1383:	func_Send();
 call    0 never executed
-    #####: 1383:	gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
-call    0 never executed
-call    1 never executed
-    #####: 1384:	gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
-call    0 never executed
+        -: 1384:
         -: 1385:
-    #####: 1386:	strcpy(sfDs.stat, "암호화");
-    #####: 1387:	func_Send();
-call    0 never executed
+    #####: 1386:	return;
+        -: 1387:}
         -: 1388:
-        -: 1389:
-    #####: 1390:	return;
-        -: 1391:}
-        -: 1392:
 function d_delete_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1393:void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
-        -: 1394:{
-        -: 1395:	char	message[1134];
-        -: 1396:	
-    #####: 1397:	if( sfDs.fpath[0] == 0x00 )
+    #####: 1389:void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
+        -: 1390:{
+        -: 1391:	char	message[1134];
+        -: 1392:	
+    #####: 1393:	if (sfDs.fpath[0] == 0x00)
 branch  0 never executed
 branch  1 never executed
-        -: 1398:	{
-    #####: 1399:		func_gtk_dialog_modal(0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
+        -: 1394:	{
+    #####: 1395:		func_gtk_dialog_modal (0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
 call    0 never executed
-        -: 1400:	}
-        -: 1401:	else
-        -: 1402:	{
-    #####: 1403:		sprintf( message, 
-        -: 1404:			"\n    삭제 후에 복구가 불가능 합니다.\n    아래 파일을 삭제하시겠습니까?\n    [ %s ]    \n", sfDs.fpath);
-        -: 1405:    
-    #####: 1406:		if( func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
+        -: 1396:	}
+        -: 1397:	else
+        -: 1398:	{
+    #####: 1399:		sprintf (message, 
+        -: 1400:			"\n    삭제 후에 복구가 불가능 합니다.\n    아래 파일을 삭제하시겠습니까?\n    [ %s ]    \n", sfDs.fpath);
+        -: 1401:    
+    #####: 1402:		if (func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -: 1407:		{
-    #####: 1408:			int res = 0;
-        -: 1409:
-    #####: 1410:			func_file_eraser(3);
+        -: 1403:		{
+    #####: 1404:			int res = 0;
+        -: 1405:
+    #####: 1406:			func_file_eraser (3);
 call    0 never executed
+        -: 1407:
+    #####: 1408:			for (int i = 0; i <= chk_fcnt; i++)
+branch  0 never executed
+branch  1 never executed
+        -: 1409:			{
+    #####: 1410:				res = strcmp (fname, fDs[i].fname);
         -: 1411:
-    #####: 1412:			for(int i = 0; i <= chk_fcnt; i++)
+    #####: 1412:				if (res == 0)
 branch  0 never executed
 branch  1 never executed
-        -: 1413:			{
-    #####: 1414:				res = strcmp(fname, fDs[i].fname);
-        -: 1415:
-    #####: 1416:				if(res == 0)
-branch  0 never executed
-branch  1 never executed
-        -: 1417:				{
-    #####: 1418:					strcpy(fDs[i].stat, "삭제");
-    #####: 1419:					printf("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
+        -: 1413:				{
+    #####: 1414:					strcpy (fDs[i].stat, "삭제");
+    #####: 1415:					printf ("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
 call    0 never executed
-        -: 1420:				}
-        -: 1421:			}
-        -: 1422:
-    #####: 1423:			gtk_container_remove (GTK_CONTAINER(d_scrolledwindow), d_view);	// 다 지우기
+        -: 1416:				}
+        -: 1417:			}
+        -: 1418:
+    #####: 1419:			gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 call    0 never executed
 call    1 never executed
-        -: 1424:			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
-        -: 1425:
-    #####: 1426:			printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+        -: 1420:			//gtk_tree_store_remove(dtreestore, &diter);				// 선택한거만 지우기
+        -: 1421:
+    #####: 1422:			printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+call    0 never executed
+        -: 1423:
+    #####: 1424:			d_view = d_create_view_and_model();
+call    0 never executed
+    #####: 1425:			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
+call    0 never executed
+call    1 never executed
+    #####: 1426:			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 call    0 never executed
         -: 1427:
-    #####: 1428:			d_view = d_create_view_and_model();
+    #####: 1428:			strcpy (sfDs.stat, "삭제");
+    #####: 1429:			func_Send();
 call    0 never executed
-    #####: 1429:			gtk_container_add (GTK_CONTAINER(d_scrolledwindow), d_view);
-call    0 never executed
-call    1 never executed
-    #####: 1430:			gtk_widget_show_all ((GtkWidget *)d_scrolledwindow);
-call    0 never executed
-        -: 1431:
-    #####: 1432:			strcpy(sfDs.stat, "삭제");
-    #####: 1433:			func_Send();
+        -: 1430:		}
+        -: 1431:		else
+        -: 1432:		{
+    #####: 1433:			printf("취소 되었습니다.\n");
 call    0 never executed
         -: 1434:		}
-        -: 1435:		else
-        -: 1436:		{
-    #####: 1437:			printf("취소 되었습니다.\n");
-call    0 never executed
-        -: 1438:		}
-        -: 1439:	}
-        -: 1440:
-    #####: 1441:	return;
-        -: 1442:}
-        -: 1443:
+        -: 1435:	}
+        -: 1436:
+    #####: 1437:	return;
+        -: 1438:}
+        -: 1439:
 function d_close_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1444:void d_close_btn_clicked (GtkButton *d_close_btn, gpointer *data)
-        -: 1445:{
-    #####: 1446:	gtk_widget_hide(GTK_WIDGET(data));
+    #####: 1440:void d_close_btn_clicked (GtkButton *d_close_btn, gpointer *data)
+        -: 1441:{
+    #####: 1442:	gtk_widget_hide (GTK_WIDGET (data));
 call    0 never executed
 call    1 never executed
-        -: 1447:	
-    #####: 1448:	return;
-        -: 1449:}
-        -: 1450:
+        -: 1443:	
+    #####: 1444:	return;
+        -: 1445:}
+        -: 1446:
 function detect_window_destroy called 0 returned 0% blocks executed 0%
-    #####: 1451:void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
-        -: 1452:{
-    #####: 1453:	gtk_widget_destroy(GTK_WIDGET(detect_window));
+    #####: 1447:void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
+        -: 1448:{
+    #####: 1449:	gtk_widget_destroy (GTK_WIDGET (detect_window));
 call    0 never executed
 call    1 never executed
-        -: 1454:	
-    #####: 1455:	return;
-        -: 1456:}
-        -: 1457:/* end of detect_window function */
+        -: 1450:	
+    #####: 1451:	return;
+        -: 1452:}
+        -: 1453:/* end of detect_window function */
+        -: 1454:
+        -: 1455:
+        -: 1456:
+        -: 1457:// enrollment_window function #ef //
         -: 1458:
-        -: 1459:
-        -: 1460:
-        -: 1461:// enrollment_window function #ef //
-        -: 1462:
 function e_name_entry_activate called 0 returned 0% blocks executed 0%
-    #####: 1463:void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
-        -: 1464:{
-    #####: 1465:	name = (gchar *)gtk_entry_get_text(e_name_entry);
+    #####: 1459:void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
+        -: 1460:{
+    #####: 1461:	name = (gchar *)gtk_entry_get_text (e_name_entry);
 call    0 never executed
-    #####: 1466:	strcpy(uDs.uname, name);
-    #####: 1467:	printf("%s\n", name);
+    #####: 1462:	strcpy(uDs.uname, name);
+    #####: 1463:	printf("%s\n", name);
 call    0 never executed
-        -: 1468:	
-    #####: 1469:	return;
-        -: 1470:}
-        -: 1471:
+        -: 1464:	
+    #####: 1465:	return;
+        -: 1466:}
+        -: 1467:
 function e_jobtitle_cbxtext_changed called 0 returned 0% blocks executed 0%
-    #####: 1472:void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data)
-        -: 1473:{
-    #####: 1474:	job = (gchar *)gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(e_jobtitle_cbxtext))));
+    #####: 1468:void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data)
+        -: 1469:{
+    #####: 1470:	job = (gchar *)gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (e_jobtitle_cbxtext))));
 call    0 never executed
 call    1 never executed
 call    2 never executed
 call    3 never executed
-    #####: 1475:	strcpy(uDs.ujob, job);
-    #####: 1476:	printf("%s\n", uDs.ujob);
+    #####: 1471:	strcpy (uDs.ujob, job);
+    #####: 1472:	printf ("%s\n", uDs.ujob);
 call    0 never executed
+        -: 1473:
+    #####: 1474:	return;
+        -: 1475:}
+        -: 1476:
         -: 1477:
-    #####: 1478:	return;
-        -: 1479:}
-        -: 1480:
-        -: 1481:
-        -: 1482:enum
-        -: 1483:{
-        -: 1484:	e_treeview_col,
-        -: 1485:	NUM_COL
-        -: 1486:} ;
-        -: 1487:
-        -: 1488:gboolean
+        -: 1478:enum
+        -: 1479:{
+        -: 1480:	e_treeview_col,
+        -: 1481:	NUM_COL
+        -: 1482:} ;
+        -: 1483:
+        -: 1484:gboolean
 function e_view_selection_func called 0 returned 0% blocks executed 0%
-    #####: 1489:e_view_selection_func 	(GtkTreeSelection *selection,
-        -: 1490:							GtkTreeModel     *model,
-        -: 1491:							GtkTreePath      *path,
-        -: 1492:							gboolean          path_currently_selected,
-        -: 1493:							gpointer          userdata)
-        -: 1494:{
-        -: 1495:	GtkTreeIter iter;
-        -: 1496:
-    #####: 1497:	if (gtk_tree_model_get_iter(model, &iter, path))
+    #####: 1485:e_view_selection_func 	(GtkTreeSelection *selection,
+        -: 1486:							GtkTreeModel     *model,
+        -: 1487:							GtkTreePath      *path,
+        -: 1488:							gboolean          path_currently_selected,
+        -: 1489:							gpointer          userdata)
+        -: 1490:{
+        -: 1491:	GtkTreeIter iter;
+        -: 1492:
+    #####: 1493:	if (gtk_tree_model_get_iter (model, &iter, path))
 call    0 never executed
 branch  1 never executed
 branch  2 never executed
-        -: 1498:	{
-    #####: 1499:		gtk_tree_model_get(model, &iter, e_treeview_col, &vs_dept, -1);
+        -: 1494:	{
+    #####: 1495:		gtk_tree_model_get (model, &iter, e_treeview_col, &vs_dept, -1);
 call    0 never executed
-        -: 1500:
-    #####: 1501:		if (!path_currently_selected)
+        -: 1496:
+    #####: 1497:		if (!path_currently_selected)
 branch  0 never executed
 branch  1 never executed
+        -: 1498:		{
+    #####: 1499:			g_print ("부서: [%s] 선택.\n", vs_dept);
+call    0 never executed
+        -: 1500:		}
+        -: 1501:		else
         -: 1502:		{
-    #####: 1503:			g_print ("부서: [%s] 선택.\n", vs_dept);
+    #####: 1503:			g_print ("부서: [%s] 선택 해제.\n", vs_dept);
 call    0 never executed
         -: 1504:		}
-        -: 1505:		else
-        -: 1506:		{
-    #####: 1507:			g_print ("부서: [%s] 선택 해제.\n", vs_dept);
+        -: 1505:
+    #####: 1506:		strcpy (uDs.udept, vs_dept);
+        -: 1507:
+    #####: 1508:		g_free (vs_dept);
 call    0 never executed
-        -: 1508:		}
-        -: 1509:
-    #####: 1510:		strcpy(uDs.udept, vs_dept);
-        -: 1511:
-    #####: 1512:		g_free(vs_dept);
-call    0 never executed
-        -: 1513:	}
-        -: 1514:
-    #####: 1515:	return TRUE; /* allow selection state to change */
-        -: 1516:}
-        -: 1517:
-        -: 1518:static GtkTreeModel *
+        -: 1509:	}
+        -: 1510:
+    #####: 1511:	return TRUE; /* allow selection state to change */
+        -: 1512:}
+        -: 1513:
+        -: 1514:static GtkTreeModel *
 function e_create_and_fill_model called 0 returned 0% blocks executed 0%
-    #####: 1519:e_create_and_fill_model (void)
-        -: 1520:{
-        -: 1521:	GtkTreeStore  *e_treestore;
-        -: 1522:	GtkTreeIter    parent, child1;
-        -: 1523:
-    #####: 1524:	e_treestore = gtk_tree_store_new (NUM_COL, G_TYPE_STRING);
+    #####: 1515:e_create_and_fill_model (void)
+        -: 1516:{
+        -: 1517:	GtkTreeStore  *e_treestore;
+        -: 1518:	GtkTreeIter    parent, child1;
+        -: 1519:
+    #####: 1520:	e_treestore = gtk_tree_store_new (NUM_COL, G_TYPE_STRING);
 call    0 never executed
-        -: 1525:
-        -: 1526:	/*대표이사 0*/
-    #####: 1527:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1521:
+        -: 1522:	/*대표이사 0*/
+    #####: 1523:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1528:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1524:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1529:					 e_treeview_col, "대표이사",
-        -: 1530:					 -1);
-        -: 1531:
-        -: 1532:	/*임원실 1*/
-    #####: 1533:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1525:					 e_treeview_col, "대표이사",
+        -: 1526:					 -1);
+        -: 1527:
+        -: 1528:	/*임원실 1*/
+    #####: 1529:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1534:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1530:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1535:					 e_treeview_col, "임원실",
-        -: 1536:					 -1);
-        -: 1537:
-        -: 1538:	/*대전지사 2*/
-    #####: 1539:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1531:					 e_treeview_col, "임원실",
+        -: 1532:					 -1);
+        -: 1533:
+        -: 1534:	/*대전지사 2*/
+    #####: 1535:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1540:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1536:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1541:					 e_treeview_col, "대전지사",
-        -: 1542:					 -1);
-        -: 1543:					 
-        -: 1544:	/*경영혁신팀 3*/
-    #####: 1545:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1537:					 e_treeview_col, "대전지사",
+        -: 1538:					 -1);
+        -: 1539:					 
+        -: 1540:	/*경영혁신팀 3*/
+    #####: 1541:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1546:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1542:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1547:					 e_treeview_col, "경영혁신팀",
-        -: 1548:					 -1);
-        -: 1549:
-        -: 1550:	/*솔루션사업부 4*/
-    #####: 1551:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1543:					 e_treeview_col, "경영혁신팀",
+        -: 1544:					 -1);
+        -: 1545:
+        -: 1546:	/*솔루션사업부 4*/
+    #####: 1547:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1552:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1548:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1553:					 e_treeview_col, "솔루션사업부",
-        -: 1554:					 -1);
-        -: 1555:		/*솔루션사업부 영업팀 8*/
-    #####: 1556:		gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1549:					 e_treeview_col, "솔루션사업부",
+        -: 1550:					 -1);
+        -: 1551:		/*솔루션사업부 영업팀 8*/
+    #####: 1552:		gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1557:		gtk_tree_store_set(e_treestore, &parent,
+    #####: 1553:		gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1558:						 e_treeview_col, "솔루션사업부 영업팀",
-        -: 1559:						 -1);
-        -: 1560:		/*솔루션사업부 사업팀 9*/
-    #####: 1561:		gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1554:						 e_treeview_col, "솔루션사업부 영업팀",
+        -: 1555:						 -1);
+        -: 1556:		/*솔루션사업부 사업팀 9*/
+    #####: 1557:		gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1562:		gtk_tree_store_set(e_treestore, &parent,
+    #####: 1558:		gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1563:						 e_treeview_col, "솔루션사업부 기술팀",
-        -: 1564:						 -1);
-        -: 1565:
-        -: 1566:	/*보안인프라사업부 5*/
-    #####: 1567:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1559:						 e_treeview_col, "솔루션사업부 기술팀",
+        -: 1560:						 -1);
+        -: 1561:
+        -: 1562:	/*보안인프라사업부 5*/
+    #####: 1563:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1568:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1564:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1569:					 e_treeview_col, "보안인프라사업부",
-        -: 1570:					 -1);
-        -: 1571:		/*보안인프라사업부 영업팀 10*/
-    #####: 1572:		gtk_tree_store_append(e_treestore, &child1, &parent);
+        -: 1565:					 e_treeview_col, "보안인프라사업부",
+        -: 1566:					 -1);
+        -: 1567:		/*보안인프라사업부 영업팀 10*/
+    #####: 1568:		gtk_tree_store_append (e_treestore, &child1, &parent);
 call    0 never executed
-    #####: 1573:		gtk_tree_store_set(e_treestore, &child1,
+    #####: 1569:		gtk_tree_store_set (e_treestore, &child1,
 call    0 never executed
-        -: 1574:						 e_treeview_col, "보안인프라사업부 영업팀",
-        -: 1575:						 -1);
-        -: 1576:		/*보안인프라사업부 기술팀 11*/
-    #####: 1577:		gtk_tree_store_append(e_treestore, &child1, &parent);
+        -: 1570:						 e_treeview_col, "보안인프라사업부 영업팀",
+        -: 1571:						 -1);
+        -: 1572:		/*보안인프라사업부 기술팀 11*/
+    #####: 1573:		gtk_tree_store_append (e_treestore, &child1, &parent);
 call    0 never executed
-    #####: 1578:		gtk_tree_store_set(e_treestore, &child1,
+    #####: 1574:		gtk_tree_store_set (e_treestore, &child1,
 call    0 never executed
-        -: 1579:						 e_treeview_col, "보안인프라사업부 기술팀",
-        -: 1580:						 -1);
-        -: 1581:
-        -: 1582:	/*부설연구소 6*/
-    #####: 1583:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1575:						 e_treeview_col, "보안인프라사업부 기술팀",
+        -: 1576:						 -1);
+        -: 1577:
+        -: 1578:	/*부설연구소 6*/
+    #####: 1579:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1584:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1580:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1585:					 e_treeview_col, "부설연구소",
-        -: 1586:					 -1);
-        -: 1587:		/*부설연구소 개발1팀 12*/
-    #####: 1588:		gtk_tree_store_append(e_treestore, &child1, &parent);
+        -: 1581:					 e_treeview_col, "부설연구소",
+        -: 1582:					 -1);
+        -: 1583:		/*부설연구소 개발1팀 12*/
+    #####: 1584:		gtk_tree_store_append (e_treestore, &child1, &parent);
 call    0 never executed
-    #####: 1589:		gtk_tree_store_set(e_treestore, &child1,
+    #####: 1585:		gtk_tree_store_set (e_treestore, &child1,
 call    0 never executed
-        -: 1590:						 e_treeview_col, "부설연구소 개발1팀",
-        -: 1591:						 -1);
-        -: 1592:		/*부설연구소 개발2팀 13*/
-    #####: 1593:		gtk_tree_store_append(e_treestore, &child1, &parent);
+        -: 1586:						 e_treeview_col, "부설연구소 개발1팀",
+        -: 1587:						 -1);
+        -: 1588:		/*부설연구소 개발2팀 13*/
+    #####: 1589:		gtk_tree_store_append (e_treestore, &child1, &parent);
 call    0 never executed
-    #####: 1594:		gtk_tree_store_set(e_treestore, &child1,
+    #####: 1590:		gtk_tree_store_set (e_treestore, &child1,
 call    0 never executed
-        -: 1595:						 e_treeview_col, "부설연구소 개발2팀",
-        -: 1596:						 -1);
-        -: 1597:
-        -: 1598:	/*특수사업부 7*/
-    #####: 1599:	gtk_tree_store_append(e_treestore, &parent, e_treeview_col);
+        -: 1591:						 e_treeview_col, "부설연구소 개발2팀",
+        -: 1592:						 -1);
+        -: 1593:
+        -: 1594:	/*특수사업부 7*/
+    #####: 1595:	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
 call    0 never executed
-    #####: 1600:	gtk_tree_store_set(e_treestore, &parent,
+    #####: 1596:	gtk_tree_store_set (e_treestore, &parent,
 call    0 never executed
-        -: 1601:					 e_treeview_col, "특수사업부",
-        -: 1602:					 -1);
-        -: 1603:		/*특수사업부 자사품 TF팀 14*/
-    #####: 1604:		gtk_tree_store_append(e_treestore, &child1, &parent);
+        -: 1597:					 e_treeview_col, "특수사업부",
+        -: 1598:					 -1);
+        -: 1599:		/*특수사업부 자사품 TF팀 14*/
+    #####: 1600:		gtk_tree_store_append (e_treestore, &child1, &parent);
 call    0 never executed
-    #####: 1605:		gtk_tree_store_set(e_treestore, &child1,
+    #####: 1601:		gtk_tree_store_set (e_treestore, &child1,
 call    0 never executed
-        -: 1606:						 e_treeview_col, "특수사업부 자사품 TF팀",
-        -: 1607:						 -1);
-        -: 1608:		/*특수사업부 컨설팅팀 15*/
-    #####: 1609:		gtk_tree_store_append(e_treestore, &child1, &parent);
+        -: 1602:						 e_treeview_col, "특수사업부 자사품 TF팀",
+        -: 1603:						 -1);
+        -: 1604:		/*특수사업부 컨설팅팀 15*/
+    #####: 1605:		gtk_tree_store_append (e_treestore, &child1, &parent);
 call    0 never executed
-    #####: 1610:		gtk_tree_store_set(e_treestore, &child1,
+    #####: 1606:		gtk_tree_store_set (e_treestore, &child1,
 call    0 never executed
-        -: 1611:						 e_treeview_col, "특수사업부 컨설팅팀",
-        -: 1612:						 -1);
-        -: 1613:                     
-    #####: 1614:	return GTK_TREE_MODEL(e_treestore);
+        -: 1607:						 e_treeview_col, "특수사업부 컨설팅팀",
+        -: 1608:						 -1);
+        -: 1609:                     
+    #####: 1610:	return GTK_TREE_MODEL (e_treestore);
 call    0 never executed
-        -: 1615:}
-        -: 1616:
-        -: 1617:static GtkWidget *
+        -: 1611:}
+        -: 1612:
+        -: 1613:static GtkWidget *
 function e_create_view_and_model called 0 returned 0% blocks executed 0%
-    #####: 1618:e_create_view_and_model (void)
-        -: 1619:{
-        -: 1620:	GtkTreeViewColumn	*e_col;
-        -: 1621:	GtkCellRenderer		*e_renderer;
-        -: 1622:	GtkWidget				*e_view;
-        -: 1623:	GtkTreeModel			*e_model;
-        -: 1624:	GtkTreeSelection	*e_selection;
-        -: 1625:	
-    #####: 1626:	e_view = gtk_tree_view_new();
+    #####: 1614:e_create_view_and_model (void)
+        -: 1615:{
+        -: 1616:	GtkTreeViewColumn	*e_col;
+        -: 1617:	GtkCellRenderer		*e_renderer;
+        -: 1618:	GtkWidget		*e_view;
+        -: 1619:	GtkTreeModel		*e_model;
+        -: 1620:	GtkTreeSelection	*e_selection;
+        -: 1621:	
+    #####: 1622:	e_view = gtk_tree_view_new();
 call    0 never executed
-        -: 1627:
-        -: 1628:	// Column #부서 //
-    #####: 1629:	e_col = gtk_tree_view_column_new();
+        -: 1623:
+        -: 1624:	// Column #부서 //
+    #####: 1625:	e_col = gtk_tree_view_column_new();
 call    0 never executed
-        -: 1630:
-    #####: 1631:	gtk_tree_view_column_set_title(e_col, "(주)조은아이앤에스 조직도");
+        -: 1626:
+    #####: 1627:	gtk_tree_view_column_set_title (e_col, "(주)조은아이앤에스 조직도");
 call    0 never executed
-        -: 1632:
-    #####: 1633:	gtk_tree_view_append_column(GTK_TREE_VIEW(e_view), e_col);
+        -: 1628:
+    #####: 1629:	gtk_tree_view_append_column (GTK_TREE_VIEW (e_view), e_col);
 call    0 never executed
 call    1 never executed
-    #####: 1634:	e_renderer = gtk_cell_renderer_text_new();
+    #####: 1630:	e_renderer = gtk_cell_renderer_text_new();
 call    0 never executed
-    #####: 1635:	gtk_tree_view_column_pack_start(e_col, e_renderer, TRUE);
+    #####: 1631:	gtk_tree_view_column_pack_start (e_col, e_renderer, TRUE);
 call    0 never executed
+        -: 1632:	
+    #####: 1633:	gtk_tree_view_column_add_attribute(e_col, e_renderer, "text", e_treeview_col);
+call    0 never executed
+        -: 1634:	
+    #####: 1635:	e_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (e_view));
+call    0 never executed
+call    1 never executed
         -: 1636:	
-    #####: 1637:	gtk_tree_view_column_add_attribute(e_col, e_renderer, "text", e_treeview_col);
+    #####: 1637:	gtk_tree_selection_set_select_function (e_selection, e_view_selection_func, NULL, NULL);
 call    0 never executed
         -: 1638:	
-    #####: 1639:	e_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(e_view));
+    #####: 1639:	e_model = e_create_and_fill_model();
+call    0 never executed
+        -: 1640:
+    #####: 1641:	gtk_tree_view_set_model (GTK_TREE_VIEW (e_view), e_model);
 call    0 never executed
 call    1 never executed
-        -: 1640:	
-    #####: 1641:	gtk_tree_selection_set_select_function(e_selection, e_view_selection_func, NULL, NULL);
+        -: 1642:
+    #####: 1643:	g_object_unref (e_model); // destroy model automatically with view //
 call    0 never executed
-        -: 1642:	
-    #####: 1643:	e_model = e_create_and_fill_model();
-call    0 never executed
-        -: 1644:
-    #####: 1645:	gtk_tree_view_set_model(GTK_TREE_VIEW(e_view), e_model);
-call    0 never executed
-call    1 never executed
-        -: 1646:
-    #####: 1647:	g_object_unref(e_model); // destroy model automatically with view //
-call    0 never executed
-        -: 1648:	
-    #####: 1649:	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(e_view)),
+        -: 1644:	
+    #####: 1645:	gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (e_view)),
 call    0 never executed
 call    1 never executed
 call    2 never executed
-        -: 1650:                              GTK_SELECTION_SINGLE);
-        -: 1651:
-    #####: 1652:	return e_view;
-        -: 1653:}
-        -: 1654:
+        -: 1646:                              GTK_SELECTION_SINGLE);
+        -: 1647:
+    #####: 1648:	return e_view;
+        -: 1649:}
+        -: 1650:
 function dept_ok_btn_clicked_w called 0 returned 0% blocks executed 0%
-    #####: 1655:void dept_ok_btn_clicked_w	(GtkButton *dept_ok_btn,	gpointer *data)
-        -: 1656:{
-    #####: 1657:	gtk_widget_hide(department_window);
+    #####: 1651:void dept_ok_btn_clicked_w (GtkButton *dept_ok_btn,	gpointer *data)
+        -: 1652:{
+    #####: 1653:	gtk_widget_hide (department_window);
 call    0 never executed
-    #####: 1658:}
-        -: 1659:
+    #####: 1654:}
+        -: 1655:
 function dept_ok_btn_clicked_e called 0 returned 0% blocks executed 0%
-    #####: 1660:void dept_ok_btn_clicked_e	(GtkButton *dept_ok_btn,	gpointer *data)
-        -: 1661:{
-    #####: 1662:	gtk_entry_set_text(GTK_ENTRY(data), uDs.udept);
+    #####: 1656:void dept_ok_btn_clicked_e (GtkButton *dept_ok_btn,	gpointer *data)
+        -: 1657:{
+    #####: 1658:	gtk_entry_set_text (GTK_ENTRY(data), uDs.udept);
 call    0 never executed
 call    1 never executed
-        -: 1663:
-    #####: 1664:	return;
-        -: 1665:}
-        -: 1666:
+        -: 1659:
+    #####: 1660:	return;
+        -: 1661:}
+        -: 1662:
 function dept_close_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1667:void dept_close_btn_clicked	(GtkButton *dept_close_btn,	gpointer *data)
-        -: 1668:{
-    #####: 1669:	gtk_widget_hide(department_window);
+    #####: 1663:void dept_close_btn_clicked (GtkButton *dept_close_btn,	gpointer *data)
+        -: 1664:{
+    #####: 1665:	gtk_widget_hide (department_window);
 call    0 never executed
-    #####: 1670:}
-        -: 1671:
+    #####: 1666:}
+        -: 1667:
 function e_department_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1672:void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
-        -: 1673:{
-        -: 1674:	GtkWidget *e_view;
-        -: 1675:	
-    #####: 1676:	e_view = e_create_view_and_model();
+    #####: 1668:void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
+        -: 1669:{
+        -: 1670:	GtkWidget *e_view;
+        -: 1671:	
+    #####: 1672:	e_view = e_create_view_and_model();
 call    0 never executed
-    #####: 1677:	gtk_container_add (GTK_CONTAINER(dept_scrolledwindow), e_view);
+    #####: 1673:	gtk_container_add (GTK_CONTAINER (dept_scrolledwindow), e_view);
 call    0 never executed
 call    1 never executed
-    #####: 1678:	gtk_widget_show_all ((GtkWidget *)department_window);
+    #####: 1674:	gtk_widget_show_all ((GtkWidget *) department_window);
 call    0 never executed
-    #####: 1679:}
-        -: 1680:
+    #####: 1675:}
+        -: 1676:
 function e_enroll_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1681:void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
-        -: 1682:{
-    #####: 1683:	char *usrinfostr = malloc(sizeof(char) * 10);
+    #####: 1677:void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
+        -: 1678:{
+    #####: 1679:	char *usrinfostr = malloc (sizeof (char) * 10);
+        -: 1680:
+    #####: 1681:	chk_df = 2;
+        -: 1682:
+    #####: 1683:	sprintf (usrinfostr, "%s %s", uDs.uname, uDs.ujob);
         -: 1684:
-    #####: 1685:	chk_df = 2;
-        -: 1686:
-    #####: 1687:	sprintf(usrinfostr, "%s %s", uDs.uname, uDs.ujob);
-        -: 1688:
-    #####: 1689:	gtk_widget_hide(enrollment_window);
+    #####: 1685:	gtk_widget_hide (enrollment_window);
 call    0 never executed
-        -: 1690:
-    #####: 1691:	gtk_label_set_text(GTK_LABEL(m_userinfo_label), usrinfostr);
+        -: 1686:
+    #####: 1687:	gtk_label_set_text (GTK_LABEL (m_userinfo_label), usrinfostr);
 call    0 never executed
 call    1 never executed
-    #####: 1692:	gtk_widget_show(main_window);
+    #####: 1688:	gtk_widget_show (main_window);
+call    0 never executed
+        -: 1689:
+    #####: 1690:	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
+call    0 never executed
+        -: 1691:	//printf("%s\n", usrinfostr);
+    #####: 1692:	func_Send();
 call    0 never executed
         -: 1693:
-    #####: 1694:	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
+    #####: 1694:	gtk_main();
 call    0 never executed
-        -: 1695:	//printf("%s\n", usrinfostr);
-    #####: 1696:	func_Send();
-call    0 never executed
-        -: 1697:
-    #####: 1698:	gtk_main();
-call    0 never executed
-        -: 1699:	
-    #####: 1700:	return;
-        -: 1701:}
-        -: 1702:/* end of enrollment_window */
-        -: 1703:
-        -: 1704:
-        -: 1705:// setting_window function #sf //
+        -: 1695:	
+    #####: 1696:	return;
+        -: 1697:}
+        -: 1698:/* end of enrollment_window */
+        -: 1699:
+        -: 1700:
+        -: 1701:// setting_window function #sf //
 function s_ip_entry_activate called 0 returned 0% blocks executed 0%
-    #####: 1706:void s_ip_entry_activate	(GtkEntry  *s_ip_entry,	gpointer *data)
-        -: 1707:{
-        -: 1708:	char *hostname;
-    #####: 1709:	hostname = (gchar *)gtk_entry_get_text(s_ip_entry);
+    #####: 1702:void s_ip_entry_activate (GtkEntry  *s_ip_entry,	gpointer *data)
+        -: 1703:{
+        -: 1704:	char *hostname;
+    #####: 1705:	hostname = (gchar *) gtk_entry_get_text (s_ip_entry);
 call    0 never executed
-    #####: 1710:	g_print("HOST NAME: %s\n", hostname);
+    #####: 1706:	g_print ("HOST NAME: %s\n", hostname);
 call    0 never executed
-        -: 1711:
-    #####: 1712:	return;
-        -: 1713:}
-        -: 1714:
+        -: 1707:
+    #####: 1708:	return;
+        -: 1709:}
+        -: 1710:
 function s_port_entry_activate called 0 returned 0% blocks executed 0%
-    #####: 1715:void s_port_entry_activate	(GtkEntry  *s_port_entry,	gpointer *data)
-        -: 1716:{
-        -: 1717:	char *port;
-    #####: 1718:	port = (gchar *)gtk_entry_get_text(s_port_entry);
+    #####: 1711:void s_port_entry_activate (GtkEntry  *s_port_entry,	gpointer *data)
+        -: 1712:{
+        -: 1713:	char *port;
+    #####: 1714:	port = (gchar *) gtk_entry_get_text (s_port_entry);
 call    0 never executed
-    #####: 1719:	g_print("PORT: %s\n", port);
+    #####: 1715:	g_print("PORT: %s\n", port);
 call    0 never executed
-        -: 1720:
-    #####: 1721:	return;
-        -: 1722:}
-        -: 1723:
+        -: 1716:
+    #####: 1717:	return;
+        -: 1718:}
+        -: 1719:
 function s_detect_entry_activate called 0 returned 0% blocks executed 0%
-    #####: 1724:void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data)
-        -: 1725:{
-    #####: 1726:	path = (gchar *)gtk_entry_get_text(s_detect_entry);
+    #####: 1720:void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data)
+        -: 1721:{
+    #####: 1722:	path = (gchar *)gtk_entry_get_text(s_detect_entry);
 call    0 never executed
-    #####: 1727:	g_print("선택한 디폴트 폴더 위치: %s\n", dpath);
+    #####: 1723:	g_print("선택한 디폴트 폴더 위치: %s\n", dpath);
 call    0 never executed
-        -: 1728:
-    #####: 1729:	return;
-        -: 1730:}
-        -: 1731:
+        -: 1724:
+    #####: 1725:	return;
+        -: 1726:}
+        -: 1727:
 function s_folder_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1732:void s_folder_btn_clicked	(GtkButton *s_folder_btn,	gpointer *data)
-        -: 1733:{
-    #####: 1734:    filechooserdialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
+    #####: 1728:void s_folder_btn_clicked (GtkButton *s_folder_btn,	gpointer *data)
+        -: 1729:{
+    #####: 1730:    filechooserdialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW (data), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, 
 call    0 never executed
 call    1 never executed
-        -: 1735:			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
+        -: 1731:			("_선택"), GTK_RESPONSE_ACCEPT, NULL);
+        -: 1732:
+    #####: 1733:    gtk_widget_show_all (filechooserdialog);
+call    0 never executed
+        -: 1734:    
+    #####: 1735:	gint resp = gtk_dialog_run (GTK_DIALOG (filechooserdialog));
+call    0 never executed
+call    1 never executed
         -: 1736:
-    #####: 1737:    gtk_widget_show_all(filechooserdialog);
-call    0 never executed
-        -: 1738:    
-    #####: 1739:	gint resp = gtk_dialog_run(GTK_DIALOG(filechooserdialog));
-call    0 never executed
-call    1 never executed
-        -: 1740:
-    #####: 1741:    if( resp == GTK_RESPONSE_ACCEPT)
+    #####: 1737:    if (resp == GTK_RESPONSE_ACCEPT)
 branch  0 never executed
 branch  1 never executed
-        -: 1742:    {
-    #####: 1743:	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+        -: 1738:    {
+    #####: 1739:	gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filechooserdialog));
 call    0 never executed
 call    1 never executed
-        -: 1744:    } 
-    #####: 1745:	dpath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserdialog));
+        -: 1740:    } 
+    #####: 1741:	dpath = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filechooserdialog));
 call    0 never executed
 call    1 never executed
-        -: 1746:
-    #####: 1747:	gtk_entry_set_text(GTK_ENTRY (data), dpath);
+        -: 1742:
+    #####: 1743:	gtk_entry_set_text (GTK_ENTRY (data), dpath);
 call    0 never executed
 call    1 never executed
-        -: 1748:
+        -: 1744:
+        -: 1745:
+    #####: 1746:	gtk_widget_destroy (filechooserdialog);
+call    0 never executed
+        -: 1747:
+    #####: 1748:	g_print ("선택한 디폴트 폴더 위치: %s\n", dpath);
+call    0 never executed
         -: 1749:
-    #####: 1750:	gtk_widget_destroy(filechooserdialog);
-call    0 never executed
-        -: 1751:
-    #####: 1752:	g_print("선택한 디폴트 폴더 위치: %s\n", dpath);
-call    0 never executed
-        -: 1753:
-    #####: 1754:	return;
-        -: 1755:}
-        -: 1756:
+    #####: 1750:	return;
+        -: 1751:}
+        -: 1752:
 function s_usrchg_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1757:void s_usrchg_btn_clicked	(GtkButton *s_usrchg_btn,	gpointer *data)
-        -: 1758:{
-    #####: 1759:	gtk_widget_show(enrollment_window);
+    #####: 1753:void s_usrchg_btn_clicked (GtkButton *s_usrchg_btn,	gpointer *data)
+        -: 1754:{
+    #####: 1755:	gtk_widget_show (enrollment_window);
 call    0 never executed
-    #####: 1760:	return;
-        -: 1761:}
-        -: 1762:
-        -: 1763:
+    #####: 1756:	return;
+        -: 1757:}
+        -: 1758:
+        -: 1759:
 function s_ok_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1764:void s_ok_btn_clicked		(GtkButton *s_ok_btn,		gpointer *data)
-        -: 1765:{
-    #####: 1766:	gtk_widget_hide(GTK_WIDGET(data));
+    #####: 1760:void s_ok_btn_clicked (GtkButton *s_ok_btn,		gpointer *data)
+        -: 1761:{
+    #####: 1762:	gtk_widget_hide (GTK_WIDGET(data));
 call    0 never executed
 call    1 never executed
-        -: 1767:
-    #####: 1768:	return;
-        -: 1769:}
-        -: 1770:
+        -: 1763:
+    #####: 1764:	return;
+        -: 1765:}
+        -: 1766:
 function s_cloese_btn_clicked called 0 returned 0% blocks executed 0%
-    #####: 1771:void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
-        -: 1772:{
-    #####: 1773:	gtk_widget_hide(GTK_WIDGET(data));
+    #####: 1767:void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
+        -: 1768:{
+    #####: 1769:	gtk_widget_hide (GTK_WIDGET(data));
 call    0 never executed
 call    1 never executed
-        -: 1774:	
-    #####: 1775:	return;
-        -: 1776:}
-        -: 1777:/* end of setting_window function */
-        -: 1778:
-        -: 1779:
-        -: 1780:
-        -: 1781:// main #main //
+        -: 1770:	
+    #####: 1771:	return;
+        -: 1772:}
+        -: 1773:/* end of setting_window function */
+        -: 1774:
+        -: 1775:
+        -: 1776:
+        -: 1777:// main #main //
 function main called 0 returned 0% blocks executed 0%
-    #####: 1782:int main (int argc, char *argv[])
-        -: 1783:{
-        -: 1784:	int chkini;
-        -: 1785:	
-    #####: 1786:	gtk_init(&argc, &argv);
+    #####: 1778:int main (int argc, char *argv[])
+        -: 1779:{
+        -: 1780:	int chkini;
+        -: 1781:	
+    #####: 1782:	gtk_init(&argc, &argv);
 call    0 never executed
-        -: 1787:
-    #####: 1788:	builder = gtk_builder_new();
+        -: 1783:
+    #####: 1784:	builder = gtk_builder_new();
 call    0 never executed
-    #####: 1789:	gtk_builder_add_from_file(builder, "main.glade", NULL);
+    #####: 1785:	gtk_builder_add_from_file(builder, "main.glade", NULL);
 call    0 never executed
-        -: 1790:
-    #####: 1791:	main_window		= GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-call    0 never executed
-call    1 never executed
-    #####: 1792:	enrollment_window	= GTK_WIDGET(gtk_builder_get_object(builder, "enrollment_window"));
+        -: 1786:
+    #####: 1787:	main_window		= GTK_WIDGET (gtk_builder_get_object (builder, "main_window"));
 call    0 never executed
 call    1 never executed
-    #####: 1793:	department_window	= GTK_WIDGET(gtk_builder_get_object(builder, "department_window"));
+    #####: 1788:	enrollment_window	= GTK_WIDGET (gtk_builder_get_object (builder, "enrollment_window"));
 call    0 never executed
 call    1 never executed
-    #####: 1794:	detect_window		= GTK_WIDGET(gtk_builder_get_object(builder, "detect_window"));
+    #####: 1789:	department_window	= GTK_WIDGET (gtk_builder_get_object (builder, "department_window"));
 call    0 never executed
 call    1 never executed
-    #####: 1795:	setting_window		= GTK_WIDGET(gtk_builder_get_object(builder, "setting_window"));
+    #####: 1790:	detect_window		= GTK_WIDGET (gtk_builder_get_object (builder, "detect_window"));
 call    0 never executed
 call    1 never executed
-    #####: 1796:	d_progressbar 		= GTK_WIDGET(gtk_builder_get_object(builder, "d_progressbar"));
+    #####: 1791:	setting_window		= GTK_WIDGET (gtk_builder_get_object (builder, "setting_window"));
 call    0 never executed
 call    1 never executed
-    #####: 1797:	d_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "d_scrolledwindow"));
+    #####: 1792:	d_progressbar 		= GTK_WIDGET (gtk_builder_get_object (builder, "d_progressbar"));
 call    0 never executed
 call    1 never executed
-    #####: 1798:	dept_scrolledwindow	= GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "dept_scrolledwindow"));
+    #####: 1793:	d_scrolledwindow	= GTK_SCROLLED_WINDOW (gtk_builder_get_object (builder, "d_scrolledwindow"));
 call    0 never executed
 call    1 never executed
-    #####: 1799:	m_userinfo_label = GTK_WIDGET(gtk_builder_get_object(builder, "m_userinfo_label"));
+    #####: 1794:	dept_scrolledwindow	= GTK_SCROLLED_WINDOW (gtk_builder_get_object (builder, "dept_scrolledwindow"));
 call    0 never executed
 call    1 never executed
-    #####: 1800:	gtk_window_set_position(GTK_WINDOW(detect_window), GTK_WIN_POS_CENTER);
+    #####: 1795:	m_userinfo_label = GTK_WIDGET (gtk_builder_get_object (builder, "m_userinfo_label"));
 call    0 never executed
 call    1 never executed
-        -: 1801:
-        -: 1802:	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
-    #####: 1803:	g_signal_connect(detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+    #####: 1796:	gtk_window_set_position (GTK_WINDOW (detect_window), GTK_WIN_POS_CENTER);
 call    0 never executed
-    #####: 1804:	g_signal_connect(setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+call    1 never executed
+        -: 1797:
+        -: 1798:	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
+    #####: 1799:	g_signal_connect (detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 call    0 never executed
-    #####: 1805:	g_signal_connect(enrollment_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+    #####: 1800:	g_signal_connect (setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 call    0 never executed
-        -: 1806:
-    #####: 1807:	gtk_builder_connect_signals(builder, NULL);
+    #####: 1801:	g_signal_connect (enrollment_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 call    0 never executed
-        -: 1808:
-    #####: 1809:	func_Uuid();			// 사용자 UUID	//
+        -: 1802:
+    #####: 1803:	gtk_builder_connect_signals (builder, NULL);
 call    0 never executed
-        -: 1810:	
-        -: 1811:	// Ini File Check //
-    #####: 1812:	chkini = func_ParseIni("plover.ini");
+        -: 1804:
+    #####: 1805:	func_Uuid();			// 사용자 UUID	//
 call    0 never executed
-    #####: 1813:	if (chkini != 0)
+        -: 1806:	
+        -: 1807:	// Ini File Check //
+    #####: 1808:	chkini = func_ParseIni ("plover.ini");
+call    0 never executed
+    #####: 1809:	if (chkini != 0)
 branch  0 never executed
 branch  1 never executed
-        -: 1814:	{
-    #####: 1815:		func_CreateIni();
+        -: 1810:	{
+    #####: 1811:		func_CreateIni();
 call    0 never executed
-    #####: 1816:		printf("ini 파일 생성!\n");
+    #####: 1812:		printf ("ini 파일 생성!\n");
 call    0 never executed
-    #####: 1817:		chkini = func_ParseIni("plover.ini");
+    #####: 1813:		chkini = func_ParseIni ("plover.ini");
 call    0 never executed
-        -: 1818:    }
+        -: 1814:    }
+        -: 1815:
+    #####: 1816:	func_SetRabbit();	// 서버와 연결	//
+call    0 never executed
+    #####: 1817:	func_VerChk();		// 버전 확인	//
+call    0 never executed
+    #####: 1818:	func_UsrChk();		// 사용자 확인	//
+call    0 never executed
         -: 1819:
-    #####: 1820:	func_SetRabbit();	// 서버와 연결	//
+    #####: 1820:	g_object_unref(builder);
 call    0 never executed
-    #####: 1821:	func_VerChk();		// 버전 확인	//
-call    0 never executed
-    #####: 1822:	func_UsrChk();		// 사용자 확인	//
+        -: 1821:
+    #####: 1822:	gtk_widget_show(window);
 call    0 never executed
         -: 1823:
-    #####: 1824:	g_object_unref(builder);
-call    0 never executed
-        -: 1825:
-    #####: 1826:	gtk_widget_show(window);
-call    0 never executed
-        -: 1827:
-    #####: 1828:	return 0;
-        -: 1829:}
+    #####: 1824:	return 0;
+        -: 1825:}
