@@ -14,7 +14,7 @@
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
 
-int x,y,z; //지울거
+int z; //지울거
 const char *find_text;
 static gchar *dpath;			// default 경로 //
 static gchar *path;			// 검사 파일경로 //
@@ -413,14 +413,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 	{
 		int nomatch = regexec (r, p, n_matches, m, 0);
 
-		if (nomatch)
-		{
-			//printf("No more matches.\n");
-			printf("[%d] P reading\n", y++);
-			return 0;
-		}
-
-		else
+		if (nomatch != 1)
 		{
 			for (int i = 0; i < n_matches; i++)
 			{
@@ -453,6 +446,11 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 
 				}
 			}
+		}
+		else
+		{
+			printf("No more matches.\n");
+			return 0;
 		}
 
 		p += m[0].rm_eo;
