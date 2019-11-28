@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <regex.h>
+#include <time.h>
 #include "iniparser.h"
 #include "iniparser.c"
 #include "dictionary.h"
@@ -14,14 +15,16 @@
 #define	ERASER_SIZE	512		//1k
 #define	ERASER_ENC_SIZE	896		//1k
 
+clock_t start, end;
 int z; //지울거
-const char *find_text;
+static char *find_text;
 static gchar *dpath;			// default 경로 //
 static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
 static gchar *vs_dept;			// 등록 부서이름 //
 
+static char *buffer = NULL;	// 검출돌고있는 파일 버퍼 //
 static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개//
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
 static char	chk_uuid[40];		// INI UUID 확인 //
@@ -237,8 +240,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
 	while (1)
 	{
-		int nomatch = 0;
-		nomatch = regexec (r, p, n_matches, m, 0);
+		int nomatch = regexec (r, p, n_matches, m, 0);
 
 		if (nomatch != 1)
 		{
@@ -271,17 +273,17 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 					chk = buf_tmp[13];
 					jtmp = 11 - (sum % 11); // 주민번호 //
-					//fgtmp = 13 - (sum % 11); // 외국인번호 //
+					fgtmp = 13 - (sum % 11); // 외국인번호 //
 
 					if (jtmp >= 10)
 					{
 						jtmp -= 10;
 					}
 
-					//if (fgtmp >= 10)
-					//{
-					//	fgtmp -= 10;
-					//}
+					if (fgtmp >= 10)
+					{
+						fgtmp -= 10;
+					}
 
 					// 주민번호 유효성 통과 //
 					if (jtmp == chk)
@@ -308,28 +310,28 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					}
 
 					// 외국인등록번호 유효성 통과 //
-					//if (fgtmp == chk)
-					//{
-						//int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+					if (fgtmp == chk)
+					{
+						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
 
-						//if (res != 0)
-						//{
-						//	chk_fcnt++;
-						//}
+						if (res != 0)
+						{
+							chk_fcnt++;
+						}
 
 					// 읽고있는중인 파일 이름 저장 //
-					//strcpy (chk_fname, file->d_name);
+					strcpy (chk_fname, file->d_name);
 
 					// 검출된 외국인등록번호의 수 //
-					//fDs[chk_fcnt].fgcnt++;
+					fDs[chk_fcnt].fgcnt++;
 
 					// data 구조체에 저장 //
-					//strcpy (fDs[chk_fcnt].fpath, filepath);
-					//strcpy (fDs[chk_fcnt].fname, file->d_name);
-					//fDs[chk_fcnt].fsize = buf.st_size;
-					//strcpy (fDs[chk_fcnt].stat, "일반");
+					strcpy (fDs[chk_fcnt].fpath, filepath);
+					strcpy (fDs[chk_fcnt].fname, file->d_name);
+					fDs[chk_fcnt].fsize = buf.st_size;
+					strcpy (fDs[chk_fcnt].stat, "일반");
 
-					//}
+					}
 				}
 			}
 		}
@@ -485,28 +487,63 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	match_regex_jnfg(&r, find_text, filepath, file, buf);
 
 	// 운전면허 정규식 //
-	//regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
-	//compile_regex (&r, regex_text); // 정규식 컴파일 //
-	//match_regex_d (&r, to_match, filepath, file, buf);
+	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
+	compile_regex (&r, regex_text); // 정규식 컴파일 //
+	match_regex_d (&r, find_text, filepath, file, buf);
 
 	// 여권번호 정규식 //
-	//regex_text = "[a-zA-Z]{2}[0-9]{7}";
-	//compile_regex (&r, regex_text); // 정규식 컴파일 //
-	//match_regex_p (&r, to_match, filepath, file, buf);
+	regex_text = "[a-zA-Z]{1}[0-9]{8}";
+	compile_regex (&r, regex_text); // 정규식 컴파일 //
+	match_regex_p (&r, find_text, filepath, file, buf);
 
 	return;
 }
 /* end of check_kind_of_data(); */
 
+
+// pdf to txt 변환 //
+int func_pdf2txt(char *filepath)
+{
+	char commande[60] = "pdftotext -enc UTF-8 ";
+    FILE *fp;
+    long length = 0;
+    char namebuf[50];
+
+	strcat(commande,filepath);
+	system(commande);
+
+	strcpy (namebuf, filepath);
+	namebuf[strlen(namebuf)-4]='\0';
+	strcat(namebuf,".txt");
+
+	fp = fopen(namebuf, "r");
+	fseek (fp, 0, SEEK_END);
+	length = ftell (fp);
+	rewind (fp);
+
+	fread (find_text, 1, length, fp);
+
+	fclose(fp);
+	remove(namebuf);
+
+	return 0;
+}
+// end of pdf to txt 변환 //
+
+
 // 폴더, 파일 스캔 후 검출 #fd //
 int func_Detect (gchar *path)
 {
 	DIR *dp = NULL;
-	FILE *fp = NULL;
+	FILE *fp, *cp = NULL;
 	struct dirent *file = NULL;
 	struct stat buf;
 	char filepath[300];
-	char buffer[7320320] = {0,};
+	long lSize;
+	char commande[60] = {0,}, ftype[60] = {0,};
+	int ftypesig;
+
+
 
 	if ((dp = opendir(path)) == NULL)
 	{
@@ -538,25 +575,58 @@ int func_Detect (gchar *path)
 				printf("파일을 열수 없습니다.\n");
 				return 1;
 			}
-			// 버퍼 크기만큼 읽고 find_text에 넣어서 정규식검사로 이동 //
-			while (feof (fp) == 0)
+			strcpy (commande, "file -b ");
+			strcat (commande, filepath);
+			cp = popen (commande, "r");
+
+			if(!cp)
 			{
-				fread (buffer, sizeof(char), sizeof (buffer), fp);
-				find_text = buffer;
-				check_kind_of_data (find_text, filepath, file, buf);
+				printf("error [%d:%s]\n", errno, strerror(errno));
+				return -1;
 			}
-			// 메모리관리(초기화), 파일닫기 //
-			memset (buffer, 0, sizeof (buffer));
+			fread ((void *)ftype, sizeof(char), 60, cp); // 파일 종류 저장
+			printf("ftype: %s\n", ftype);
+
+
+			if (ftype[0] == 'P')
+			{
+				ftypesig = 1;
+			}
+
+			// 파일 크기만큼 버퍼에 저장 후 find_text에 넣어서 정규식검사로 이동 //
+			fseek (fp, 0, SEEK_END);
+			lSize = ftell (fp);
+			rewind (fp);
+
+			buffer = (char *) malloc (sizeof(char) *lSize);
+
+			fread(buffer, 1, lSize, fp);
+
+			find_text = buffer; //그냥 버퍼는 못쓰나 확인
+
+			switch(ftypesig)
+			{
+				case 0:
+					break;	
+
+				case 1:
+					func_pdf2txt(filepath);
+					break;
+			}
+
+			check_kind_of_data (find_text, filepath, file, buf);
+
+			// 메모리관리(초기화), 파일
 			fclose (fp);
+			free(buffer);
 			printf ("Close FILE\n");
+
 			chk_fname[0] = 0; // 초기화 //
 		}
 	}
 
 	closedir (dp);
-
 	printf ("Close DIR\n");
-
 	return  0;
 }
 /* end of func_Detect(); */
@@ -585,7 +655,6 @@ int func_SetRabbit()
 	{
 		die("opening TCP socket");
 	}
-
 
 	die_on_amqp_error (amqp_login (conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
 																		"guest", "guest"),
@@ -676,7 +745,7 @@ int func_Send()
 				printf("##### 사용자 등록 #####\n");
 				//routingkey = "BPDEPT0R"; // TRCODE //
 				routingkey = "ka";
-				in_len = sizeof (uDs);
+				in_len = sizeof(uDs);
 				enc = b64_encode ((unsigned char *)&uDs, in_len, enc);
 				printf ("[enc_data: %s]\n", enc);
 				printf ("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
@@ -713,7 +782,7 @@ int func_Send()
 			case 4:	// 파일 삭제 //
 				printf ("##### 파일 삭제  #####\n");
 				routingkey = "ka"; // TRCODE //
-				in_len = sizeof (sfDs);
+				in_len = sizeof(sfDs);
 				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
 				printf ("[enc_data: %s]\n", enc);
 				
@@ -725,7 +794,7 @@ int func_Send()
 			case 5:	// 파일 암호화 //
 				printf ("##### 파일 암호화  #####\n");
 				routingkey = "ka"; // TRCODE //
-				in_len = sizeof (sfDs);
+				in_len = sizeof(sfDs);
 				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
 				printf ("[enc_data: %s]\n", enc);
 				
@@ -1001,9 +1070,9 @@ void func_ARIA ()
 			lSize = ftell (fp);
 			rewind (fp);
 
-			buff = (unsigned char *) malloc (sizeof (char) *lSize);
+			buff = (unsigned char *) malloc (sizeof(char) *lSize);
 
-			while ((cur = fread (&buff[sum], sizeof (char), lSize - cur, fp)) > 0 )
+			while ((cur = fread (&buff[sum], sizeof(char), lSize - cur, fp)) > 0 )
 			{
 				sum += cur;
 			}
@@ -1015,15 +1084,16 @@ void func_ARIA ()
 
 			while (arisize < sfDs.fsize)
 			{
-				memcpy (aribuf, buff, sizeof (aribuf));
+				memcpy (aribuf, buff, sizeof(aribuf));
 				ARIA (aribuf);
-				memcpy (buff, aribuf, sizeof (aribuf));
-				//memset (aribuf, 0, sizeof (aribuf));
+				memcpy (buff, aribuf, sizeof(aribuf));
+				//memset (aribuf, 0, sizeof(aribuf));
 				buff += i;
 				arisize += i;
-				
+
 			}
 			fclose (fp);
+			
 			printf("arisize: %d\n", arisize);
 			fp = fopen (sfDs.fpath, "w+");
 			fwrite (buff, lSize, 1, fp);
@@ -1050,7 +1120,7 @@ void func_ARIA ()
 			strcpy (sfDs.stat, "암호화");
 
 			fclose (fp);
-
+			free (buff);
 			chk_df = 5;
 			printf ("Close FILE\n");
 			chk_fname[0] = 0; // 초기화 //
@@ -1319,9 +1389,15 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
 	chk_df = 3;
 	chk_fcnt = -1; 						// 파일개수 count 초기화
-	memset (&fDs, 0, sizeof (fDs));		// 구조체 초기화
+	memset (&fDs, 0, sizeof(fDs));		// 구조체 초기화
+	double chktime;
 	
+	start = time(NULL);
 	func_Detect (path);
+	end =time(NULL);
+	chktime = (double)(end - start);
+	printf("검출 시간: [%f]초\n", chktime);
+	
 	func_Send();
 
 	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
@@ -1339,7 +1415,7 @@ void d_option_btn_clicked (GtkButton *d_option_btn, gpointer *data)
 	return;
 }
 
-void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)//미구현//
+void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)
 {
 	func_ARIA();
 
@@ -1649,7 +1725,7 @@ void e_department_btn_clicked (GtkButton *e_department_btn,	gpointer *data)
 
 void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 {
-	char *usrinfostr = malloc (sizeof (char) * 10);
+	char *usrinfostr = malloc (sizeof(char) * 10);
 
 	chk_df = 2;
 
@@ -1665,7 +1741,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	func_Send();
 
 	gtk_main();
-	
+	free(usrinfostr);
 	return;
 }
 /* end of enrollment_window */
