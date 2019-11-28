@@ -12,6 +12,7 @@
 #include "encode.c"
 #include "decode.c"
 #include "aria.c"
+//#include "pdf2txt.c"
 
 #define	MAX_FCNT	100
 #define	HOSTNAME	"localhost"

@@ -500,33 +500,110 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 }
 /* end of check_kind_of_data(); */
 
+typedef struct {
+	char *hex;
+	char *braille;
+} Braille;
+
 
 // pdf to txt 변환 //
-int func_pdf2txt(char *filepath)
+char remplacerbraille (Braille carac[], int tailleCarac, char *find_text, long lSize)
 {
-	char commande[60] = "pdftotext -enc UTF-8 ";
-    FILE *fp;
-    long length = 0;
-    char namebuf[50];
+	int i = 0, now_replacing = 0, j, converDansBalise, k, z = 0;
+	while (z < lSize)
+	{
+		for (i = 0; find_text[i] != '\0';) 
+		{
+			//printf("lSize: [%ld], z: [%d]\n", lSize, z);
+			converDansBalise=1;
+			if (strncmp(&find_text[i], "|(", 2) == 0)
+			{
+				now_replacing = 1;
+				memcpy (buffer + i, "|(", 2);
+				i += 2;
+				z += 2;
+				//fprintf(out, "|(");
+				continue;
+			}
+			if (strncmp(&find_text[i], "|)", 2) == 0)
+			{
+				now_replacing = 0;
+				memcpy (buffer + i, "|)", 2);
+				i += 2;
+				z += 2;
+				//fprintf(out, "|)");
+				continue;
+			}
+			if (now_replacing == 1)
+			{
+				for (j = 0; j < tailleCarac; j++)
+				{
+					if (strncmp (&find_text[i], carac[j].hex, strlen(carac[j].hex)) == 0)
+					{
+						for (k = 0; k < strlen (carac[j].braille); k++)
+						{
+							memcpy (buffer, &carac[j].braille[k], strlen (carac[j].hex));
+							//fputc(carac[j].braille[k],out);
+						}
+						i += strlen (carac[j].hex);
+						z += strlen (carac[j].hex);
+						converDansBalise=0;
+						break;
+					}
+				}
+				if (converDansBalise == 1)
+				{
+					memcpy (buffer, &find_text[i], 1);
+					//fputc(find_text[i], out);
+					i++;
+					z++;
+				}
+			}
+			else
+			{
+				memcpy (buffer, &find_text[i], 1);
+				//fputc(find_text[i], out);
+				i++;
+				z++;
+			}
+		}
+	}
+	//memset (find_text, 0, lSize);
+	memcpy (find_text, buffer, lSize);
+	printf("find_text: %s\n", find_text);
+	return *find_text;
+}
 
-	strcat(commande,filepath);
+char func_pdf2txt(char *find_text, char *filepath, long lSize)
+{
+	char commande[50]="pdftotext -enc UTF-8 ";
+    Braille carac[] =
+    {
+		{"\xe2\x88\x9e","¤c"}, // ∞
+            {"\x3d","\""}, //=
+            {"\xe2\x88\xaa","¸!"}, // ∪
+            {"\x2b","!"}, //+
+            {"\xc3\x97","*"}, //×
+            {"\x3e","@"}, // >
+            {"\x3c","2"}, // <
+            {"\x5d","à"}, // [
+            {"\x5b","ù"}, // ]
+            {"\xe2\x8b\x82","¤!"}, //⋂
+            {"\xe2\x89\x85","null"}, //≅
+            {"\x3d\x3e","¤2"}, // <=
+            {"\xe2\x88\x9a","@"},// √
+            {"\xe2\x88\xab","ç"}, // ∫
+            {"\xe2\x88\xa7","é"}, // ∧
+            {"\xe2\x88\xa8","¸"}, // ∨
+            {"\xe2\x88\x8b","¤\""}, // ∋
+            {"\xe2\x88\x85","¤0"}, // ∅
+            {"\xe2\x88\xa5","¸8"}, // ∥
+    };
+	int tailleCarac=19;
+	strcat(commande, filepath);
 	system(commande);
-
-	strcpy (namebuf, filepath);
-	namebuf[strlen(namebuf)-4]='\0';
-	strcat(namebuf,".txt");
-
-	fp = fopen(namebuf, "r");
-	fseek (fp, 0, SEEK_END);
-	length = ftell (fp);
-	rewind (fp);
-
-	fread (find_text, 1, length, fp);
-
-	fclose(fp);
-	remove(namebuf);
-
-	return 0;
+	remplacerbraille (carac, tailleCarac, find_text, lSize);
+	return *find_text;
 }
 // end of pdf to txt 변환 //
 
@@ -602,7 +679,7 @@ int func_Detect (gchar *path)
 
 			fread(buffer, 1, lSize, fp);
 
-			find_text = buffer; //그냥 버퍼는 못쓰나 확인
+			find_text = buffer;
 
 			switch(ftypesig)
 			{
@@ -610,7 +687,9 @@ int func_Detect (gchar *path)
 					break;	
 
 				case 1:
-					func_pdf2txt(filepath);
+					printf("START check@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: %s\n", find_text);
+					func_pdf2txt(find_text, filepath, lSize);
+					printf("\n\n\nEND check@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: %s\n", find_text);
 					break;
 			}
 
