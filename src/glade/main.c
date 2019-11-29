@@ -23,7 +23,8 @@ static gchar *path;			// 검사 파일경로 //
 static gchar *name;			// 등록 유저이름 //
 static gchar *job;			// 등록 직급이름 //
 static gchar *vs_dept;			// 등록 부서이름 //
-
+static float percent = 0.0;	// Progress Bar //
+static char message[1024] = {0,};	// Progress Bar Message //
 static char *buffer = NULL;	// 검출돌고있는 파일 버퍼 //
 static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개//
 static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
@@ -44,11 +45,11 @@ GtkWidget		*main_window,
 			*e_verion_label,
 			*detect_window,
 			*department_window,
-			*d_progressbar_status,
 			*d_progressbar,
+			*d_progressbar_status,
 			*setting_window,
 			*window;
-						
+
 GtkEntry		*e_name_entry,
 			*e_jobtitle_entry,
 			*e_department_entry,
@@ -375,6 +376,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					if (res != 0)
 					{
 						chk_fcnt++;
+
 					}
 
 					// 읽고있는중인 파일 이름 저장 //
@@ -543,8 +545,7 @@ int func_Detect (gchar *path)
 	char commande[60] = {0,}, ftype[60] = {0,};
 	int ftypesig;
 
-
-
+	memset (message, 0x00, strlen(message));
 	if ((dp = opendir(path)) == NULL)
 	{
 		printf("폴더를 열수 없습니다.\n");
@@ -585,7 +586,7 @@ int func_Detect (gchar *path)
 				return -1;
 			}
 			fread ((void *)ftype, sizeof(char), 60, cp); // 파일 종류 저장
-			printf("ftype: %s\n", ftype);
+			//printf("ftype: %s\n", ftype);
 
 
 			if (ftype[0] == 'P')
@@ -690,8 +691,8 @@ int func_SetRabbit()
 int func_Send()
 {
 	static char *enc;
-	char message[1024];
-	gdouble percent = 0.0;
+	//char message[1024];
+	//gdouble percent = 0.0;
 	size_t in_len = 0;
 	//routingkey = "ka"; // TRCODE //
 
@@ -758,10 +759,9 @@ int func_Send()
 			case 3:	// 검출 결과 //
 				printf ("##### 검출 결과  #####\n");
 				routingkey = "ka"; // TRCODE //
-				memset (message, 0x00, strlen(message));
+
 				for (int i = 0; i <= chk_fcnt; i++)
 				{
-					percent = 100.0;
 					strcpy (fDs[i].uuid, uDs.uuid);
 					in_len = sizeof(fDs[i]);
 					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
@@ -769,14 +769,14 @@ int func_Send()
 					printf ("[enc_data: %s]\n", enc);
 					printf ("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
 								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
-					sprintf ( message, "%.0f%% Complete", percent);
-					gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), percent);
-					gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
 
 					die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 									amqp_cstring_bytes (routingkey), 0, 0,
 									&props, amqp_cstring_bytes (enc)), "Publishing");
 				}
+				sprintf (message, "%.0f%% Complete", 100.0);
+				gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), 1.0);
+				gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
 				break;
 
 			case 4:	// 파일 삭제 //
@@ -1390,20 +1390,24 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	chk_df = 3;
 	chk_fcnt = -1; 						// 파일개수 count 초기화
 	memset (&fDs, 0, sizeof(fDs));		// 구조체 초기화
-	double chktime;
-	
+	double chktime = 0;
+
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), percent);
+	sprintf (message, "진행중 입니다...");
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
+
 	start = time(NULL);
 	func_Detect (path);
 	end =time(NULL);
 	chktime = (double)(end - start);
-	printf("검출 시간: [%f]초\n", chktime);
-	
+
 	func_Send();
 
 	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 	d_view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
+	printf("총 검출시간: [%.3f]초, 평균 검출시간: [%.3f]초\n", chktime, chktime/chk_fcnt);
 
 	return;
 }
