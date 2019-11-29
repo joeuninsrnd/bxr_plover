@@ -14,7 +14,7 @@
 #include "aria.c"
 //#include "pdf2txt.c"
 
-#define	MAX_FCNT	100
+#define	MAX_FCNT	20
 #define	HOSTNAME	"localhost"
 #define	EXCHANGE	"aa"
 //#define	HOSTNAME	"plover-server"
