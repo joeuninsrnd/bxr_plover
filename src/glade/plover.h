@@ -82,6 +82,7 @@ int func_Usrchk();
 int func_Uuid();
 int func_Detect (gchar *path);
 
+
 // enrollment_window //
 void e_enroll_btn_clicked	(GtkButton *e_enroll_btn,	gpointer *data);
 void e_department_btn_clicked	(GtkButton *e_department_btn,	gpointer *data);
