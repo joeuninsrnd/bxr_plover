@@ -4,8 +4,10 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <fcntl.h>
+#include <libgen.h>
 #include <regex.h>
-#include <time.h>
 #include "iniparser.h"
 #include "iniparser.c"
 #include "dictionary.h"
@@ -16,6 +18,16 @@
 #define	ERASER_ENC_SIZE	896		//1k
 
 clock_t start, end;
+/*- Log define ------------*/
+char	*LogName;
+#define LOGFILE LogName
+#define ERR LOGFILE,1,__LINE__
+#define INF LOGFILE,2,__LINE__
+#define WRN LOGFILE,3,__LINE__
+#define DBG LOGFILE,4,__LINE__
+
+#define DEF "./bxr_plover.log",1,__LINE__
+
 int z; //지울거
 static char *find_text;
 static gchar *dpath;			// default 경로 //
@@ -36,6 +48,7 @@ static gchar	*fname;
 static GtkTreeViewColumn	*dcol;
 static GtkCellRenderer		*drenderer;
 
+int BXLog(const char *, int , int , const char *, ...);
 
 GtkWidget		*main_window,
 			*m_userinfo_label,
@@ -69,6 +82,72 @@ GtkTreeStore		*dtreestore;
 GtkTreeIter		diter;
 
 GtkBuilder		*builder;
+
+
+// BXLog //
+int BXLog(const char *logfile, int logflag, int logline, const char *fmt, ...)
+{
+    int fd, len;
+    struct  timeval t;
+    struct tm *tm;
+    static char fn[128];
+    static char sTmp[1024*2], sFlg[5];
+
+    va_list ap;
+
+    switch( logflag )
+    {
+        case    1 :
+            sprintf( sFlg, "E" );
+            break;
+        case    2 :
+            sprintf( sFlg, "I" );
+            break;
+        case    3 :
+            sprintf( sFlg, "W" );
+            break;
+        case    4 :
+        default   :
+#ifndef _BXDBG
+            return 0;
+#endif
+            sprintf( sFlg, "D" );
+
+            break;
+    }
+
+    memset( sTmp, 0x00, sizeof(sTmp) );
+    gettimeofday(&t, NULL);
+    tm = localtime(&t.tv_sec);
+
+    /* [HHMMSS ssssss flag __LINE__] */
+    len = sprintf(sTmp, "[%5d:%08x/%02d:%02d:%02d.%03ld/%s:%4d]",
+            getpid(), (unsigned int)pthread_self(),
+            tm->tm_hour, tm->tm_min, tm->tm_sec, t.tv_usec/1000,
+            sFlg, logline );
+
+    va_start(ap, fmt);
+    vsprintf((char *)&sTmp[len], fmt, ap);
+    va_end(ap);
+
+	sprintf(fn, "%s.%02d%02d", logfile, tm->tm_mon+1, tm->tm_mday);
+    if (access(fn, 0) != 0)
+        fd = open(fn, O_WRONLY|O_CREAT, 0660);
+    else
+        fd = open(fn, O_WRONLY|O_APPEND, 0660);
+
+    if (fd >= 0)
+    {
+        write(fd, sTmp, strlen(sTmp));
+        close(fd);
+    }
+
+    return 0;
+
+}
+/* End of BXLog() */
+
+
 
 // Create IniFile //
 void func_CreateIni(void)
@@ -628,6 +707,7 @@ int func_Detect (gchar *path)
 
 	closedir (dp);
 	printf ("Close DIR\n");
+
 	return  0;
 }
 /* end of func_Detect(); */
@@ -1392,14 +1472,16 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	memset (&fDs, 0, sizeof(fDs));		// 구조체 초기화
 	double chktime = 0;
 
-	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), percent);
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (data), percent);
 	sprintf (message, "진행중 입니다...");
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (data), message);
 
+	BXLog (DBG, "검출 시작...\n");
 	start = time(NULL);
 	func_Detect (path);
 	end =time(NULL);
 	chktime = (double)(end - start);
+	BXLog (DBG, "검출 끝...\n");
 
 	func_Send();
 
@@ -1831,7 +1913,8 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 int main (int argc, char *argv[])
 {
 	int chkini;
-	
+
+	LogName = basename(argv[0]);
 	gtk_init(&argc, &argv);
 
 	builder = gtk_builder_new();
