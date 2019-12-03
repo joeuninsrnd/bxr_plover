@@ -1,3 +1,10 @@
+/******************************************************************************/
+/*  Source      : main.cpp                                                */
+/*  Description :                                                             */
+/*  Rev. History: Ver   Date    Description                                   */
+/*                ----  ------- ----------------------------------------------*/
+/*                1.0   2019-12 Initial version                               */
+/******************************************************************************/
 #include "plover.h"
 #include <unistd.h>
 #include <assert.h>
@@ -50,6 +57,9 @@ static GtkCellRenderer		*drenderer;
 
 int BXLog(const char *, int , int , const char *, ...);
 
+/*---------------------------------------------------------------------------*/
+/* Related to Gtk and Glade                                  */
+/*---------------------------------------------------------------------------*/
 GtkWidget		*main_window,
 			*m_userinfo_label,
 			*m_verion_label,
@@ -82,74 +92,12 @@ GtkTreeStore		*dtreestore;
 GtkTreeIter		diter;
 
 GtkBuilder		*builder;
+/* end of relating to Gtk and Glade */
 
 
-// BXLog //
-int BXLog(const char *logfile, int logflag, int logline, const char *fmt, ...)
-{
-    int fd, len;
-    struct  timeval t;
-    struct tm *tm;
-    static char fn[128];
-    static char sTmp[1024*2], sFlg[5];
-
-    va_list ap;
-
-    switch( logflag )
-    {
-        case    1 :
-            sprintf( sFlg, "E" );
-            break;
-        case    2 :
-            sprintf( sFlg, "I" );
-            break;
-        case    3 :
-            sprintf( sFlg, "W" );
-            break;
-        case    4 :
-        default   :
-#ifndef _BXDBG
-            return 0;
-#endif
-            sprintf( sFlg, "D" );
-
-            break;
-    }
-
-    memset( sTmp, 0x00, sizeof(sTmp) );
-    gettimeofday(&t, NULL);
-    tm = localtime(&t.tv_sec);
-
-    /* [HHMMSS ssssss flag __LINE__] */
-    len = sprintf(sTmp, "[%5d:%08x/%02d:%02d:%02d.%03ld/%s:%4d]",
-            getpid(), (unsigned int)pthread_self(),
-            tm->tm_hour, tm->tm_min, tm->tm_sec, t.tv_usec/1000,
-            sFlg, logline );
-
-    va_start(ap, fmt);
-    vsprintf((char *)&sTmp[len], fmt, ap);
-    va_end(ap);
-
-	sprintf(fn, "%s.%02d%02d", logfile, tm->tm_mon+1, tm->tm_mday);
-    if (access(fn, 0) != 0)
-        fd = open(fn, O_WRONLY|O_CREAT, 0660);
-    else
-        fd = open(fn, O_WRONLY|O_APPEND, 0660);
-
-    if (fd >= 0)
-    {
-        write(fd, sTmp, strlen(sTmp));
-        close(fd);
-    }
-
-    return 0;
-
-}
-/* End of BXLog() */
-
-
-
-// Create IniFile //
+/*---------------------------------------------------------------------------*/
+/* Create IniFile                                            */
+/*---------------------------------------------------------------------------*/
 void func_CreateIni(void)
 {
     FILE    *   ini ;
@@ -170,7 +118,10 @@ void func_CreateIni(void)
 }
 // end of func_MakeIni(); //
 
-// Parse IniFile //
+
+/*---------------------------------------------------------------------------*/
+/* Parse IniFile                                             */
+/*---------------------------------------------------------------------------*/
 int  func_ParseIni (char * ini_name)
 {
     dictionary *ini;
@@ -199,7 +150,10 @@ int  func_ParseIni (char * ini_name)
 }
 // end of func_ParseIni(); //
 
-// Version Check #fvc//
+
+/*---------------------------------------------------------------------------*/
+/* Version Check                                             */
+/*---------------------------------------------------------------------------*/
 int func_VerChk()
 {
 	func_Send();
@@ -210,7 +164,10 @@ int func_VerChk()
 }
 // end of func_VerChk(); //
 
-// 계정이 있는지 확인: 1=없다 2=있다 #fuc //
+
+/*---------------------------------------------------------------------------*/
+/* User Check     1=없다 2=있다                                         */
+/*---------------------------------------------------------------------------*/
 int func_UsrChk()
 {
 	int tmp;
@@ -246,7 +203,10 @@ int func_UsrChk()
 }
 /* end of func_UsrChk(); */
 
-// 사용자 UUID parsing #fuu//
+
+/*---------------------------------------------------------------------------*/
+/* User UUID Parsing                                         */
+/*---------------------------------------------------------------------------*/
 int func_Uuid()
 {
 	FILE *uidfp = NULL;
@@ -287,7 +247,10 @@ int func_Uuid()
 }
 // end of func_Uuid()(); //
 
-// 정규식 컴파일 //
+
+/*---------------------------------------------------------------------------*/
+/* Regex Compile                                             */
+/*---------------------------------------------------------------------------*/
 int compile_regex (regex_t *r, const char *regex_text)
 {
 	int status = regcomp (r, regex_text, REG_EXTENDED|REG_NEWLINE);
@@ -307,7 +270,10 @@ int compile_regex (regex_t *r, const char *regex_text)
 }
 /* end of compile_regex(); */
 
-// 주민등록번호, 외국인등록번호 정규식 #jfr //
+
+/*---------------------------------------------------------------------------*/
+/* Jumin and Foreign Check                                   */
+/*---------------------------------------------------------------------------*/
 char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	/* "P" is a pointer into the string which points to the end of the
@@ -426,7 +392,10 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 }
 /* end of match_regex_jnfg(); */
 
-// 운전면허 정규식 #dr //
+
+/*---------------------------------------------------------------------------*/
+/* Driver Check                                              */
+/*---------------------------------------------------------------------------*/
 char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	const char *p = to_match;
@@ -484,7 +453,10 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 }
 /* end of match_regex_d(); */
 
-// 여권번호 정규식 #pr //
+
+/*---------------------------------------------------------------------------*/
+/* Passport Check                                            */
+/*---------------------------------------------------------------------------*/
 char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	const char *p = to_match;
@@ -541,7 +513,10 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 }
 /* end of match_regex_p(); */
 
-// data 종류 확인 //
+
+/*---------------------------------------------------------------------------*/
+/* Regex Check kind of data                                  */
+/*---------------------------------------------------------------------------*/
 void check_kind_of_data (const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	regex_t r;
@@ -582,7 +557,9 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 /* end of check_kind_of_data(); */
 
 
-// pdf to txt 변환 //
+/*---------------------------------------------------------------------------*/
+/* Pdf to txt                                                */
+/*---------------------------------------------------------------------------*/
 int func_pdf2txt(char *filepath)
 {
 	char commande[60] = "pdftotext -enc UTF-8 ";
@@ -612,7 +589,9 @@ int func_pdf2txt(char *filepath)
 // end of pdf to txt 변환 //
 
 
-// 폴더, 파일 스캔 후 검출 #fd //
+/*---------------------------------------------------------------------------*/
+/* Scanning Folder and File                                      */
+/*---------------------------------------------------------------------------*/
 int func_Detect (gchar *path)
 {
 	DIR *dp = NULL;
@@ -649,6 +628,8 @@ int func_Detect (gchar *path)
 		// 파일 //
 		else if (S_ISREG (buf.st_mode))
 		{
+			BXLog (DBG, "[%s] Start File Detecting...\n", file->d_name);
+
 			fp = fopen (filepath, "r");
 			if (NULL == fp)
 			{
@@ -700,6 +681,7 @@ int func_Detect (gchar *path)
 			fclose (fp);
 			free(buffer);
 			printf ("Close FILE\n");
+			BXLog (DBG, "[%s] End File Detecting...\n", file->d_name);
 
 			chk_fname[0] = 0; // 초기화 //
 		}
@@ -712,6 +694,10 @@ int func_Detect (gchar *path)
 }
 /* end of func_Detect(); */
 
+
+/*---------------------------------------------------------------------------*/
+/* Oppening RabbitMQ Socket, Channel                         */
+/*---------------------------------------------------------------------------*/
 // RabbitMQ 소켓, 채널 열기 //
 int func_SetRabbit()
 {
@@ -767,7 +753,10 @@ int func_SetRabbit()
 	return 0;
 }
 
-// 전송 #fs //
+
+/*---------------------------------------------------------------------------*/
+/* Sendding RabbitMQ Message                                 */
+/*---------------------------------------------------------------------------*/
 int func_Send()
 {
 	static char *enc;
@@ -993,7 +982,10 @@ int func_Send()
 }
 /* end of func_Send(); */
 
-// gtk_dialog_modal //
+
+/*---------------------------------------------------------------------------*/
+/* gtk_dialog_modal                                          */
+/*---------------------------------------------------------------------------*/
 int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
 {
 	GtkWidget *dialog, *label, *content_area;
@@ -1026,8 +1018,12 @@ int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
 	gtk_widget_destroy (dialog);
 	return (rtn);	
 }
+/* end of fgtk_dialog_modal(); */
 
-// 삭제 #delete //
+
+/*---------------------------------------------------------------------------*/
+/* Delete File                                               */
+/*---------------------------------------------------------------------------*/
 int func_file_eraser (int type)
 {
 	FILE *fp;
@@ -1114,16 +1110,19 @@ int func_file_eraser (int type)
 }
 // end of func_file_eraser(); //
 
-// 암호화 #aria //
+
+/*---------------------------------------------------------------------------*/
+/* ARIA Encryption                                           */
+/*---------------------------------------------------------------------------*/
 void func_ARIA ()
 {
 	char message[1134];
 	FILE *fp;
 	long lSize;
-	unsigned char *buff = NULL;
+	unsigned char *buff = NULL, *temp = NULL;
 	uint cur = 0, sum = 0;
 	uint arisize = 0;
-	unsigned char aribuf[16];
+	unsigned char aribuf[16] = {0,};
 	
 	if (sfDs.fpath[0] == 0x00)
 	{
@@ -1139,6 +1138,7 @@ void func_ARIA ()
 			int res = 0;
 			int i = 16;
 
+			BXLog (DBG, "[%s] Start File Encrypt...\n", sfDs.fname);
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
 			{
@@ -1151,6 +1151,7 @@ void func_ARIA ()
 			rewind (fp);
 
 			buff = (unsigned char *) malloc (sizeof(char) *lSize);
+			temp = buff;
 
 			while ((cur = fread (&buff[sum], sizeof(char), lSize - cur, fp)) > 0 )
 			{
@@ -1161,22 +1162,24 @@ void func_ARIA ()
 			{
 				printf("파일을 읽을수 없습니다.\n");
 			}
-
 			while (arisize < sfDs.fsize)
 			{
 				memcpy (aribuf, buff, sizeof(aribuf));
 				ARIA (aribuf);
 				memcpy (buff, aribuf, sizeof(aribuf));
-				//memset (aribuf, 0, sizeof(aribuf));
+				memset (aribuf, 0, sizeof(aribuf));
 				buff += i;
 				arisize += i;
-
 			}
 			fclose (fp);
+			remove(sfDs.fpath);
 			
+
 			printf("arisize: %d\n", arisize);
 			fp = fopen (sfDs.fpath, "w+");
 			fwrite (buff, lSize, 1, fp);
+			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
+
 			for (int i = 0; i <= chk_fcnt; i++)
 			{
 				res = strcmp (fname, fDs[i].fname);
@@ -1198,9 +1201,9 @@ void func_ARIA ()
 			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 
 			strcpy (sfDs.stat, "암호화");
-
-			fclose (fp);
+			buff = temp;
 			free (buff);
+			fclose (fp);
 			chk_df = 5;
 			printf ("Close FILE\n");
 			chk_fname[0] = 0; // 초기화 //
@@ -1210,13 +1213,82 @@ void func_ARIA ()
 			printf ("취소 되었습니다.\n");
 		}
 	}
-
 	return;
 }
 // end of func_ARIA (); //
 
 
-// main_window function #mf //
+/*---------------------------------------------------------------------------*/
+/* BXLog start                                               */
+/*---------------------------------------------------------------------------*/
+int BXLog(const char *logfile, int logflag, int logline, const char *fmt, ...)
+{
+	int fd, len;
+	struct	timeval	t;
+	struct tm *tm;
+	static char	fname[128];
+	static char sTmp[1024*2], sFlg[5];
+
+	va_list ap;
+
+	//if( LOGMODE < logflag ) return 0;
+
+	switch( logflag )
+	{
+		case	0 :
+		case	1 :
+			sprintf( sFlg, "E" );
+			break;
+		case	2 :
+			sprintf( sFlg, "I" );
+			break;
+		case	3 :
+			sprintf( sFlg, "W" );
+			break;
+		case	4 :
+		default   :
+#ifndef _BXDBG
+			return 0;
+#endif
+			sprintf( sFlg, "D" );
+
+			break;
+	}
+
+	memset( sTmp, 0x00, sizeof(sTmp) );
+	gettimeofday(&t, NULL);
+	tm = localtime(&t.tv_sec);
+
+	/* [HHMMSS ssssss flag __LINE__] */
+	len = sprintf(sTmp, "[%5d:%08x/%02d%02d%02d %06ld/%s:%4d:%4d]",
+			getpid(), (unsigned int)pthread_self(),
+			tm->tm_hour, tm->tm_min, tm->tm_sec, t.tv_usec, 
+			sFlg, errno, logline );
+
+	va_start(ap, fmt);
+	vsprintf((char *)&sTmp[len], fmt, ap);
+	va_end(ap);
+
+	sprintf(fname, "%s.%02d%02d", logfile, tm->tm_mon+1, tm->tm_mday);
+	if (access(fname, 0) != 0)
+		fd = open(fname, O_WRONLY|O_CREAT, 0660);
+	else
+		fd = open(fname, O_WRONLY|O_APPEND, 0660);
+
+	if (fd >= 0)
+	{
+		write(fd, sTmp, strlen(sTmp));
+		close(fd);
+	}
+
+	return 0;
+
+}/* End of BXLog() */
+
+
+/*---------------------------------------------------------------------------*/
+/* main_window function                                      */
+/*---------------------------------------------------------------------------*/
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
 	gtk_widget_show (detect_window);
@@ -1240,8 +1312,9 @@ void m_window_destroy()
 /* end of main_window function */
 
 
-
-// detect_window function #df //
+/*---------------------------------------------------------------------------*/
+/* detect_window function                                    */
+/*---------------------------------------------------------------------------*/
 void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text (d_detect_entry);
@@ -1275,7 +1348,9 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 	return;
 }
 
-	// treeview function #tf//
+	/*---------------------------------------------------------------------------*/
+	/* treeview function                                         */
+	/*---------------------------------------------------------------------------*/
 enum
 {
 	d_treeview_num = 0,
@@ -1476,12 +1551,12 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	sprintf (message, "진행중 입니다...");
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (data), message);
 
-	BXLog (DBG, "검출 시작...\n");
+	BXLog (DBG, "Start func_Detect()...\n");
 	start = time(NULL);
 	func_Detect (path);
 	end =time(NULL);
 	chktime = (double)(end - start);
-	BXLog (DBG, "검출 끝...\n");
+	BXLog (DBG, "End func_detect()...\n");
 
 	func_Send();
 
@@ -1489,7 +1564,7 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	d_view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
-	printf("총 검출시간: [%.3f]초, 평균 검출시간: [%.3f]초\n", chktime, chktime/chk_fcnt);
+	printf("Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", chktime, chktime/chk_fcnt);
 
 	return;
 }
@@ -1588,9 +1663,9 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 /* end of detect_window function */
 
 
-
-// enrollment_window function #ef //
-
+/*---------------------------------------------------------------------------*/
+/* enrollment_window function                                */
+/*---------------------------------------------------------------------------*/
 void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
 {
 	name = (gchar *)gtk_entry_get_text (e_name_entry);
@@ -1833,7 +1908,9 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 /* end of enrollment_window */
 
 
-// setting_window function #sf //
+/*---------------------------------------------------------------------------*/
+/* setting_window function                                   */
+/*---------------------------------------------------------------------------*/
 void s_ip_entry_activate (GtkEntry  *s_ip_entry,	gpointer *data)
 {
 	char *hostname;
@@ -1908,8 +1985,9 @@ void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 /* end of setting_window function */
 
 
-
-// main #main //
+/*---------------------------------------------------------------------------*/
+/* main                                                      */
+/*---------------------------------------------------------------------------*/
 int main (int argc, char *argv[])
 {
 	int chkini;
