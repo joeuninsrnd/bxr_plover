@@ -250,16 +250,31 @@ void printBlock(Byte *b)
 char ARIA (Byte *p)
 {
 	Byte rk[16*17], c[16], mk[32];
+	//Byte p[16]={9, 3, 0, 9, 2, 6, '-', 1, 2, 3, 4, 5 ,6 ,7};
+	//Byte d[16]={0,};
 	int i;
+	//int i, flag;
 
 	for (i=0; i<16; i++)
 		mk[i]=i*0x11;
-	for (i=16; i<24; i++)
-		mk[i]=(i-16)*0x11;
-  
-	Crypt(p, EncKeySetup(mk, rk, 192), rk, c);
+
+	Crypt(p, EncKeySetup(mk, rk, 128), rk, c);
+	//printf("BEGIN testing basic encryption...\n");
+	//printf("key      : "); printBlockOfLength(mk, 16); printf("\n");
+	//printf("plaintext: "); printBlock(p); printf("\n");
+	//printf("result is: "); printBlock(c); printf("\n");
+	//Crypt(c, DecKeySetup(mk, rk, 128), rk, d); //복호화
+	//printf("decrypted : "); printBlock(d); printf("\n");
+
+	//flag=0;
+	//for (i=0; i<16; i++)
+	//if (p[i]!=d[i])
+	//  flag=1;
+	//if (flag==1)
+	//  printf("The result is incorrect!\n");
+	//else
+	//  printf("Okay.  The result is correct.\n");
+	//printf("END   testing basic encryption.\n\n");
 
 	return *p;
 }
-
-
