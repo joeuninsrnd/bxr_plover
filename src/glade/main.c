@@ -1175,7 +1175,7 @@ void func_ARIA ()
 
 			printf("arisize: %d\n", arisize);
 			fp = fopen (sfDs.fpath, "w+");
-			fwrite (buff, lSize, 16, fp);
+			fwrite (buff, lSize, 1, fp);
 			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
 
 			for (int i = 0; i <= chk_fcnt; i++)
