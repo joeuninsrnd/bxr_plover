@@ -1123,6 +1123,8 @@ void func_ARIA ()
 	uint cur = 0, sum = 0;
 	uint arisize = 0;
 	unsigned char aribuf[16] = {0,};
+	int res = 0;
+	int i = 16;
 	
 	if (sfDs.fpath[0] == 0x00)
 	{
@@ -1135,9 +1137,6 @@ void func_ARIA ()
     
 		if (func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 		{
-			int res = 0;
-			int i = 16;
-
 			BXLog (DBG, "[%s] Start File Encrypt...\n", sfDs.fname);
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
@@ -1168,7 +1167,6 @@ void func_ARIA ()
 				ARIA (aribuf);
 				memcpy (buff, aribuf, sizeof(aribuf));
 				memset (aribuf, 0, sizeof(aribuf));
-				buff += i;
 				arisize += i;
 			}
 			fclose (fp);
@@ -1177,7 +1175,7 @@ void func_ARIA ()
 
 			printf("arisize: %d\n", arisize);
 			fp = fopen (sfDs.fpath, "w+");
-			fwrite (buff, lSize, 1, fp);
+			fwrite (buff, lSize, 16, fp);
 			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
 
 			for (int i = 0; i <= chk_fcnt; i++)
