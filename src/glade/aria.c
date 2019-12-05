@@ -134,10 +134,15 @@ void RotXOR (const Byte *s, int n, Byte *t)
 {
 	int i, q;
   
-	q = n/8; n %= 8;
-	for (i = 0; i < 16; i++) {
+	q = n / 8;
+	n %= 8;
+	for (i = 0; i < 16; i++)
+	{
 		t[(q+i) % 16] ^= (s[i] >> n);
-		if (n != 0) t[(q+i+1) % 16] ^= (s[i] << (8-n));
+		if (n != 0)
+		{
+			t[(q+i+1) % 16] ^= (s[i] << (8-n));
+		}
 	}
 }
 
@@ -151,24 +156,53 @@ int EncKeySetup (const Byte *w0, Byte *e, int keyBits)
 	Byte t[16], w1[16], w2[16], w3[16];
   
 	q = (keyBits - 128) / 64;
-	for (i = 0; i < 16; i++) t[i] = S[     i  % 4][KRK[q][i   ] ^ w0[i]];
+	for (i = 0; i < 16; i++)
+	{
+		t[i] = S[     i  % 4][KRK[q][i   ] ^ w0[i]];
+	}
 	DL (t, w1);
 	if (R==14)
-		for (i = 0; i <  8; i++) w1[i] ^= w0[16+i];
+	{
+		for (i = 0; i <  8; i++)
+		{
+			w1[i] ^= w0[16+i];
+		}
+	}
 	else if (R==16)
-		for (i = 0; i < 16; i++) w1[i] ^= w0[16+i];
+	{
+		for (i = 0; i < 16; i++)
+		{
+			w1[i] ^= w0[16+i];
+		}
+	}
+	q = (q==2)? 0 : (q+1);
+	for (i = 0; i < 16; i++)
+	{
+		t[i] = S[(2 + i) % 4][KRK[q][i] ^ w1[i]];
+	}
+
+	DL (t, w2);
+	for (i = 0; i < 16; i++)
+	{
+		w2[i] ^= w0[i];
+	}
 
 	q = (q==2)? 0 : (q+1);
-	for (i = 0; i < 16; i++) t[i] = S[(2 + i) % 4][KRK[q][i] ^ w1[i]];
-	DL (t, w2);
-	for (i = 0; i < 16; i++) w2[i] ^= w0[i];
-  
-	q = (q==2)? 0 : (q+1);
-	for (i = 0; i < 16; i++) t[i] = S[     i  % 4][KRK[q][i] ^ w2[i]];
+	for (i = 0; i < 16; i++)
+	{
+		t[i] = S[     i  % 4][KRK[q][i] ^ w2[i]];
+	}
+
 	DL (t, w3);
-	for (i = 0; i < 16; i++) w3[i] ^= w1[i];
+	for (i = 0; i < 16; i++)
+	{
+		w3[i] ^= w1[i];
+	}
   
-	for (i = 0; i < 16*(R+1); i++) e[i] = 0;
+	for (i = 0; i < 16*(R+1); i++)
+	{
+		e[i] = 0;
+	}
   
 	RotXOR (w0, 0, e      ); RotXOR (w1,  19, e      );
 	RotXOR (w1, 0, e +  16); RotXOR (w2,  19, e +  16);
@@ -183,14 +217,19 @@ int EncKeySetup (const Byte *w0, Byte *e, int keyBits)
 	RotXOR (w2, 0, e + 160); RotXOR (w3,  67, e + 160);
 	RotXOR (w3, 0, e + 176); RotXOR (w0,  67, e + 176);
 	RotXOR (w0, 0, e + 192); RotXOR (w1,  97, e + 192);
-	if (R > 12) {
+
+	if (R > 12)
+	{
 		RotXOR (w1, 0, e + 208); RotXOR (w2,  97, e + 208);
 		RotXOR (w2, 0, e + 224); RotXOR (w3,  97, e + 224);
 	}
-	if (R > 14) {
+
+	if (R > 14)
+	{
 		RotXOR (w3, 0, e + 240); RotXOR (w0,  97, e + 240);
 		RotXOR (w0, 0, e + 256); RotXOR (w1, 109, e + 256);
 	}
+
 	return R;
 }
 // Decryption round key generation rountine
@@ -201,16 +240,25 @@ int DecKeySetup (const Byte *w0, Byte *d, int keyBits)
 	Byte t[16];
   
 	R=EncKeySetup(w0, d, keyBits);
-	for (j = 0; j < 16; j++){
+
+	for (j = 0; j < 16; j++)
+	{
 		t[j] = d[j];
-		d[j] = d[16*R + j];
-		d[16*R + j] = t[j];
+		d[j] = d[16 * R + j];
+		d[16 * R + j] = t[j];
 	}
-	for (i = 1; i <= R/2; i++){
-		DL (d + i*16, t);
-		DL (d + (R-i)*16, d + i*16);
-		for (j = 0; j < 16; j++) d[(R-i)*16 + j] = t[j];
+
+	for (i = 1; i <= R / 2; i++)
+	{
+		DL (d + i * 16, t);
+		DL (d + (R - i) * 16, d + i * 16);
+		
+		for (j = 0; j < 16; j++)
+		{
+			d[(R-i) * 16 + j] = t[j];
+		}
 	}
+
 	return R;
 }
 // Encryption and decryption rountine
@@ -220,34 +268,53 @@ void Crypt (const Byte *p, int R, const Byte *e, Byte *c)
 	int i, j;
 	Byte t[16];
   
-	for (j = 0; j < 16; j++) c[j] = p[j];
-	for (i = 0; i < R/2; i++)
+	for (j = 0; j < 16; j++)
+	{
+		c[j] = p[j];
+	}
+	
+	for (i = 0; i < R / 2; i++)
 	{
 		for (j = 0; j < 16; j++) t[j] = S[j  % 4][e[j] ^ c[j]];
-		DL(t, c); e += 16;
+		{
+			DL(t, c); e += 16;
+		}
+
 		for (j = 0; j < 16; j++) t[j] = S[(2 + j) % 4][e[j] ^ c[j]];
-		DL(t, c); e += 16;
+		{
+			DL(t, c); e += 16;
+		}
 	}
+
 	DL(c, t);
-	for (j = 0; j < 16; j++) c[j] = e[j] ^ t[j];
+
+	for (j = 0; j < 16; j++)
+	{
+		c[j] = e[j] ^ t[j];
+	}
 }
 
 void printBlockOfLength (Byte *b, int len)
 {
 	int i;
   
-	for (i=0; i<len; i++, b++) {
-		printf("%02x", *b);
-		if (i%4==3 && i<len-1) printf(" ");
+	for (i = 0; i < len; i++, b++)
+	{
+		printf ("%02x", *b);
+
+		if (i%4==3 && i<len-1)
+		{
+			printf(" ");
+		}
 	}
 }
 
 void printBlock(Byte *b)
 {
-  printBlockOfLength(b, 16);
+	printBlockOfLength (b, 16);
 }
 
-void ARIA (unsigned char *aribuf)
+void ARIA (unsigned char *aribuf, int bufsize)
 {
 	Byte rk[16*17] = {0,}, c[16] = {0,}, mk[32] = {0,};
 	//Byte p[16]={9, 3, 0, 9, 2, 6, '-', 1, 2, 3, 4, 5 ,6 ,7};
@@ -258,8 +325,10 @@ void ARIA (unsigned char *aribuf)
 	unsigned char *p = aribuf;
 
 	for (i = 0; i < 16; i++)
+	{
 		mk[i] = i * 0x11; //master key
-
+	}
+	
 	Crypt (p, EncKeySetup(mk, rk, 128), rk, c);
 	//printf("BEGIN testing basic encryption...\n");
 	//printf("key      : "); printBlockOfLength(mk, 16); printf("\n");
@@ -268,7 +337,7 @@ void ARIA (unsigned char *aribuf)
 	//printf("result is: "); printBlock(c); printf("\n");
 	//Crypt(c, DecKeySetup(mk, rk, 128), rk, d); //복호화
 	//printf("decrypted : "); printBlock(d); printf("\n");
-	memset (aribuf, 0, 16);
+	memset (aribuf, 0, bufsize);
 	memcpy (aribuf, c, sizeof(c));
 	memset (c, 0, sizeof(c));
 
