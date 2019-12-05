@@ -1116,16 +1116,14 @@ int func_file_eraser (int type)
 /*---------------------------------------------------------------------------*/
 void func_ARIA ()
 {
-	char message[1134];
+	char message[1134] = {0,};
 	FILE *fp;
 	long lSize;
 	unsigned char *buff = NULL, *temp = NULL;
 	uint cur = 0, sum = 0;
-	uint arisize = 0;
-	unsigned char aribuf[16] = {0,};
-	int res = 0;
-	int i = 16;
-	
+	static unsigned char *aribuf = NULL;
+	int mok = 0, nam = 0, asize = 16;
+
 	if (sfDs.fpath[0] == 0x00)
 	{
 		func_gtk_dialog_modal (0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
@@ -1137,6 +1135,8 @@ void func_ARIA ()
     
 		if (func_gtk_dialog_modal(1, window, message) == GTK_RESPONSE_ACCEPT)
 		{
+			int res = 0;
+
 			BXLog (DBG, "[%s] Start File Encrypt...\n", sfDs.fname);
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
@@ -1161,20 +1161,36 @@ void func_ARIA ()
 			{
 				printf("파일을 읽을수 없습니다.\n");
 			}
-			while (arisize < sfDs.fsize)
+
+			mok = sfDs.fsize / 16;
+			nam = sfDs.fsize % 16;
+			aribuf = (unsigned char *) malloc (sizeof(char) *asize);
+			for (int i = 0; i <= mok; i++)
 			{
-				memcpy (aribuf, buff, sizeof(aribuf));
-				ARIA (aribuf);
-				memcpy (buff, aribuf, sizeof(aribuf));
-				memset (aribuf, 0, sizeof(aribuf));
-				arisize += i;
+				if ( i != mok)
+				{
+					memcpy (aribuf, buff, asize);
+
+					ARIA (aribuf);
+					memset (buff, 0, asize);
+					memcpy (buff, aribuf, asize);
+					memset (aribuf, 0, asize);
+					buff += 16;
+				}
+				else
+				{
+					memcpy (aribuf, buff, nam);
+					ARIA (aribuf);
+					memset (buff, 0, nam);
+					memcpy (buff, aribuf, nam);
+					memset (aribuf, 0, nam);
+				}
 			}
 			fclose (fp);
 			remove(sfDs.fpath);
-			
 
-			printf("arisize: %d\n", arisize);
 			fp = fopen (sfDs.fpath, "w+");
+			buff = temp;
 			fwrite (buff, lSize, 1, fp);
 			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
 
@@ -1199,7 +1215,6 @@ void func_ARIA ()
 			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 
 			strcpy (sfDs.stat, "암호화");
-			buff = temp;
 			free (buff);
 			fclose (fp);
 			chk_df = 5;

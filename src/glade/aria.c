@@ -157,7 +157,7 @@ int EncKeySetup (const Byte *w0, Byte *e, int keyBits)
 		for (i = 0; i <  8; i++) w1[i] ^= w0[16+i];
 	else if (R==16)
 		for (i = 0; i < 16; i++) w1[i] ^= w0[16+i];
-  
+
 	q = (q==2)? 0 : (q+1);
 	for (i = 0; i < 16; i++) t[i] = S[(2 + i) % 4][KRK[q][i] ^ w1[i]];
 	DL (t, w2);
@@ -223,7 +223,7 @@ void Crypt (const Byte *p, int R, const Byte *e, Byte *c)
 	for (j = 0; j < 16; j++) c[j] = p[j];
 	for (i = 0; i < R/2; i++)
 	{
-		for (j = 0; j < 16; j++) t[j] = S[     j  % 4][e[j] ^ c[j]];
+		for (j = 0; j < 16; j++) t[j] = S[j  % 4][e[j] ^ c[j]];
 		DL(t, c); e += 16;
 		for (j = 0; j < 16; j++) t[j] = S[(2 + j) % 4][e[j] ^ c[j]];
 		DL(t, c); e += 16;
@@ -247,24 +247,30 @@ void printBlock(Byte *b)
   printBlockOfLength(b, 16);
 }
 
-char ARIA (Byte *p)
+void ARIA (unsigned char *aribuf)
 {
-	Byte rk[16*17], c[16], mk[32];
+	Byte rk[16*17] = {0,}, c[16] = {0,}, mk[32] = {0,};
 	//Byte p[16]={9, 3, 0, 9, 2, 6, '-', 1, 2, 3, 4, 5 ,6 ,7};
 	//Byte d[16]={0,};
 	int i;
 	//int i, flag;
 
-	for (i=0; i<16; i++)
-		mk[i]=i*0x11;
+	unsigned char *p = aribuf;
 
-	Crypt(p, EncKeySetup(mk, rk, 128), rk, c);
+	for (i = 0; i < 16; i++)
+		mk[i] = i * 0x11; //master key
+
+	Crypt (p, EncKeySetup(mk, rk, 128), rk, c);
 	//printf("BEGIN testing basic encryption...\n");
 	//printf("key      : "); printBlockOfLength(mk, 16); printf("\n");
 	//printf("plaintext: "); printBlock(p); printf("\n");
+	//printf("aribuf: "); printBlock(aribuf); printf("\n");
 	//printf("result is: "); printBlock(c); printf("\n");
 	//Crypt(c, DecKeySetup(mk, rk, 128), rk, d); //복호화
 	//printf("decrypted : "); printBlock(d); printf("\n");
+	memset (aribuf, 0, 16);
+	memcpy (aribuf, c, sizeof(c));
+	memset (c, 0, sizeof(c));
 
 	//flag=0;
 	//for (i=0; i<16; i++)
@@ -275,6 +281,7 @@ char ARIA (Byte *p)
 	//else
 	//  printf("Okay.  The result is correct.\n");
 	//printf("END   testing basic encryption.\n\n");
+	
 
-	return *p;
+	return;
 }
