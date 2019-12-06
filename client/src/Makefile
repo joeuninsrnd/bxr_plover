@@ -9,7 +9,7 @@ OBJECTS = plover_client.o utils.o iniparser.o dictionary.o encode.o decode.o ari
 
 INC = -I ~/bxr_plover/client/inc
 SRC = ~/bxr_plover/client/src
-LIB = -L ~/bxr_plover/client/lib -lrabbitmq
+LIB = -L ~/bxr_plover/client/lib -lrabbitmq -export-dynamic
 BIN = ~/bxr_plover/client/bin
 
 all : $(TARGET)

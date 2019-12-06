@@ -1,16 +1,16 @@
 /******************************************************************************/
-/*  Source      : main.cpp                                                */
-/*  Description :                                                             */
-/*  Rev. History: Ver   Date    Description                                   */
-/*                ----  ------- ----------------------------------------------*/
-/*                1.0   2019-12 Initial version                               */
+/*  Source      : main.cpp                                    */
+/*  Description :                                             */
+/*  Rev. History: Ver   Date    Description                   */
+/*----------------------------------------------------------------------------*/
+/*                1.0   2019-12 Initial version               */
 /******************************************************************************/
 #include "plover_common.h"
 #include "plover_client.h"
 
 #define	MAX_ERROR_MSG	0x1000
-#define	ERASER_SIZE	512		//1k
-#define	ERASER_ENC_SIZE	896		//1k
+#define	ERASER_SIZE		512			//1k
+#define	ERASER_ENC_SIZE	896			//1k
 
 clock_t start, end;
 /*- Log define ------------*/
@@ -23,22 +23,21 @@ char	*LogName;
 
 #define DEF "./bxr_plover.log",1,__LINE__
 
-int z; //지울거
-static char *find_text;
-static gchar *dpath;			// default 경로 //
-static gchar *path;			// 검사 파일경로 //
-static gchar *name;			// 등록 유저이름 //
-static gchar *job;			// 등록 직급이름 //
-static gchar *vs_dept;			// 등록 부서이름 //
-static float percent = 0.0;	// Progress Bar //
-static char message[1024] = {0,};	// Progress Bar Message //
-static char *buffer = NULL;	// 검출돌고있는 파일 버퍼 //
-static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개//
-static char	chk_fname[100];		// 정규식돌고있는 파일이름 //
-static char	chk_uuid[40];		// INI UUID 확인 //
-static char	set_uuid[40];		// UUID 저장 //
-static int	chk_df = 0;		// chk data flag //
-//static const char	*chk_ver;	// chk version //
+static char	*find_text;
+static gchar *dpath;				// default 경로
+static gchar *path;					// 검사 파일경로
+static gchar *name;					// 등록 유저이름
+static gchar *job;					// 등록 직급이름
+static gchar *vs_dept;				// 등록 부서이름
+static float percent = 0.0;			// Progress Bar
+static char message[1024] = {0,};	// Progress Bar Message
+static char *buffer = NULL;		// 검출돌고있는 파일 버퍼
+static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개
+static char	chk_fname[100];		// 정규식돌고있는 파일이름
+static char	chk_uuid[40];			// INI UUID 확인
+static char	set_uuid[40];			// UUID 저장
+static int	chk_df = 0;			// chk data flag
+static const char	*chk_ver;		// chk version
 static gchar	*fname;
 static GtkTreeViewColumn	*dcol;
 static GtkCellRenderer		*drenderer;
@@ -48,38 +47,38 @@ int BXLog(const char *, int , int , const char *, ...);
 /*---------------------------------------------------------------------------*/
 /* Related to Gtk and Glade                                  */
 /*---------------------------------------------------------------------------*/
-GtkWidget		*main_window,
-			*m_userinfo_label,
-			*m_verion_label,
-			*enrollment_window,
-			*e_jobtitle_cbxtext,
-			*e_verion_label,
-			*detect_window,
-			*department_window,
-			*d_progressbar,
-			*d_progressbar_status,
-			*setting_window,
-			*window;
-
-GtkEntry		*e_name_entry,
-			*e_jobtitle_entry,
-			*e_department_entry,
-			*d_detect_entry,
-			*s_detect_entry,
-			*s_ip_entry,
-			*s_port_entry;
+GtkWidget				*main_window,
+						*enrollment_window,
+						*detect_window,
+						*department_window,
+						*setting_window,
+						*window;
 
 GtkScrolledWindow	*d_scrolledwindow,
-			*dept_scrolledwindow;
+						*dept_scrolledwindow;
+						
+GtkEntry				*e_name_entry,
+						*e_jobtitle_entry,
+						*e_department_entry,
+						*d_detect_entry,
+						*s_detect_entry,
+						*s_ip_entry,
+						*s_port_entry;
 
-GtkWidget 		*filechooserdialog;
+GtkWidget 			*m_userinfo_label,
+						*m_verion_label,
+						*d_progressbar,
+						*d_progressbar_status,
+						*d_view,
+						*e_jobtitle_cbxtext,
+						*e_verion_label,
+						*filechooserdialog;
 
-GtkWidget		 *d_view;
+GtkTreeStore			*dtreestore;
 
-GtkTreeStore		*dtreestore;
-GtkTreeIter		diter;
+GtkTreeIter			 diter;
 
-GtkBuilder		*builder;
+GtkBuilder			*builder;
 /* end of relating to Gtk and Glade */
 
 
@@ -88,23 +87,24 @@ GtkBuilder		*builder;
 /*---------------------------------------------------------------------------*/
 void func_CreateIni(void)
 {
-    FILE    *   ini ;
+	FILE *ini ;
 
-    if ((ini = fopen ("plover.ini", "w")) == NULL)
-    {
-        fprintf(stderr, "iniparser: cannot create plover.ini\n");
-        return ;
-    }
+	if ((ini = fopen ("plover.ini", "w")) == NULL)
+	{
+		BXLog (DBG, "[%s] iniparser: Can not create plover.ini\n");
 
-    fprintf(ini,
-    "[USERINFO]\n"
-    "\n"
-    "UUID	=	%s;\n"
-    "\n", uDs.uuid);
+		return ;
+	}
 
-    fclose(ini);
+	fprintf (ini,
+	"[USERINFO]\n"
+	"\n"
+	"UUID	=	%s;\n"
+	"\n", uDs.uuid);
+
+	fclose (ini);
 }
-// end of func_MakeIni(); //
+/* end of func_MakeIni(); */
 
 
 /*---------------------------------------------------------------------------*/
@@ -112,31 +112,32 @@ void func_CreateIni(void)
 /*---------------------------------------------------------------------------*/
 int  func_ParseIni (char * ini_name)
 {
-    dictionary *ini;
+	dictionary *ini;
 
-    /* Some temporary variables to hold query results */
+	/* Some temporary variables to hold query results */
 
-    ini = iniparser_load(ini_name);
-    if (ini==NULL)
-    {
-        fprintf(stderr, "cannot parse file: %s\n", ini_name);
-        return -1 ;
-    }
-    iniparser_dump (ini, stderr);
+	ini = iniparser_load (ini_name);
+	if (ini == NULL)
+	{
+		BXLog (DBG, "[%s] Can not parse file: %s\n", __LINE__, ini_name);
+		return -1 ;
+	}
+	iniparser_dump (ini, stderr);
 
-    /* Get attributes */	
-    INI_UUID = iniparser_getstring (ini, "USERINFO:UUID", NULL);
-    strcpy (chk_uuid ,INI_UUID);
-    printf ("********** INI FILE **********.\n");
-    printf ("INI UUID:	[%s]\n", INI_UUID ? INI_UUID : "UNDEF");
-    
-    //i = iniparser_getint(ini, "a:b", -1);
-    //printf("a:	[%d]\n", i);
+	/* Get attributes */
+	INI_UUID = iniparser_getstring (ini, "USERINFO:UUID", NULL);
+	strcpy (chk_uuid ,INI_UUID);
+	BXLog (DBG, "[%s] ********** INI FILE **********.\n", __LINE__);
+	BXLog (DBG, "[%s] INI UUID:	[%s]\n", __LINE__, INI_UUID ? INI_UUID : "UNDEF");
 
-    iniparser_freedict (ini);
-    return 0 ;
+	//i = iniparser_getint (ini, "a:b", -1);
+	//printf ("a:	[%d]\n", i);
+
+	iniparser_freedict (ini);
+
+	return 0 ;
 }
-// end of func_ParseIni(); //
+/* end of func_ParseIni(); */
 
 
 /*---------------------------------------------------------------------------*/
@@ -145,12 +146,12 @@ int  func_ParseIni (char * ini_name)
 int func_VerChk()
 {
 	func_Send();
-	//gtk_label_set_text(GTK_LABEL(e_verion_label), chk_ver); // fuc_send()의 flag(0)에서 chk_ver에 버전data넣어야함
-	chk_df = 1; // 사용자 확인해야함 //
+	//gtk_label_set_text (GTK_LABEL (e_verion_label), chk_ver); // fuc_send()의 flag(0)에서 chk_ver에 버전data넣어야함
+	chk_df = 1; // 사용자 확인해야함
 
 	return chk_df;
 }
-// end of func_VerChk(); //
+/* end of func_VerChk(); */
 
 
 /*---------------------------------------------------------------------------*/
@@ -166,24 +167,24 @@ int func_UsrChk()
 
 	if (tmp == 0)
 	{
-		printf ("사용자님 안녕하세요!\n");
+		BXLog (DBG, "[%s] 사용자님 안녕하세요!\n", __LINE__);
 		chk_df = 2;
 	}
 	else
 	{
-		printf ("사용자 등록을 해주세요!\n");
+		BXLog (DBG, "[%s] 사용자 등록을 해주세요!\n", __LINE__);
 		chk_df = 1;
 	}
 	 
 
 	if (chk_df == 1)
 	{
-		gtk_widget_show (enrollment_window); // 사용자 등록 창 //
+		gtk_widget_show (enrollment_window);	// 사용자 등록 창
 		gtk_main();
 	}
 	if (chk_df == 2)
 	{
-		gtk_widget_show (main_window); 		// 메인 창 //
+		gtk_widget_show (main_window);			// 메인 창
 		gtk_main();
 	}
 	
@@ -197,15 +198,15 @@ int func_UsrChk()
 /*---------------------------------------------------------------------------*/
 int func_Uuid()
 {
-	FILE *uidfp = NULL;
-	char strbuf[300];
-	char *pstr = NULL;
+	FILE *uidfp	= NULL;
+	char *pstr	= NULL;
+	char  strbuf[300];
 
 	uidfp = fopen ("/etc/fstab", "r");
 
 	if (NULL == uidfp)
 	{
-        printf ("fstab 파일을 열수 없습니다.\n");
+        BXLog (DBG, "[%s] Can not open fstab file...\n", __LINE__);
 		return 1;
 	}
 
@@ -213,7 +214,7 @@ int func_Uuid()
 	{
 		pstr = fgets (strbuf, sizeof(strbuf), uidfp);
 
-		if (pstr != 0) // \n만나면 문자 더이상 안 읽어서 안해주면 seg fault 뜸 //
+		if (pstr != 0) // \n만나면 문자 더이상 안 읽어서 안해주면 seg fault 뜸
 		{
 			if (pstr[0] == 'U' && pstr[42] == '/')
 			{
@@ -223,7 +224,7 @@ int func_Uuid()
 				}
 				strcpy (uDs.uuid, set_uuid);
 				strcpy (sfDs.uuid, set_uuid);
-				printf ("UUID: [%s]\n", uDs.uuid);
+				BXLog (DBG, "[%s] UUID: [%s]\n", __LINE__, uDs.uuid);
 			}
 		}
     }
@@ -233,7 +234,7 @@ int func_Uuid()
 
 	return 0;
 }
-// end of func_Uuid()(); //
+/* end of func_Uuid(); */
 
 
 /*---------------------------------------------------------------------------*/
@@ -249,7 +250,7 @@ int compile_regex (regex_t *r, const char *regex_text)
 
 		regerror (status, r, error_message, MAX_ERROR_MSG);
 
-		printf ("Regex error compiling '%s': %s\n", regex_text, error_message);
+		BXLog (DBG, "[%s] Regex error compiling '%s': %s\n", __LINE__, regex_text, error_message);
 
 		return 1;
 	}
@@ -289,13 +290,13 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 				start = m[i].rm_so + (p - to_match);
 
-				// 주민번호, 외국인등록번호 정규식 검사 통과 //
+				// 주민번호, 외국인등록번호 정규식 검사 통과
 				if (i == 0)
 				{
 					int chk = 0, jtmp = 0, fgtmp = 0, sum = 0;
 					char buf_tmp[15];
 
-					// 주민번호, 외국인등록번호 유효성 검사 //
+					// 주민번호, 외국인등록번호 유효성 검사
 					for (int j = 0; j < 14; j++)
 					{
 						buf_tmp[j] = *(to_match + start + j);
@@ -306,8 +307,8 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 					+ buf_tmp[7]*8 + buf_tmp[8]*9 + buf_tmp[9]*2 + buf_tmp[10]*3 + buf_tmp[11]*4 + buf_tmp[12]*5;
 
 					chk = buf_tmp[13];
-					jtmp = 11 - (sum % 11); // 주민번호 //
-					fgtmp = 13 - (sum % 11); // 외국인번호 //
+					jtmp = 11 - (sum % 11);	// 주민번호
+					fgtmp = 13 - (sum % 11);	// 외국인번호
 
 					if (jtmp >= 10)
 					{
@@ -319,23 +320,23 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 						fgtmp -= 10;
 					}
 
-					// 주민번호 유효성 통과 //
+					// 주민번호 유효성 통과
 					if (jtmp == chk)
 					{
-						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0
 
 						if (res != 0)
 						{
 							chk_fcnt++;
 						}
 
-						// 읽고있는중인 파일 이름 저장 //
+						// 읽고있는중인 파일 이름 저장
 						strcpy (chk_fname, file->d_name);
 
-						// 검출된 주민등록번호의 수 //
+						// 검출된 주민등록번호의 수
 						fDs[chk_fcnt].jcnt++;
 
-						// data 구조체에 저장 //
+						// data 구조체에 저장
 						strcpy (fDs[chk_fcnt].fpath, filepath);
 						strcpy (fDs[chk_fcnt].fname, file->d_name);
 						fDs [chk_fcnt].fsize = buf.st_size;
@@ -343,23 +344,23 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 					}
 
-					// 외국인등록번호 유효성 통과 //
+					// 외국인등록번호 유효성 통과
 					if (fgtmp == chk)
 					{
-						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+						int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0
 
 						if (res != 0)
 						{
 							chk_fcnt++;
 						}
 
-					// 읽고있는중인 파일 이름 저장 //
+					// 읽고있는중인 파일 이름 저장
 					strcpy (chk_fname, file->d_name);
 
-					// 검출된 외국인등록번호의 수 //
+					// 검출된 외국인등록번호의 수
 					fDs[chk_fcnt].fgcnt++;
 
-					// data 구조체에 저장 //
+					// data 구조체에 저장
 					strcpy (fDs[chk_fcnt].fpath, filepath);
 					strcpy (fDs[chk_fcnt].fname, file->d_name);
 					fDs[chk_fcnt].fsize = buf.st_size;
@@ -372,9 +373,11 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 		else
 		{
-			printf("[%d] No more matches. %d\n", z++, nomatch);
+			BXLog (DBG, "[%s] No more matches. %d\n", __LINE__, nomatch);
+
 			return 0;
 		}
+
 		p += m[0].rm_eo;
 	}
 }
@@ -387,10 +390,10 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	const char *p = to_match;
-	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed. //
+	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed.
 	regmatch_t m[n_matches];
 
-	//버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교//
+	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교
 	while (1)
 	{
 		int nomatch = regexec(r, p, n_matches, m, 0);
@@ -404,10 +407,10 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 				    break;
 				}
 
-				//운전면허 정규식 검사 통과//
+				// 운전면허 정규식 검사 통과
 				if (i == 0)
 				{
-					int res = strcmp (chk_fname, file->d_name); //같은파일 = 0 //
+					int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0
 
 					if (res != 0)
 					{
@@ -415,13 +418,13 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 
 					}
 
-					// 읽고있는중인 파일 이름 저장 //
+					// 읽고있는중인 파일 이름 저장
 					strcpy (chk_fname, file->d_name);
 
-					// 검출된 운전면허의 수 //
+					// 검출된 운전면허의 수
 					fDs[chk_fcnt].dcnt++;
 
-					// data 구조체에 저장 //
+					// data 구조체에 저장
 					strcpy (fDs[chk_fcnt].fpath, filepath);
 					strcpy (fDs[chk_fcnt].fname, file->d_name);
 					fDs[chk_fcnt].fsize = buf.st_size;
@@ -432,7 +435,8 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 		}
 		else
 		{
-			printf("No more matches.\n");
+			BXLog (DBG, "[%s] No more matches.\n", __LINE__);
+
 			return 0;
 		}
 
@@ -448,10 +452,10 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dirent *file, struct stat buf)
 {
 	const char *p = to_match;
-	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed. //
+	const int n_matches = 1000;		// "N_matches" is the maximum number of matches allowed.
 	regmatch_t m[n_matches];
 
-	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교 //
+	// 버퍼크기만큼 읽은 부분 전체를 해당 정규식과 비교
 	while (1)
 	{
 		int nomatch = regexec (r, p, n_matches, m, 0);
@@ -465,23 +469,23 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					break;
 				}
 
-				// 운전면허 정규식 검사 통과 //
+				// 운전면허 정규식 검사 통과
 				if (i == 0)
 				{
-					int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0 //
+					int res = strcmp (chk_fname, file->d_name); // 같은파일 = 0
 
 					if (res != 0)
 					{
 						chk_fcnt++;
 					}
 
-					// 읽고있는중인 파일 이름 저장 //
+					// 읽고있는중인 파일 이름 저장
 					strcpy (chk_fname, file->d_name);
 
-					// 검출된 운전면허의 수 //
+					// 검출된 운전면허의 수
 					fDs[chk_fcnt].pcnt++;
 
-					// data 구조체에 저장 //
+					// data 구조체에 저장
 					strcpy (fDs[chk_fcnt].fpath, filepath);
 					strcpy (fDs[chk_fcnt].fname, file->d_name);
 					fDs[chk_fcnt].fsize = buf.st_size;
@@ -492,7 +496,8 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 		}
 		else
 		{
-			printf("No more matches.\n");
+			BXLog (DBG, "[%s] No more matches.\n", __LINE__);
+
 			return 0;
 		}
 
@@ -514,13 +519,13 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	switch(data_flag) //나중에 민감정보 종류 선택 검출 할 때 사용
 	{
 		case 1:
-			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식//
-			compile_regex(&r, regex_text); //정규식 컴파일//
+			regex_text = "([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6})"; //주민번호 정규식
+			compile_regex(&r, regex_text); //정규식 컴파일
 			match_regex_j(&r, to_match, filepath, file, buf);
 			break;
 		case 2:
-			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식//
-			compile_regex(&r, regex_text); //정규식 컴파일//
+			regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}"; //운전면허 정규식
+			compile_regex(&r, regex_text); //정규식 컴파일
 			//match_regex_d(&r, to_match, filepath, file, buf);
 	}
 	*/
@@ -550,31 +555,31 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 /*---------------------------------------------------------------------------*/
 int func_pdf2txt(char *filepath)
 {
+	FILE *fp;
 	char commande[60] = "pdftotext -enc UTF-8 ";
-    FILE *fp;
-    long length = 0;
     char namebuf[50];
+    long length = 0;
 
 	strcat(commande,filepath);
 	system(commande);
 
 	strcpy (namebuf, filepath);
-	namebuf[strlen(namebuf)-4]='\0';
-	strcat(namebuf,".txt");
+	namebuf[strlen(namebuf) - 4] = '\0';
+	strcat (namebuf, ".txt");
 
-	fp = fopen(namebuf, "r");
+	fp = fopen (namebuf, "r");
 	fseek (fp, 0, SEEK_END);
 	length = ftell (fp);
 	rewind (fp);
 
 	fread (find_text, 1, length, fp);
 
-	fclose(fp);
-	remove(namebuf);
+	fclose (fp);
+	remove (namebuf);
 
 	return 0;
 }
-// end of pdf to txt 변환 //
+/* end of pdf to txt 변환 */
 
 
 /*---------------------------------------------------------------------------*/
@@ -594,34 +599,35 @@ int func_Detect (gchar *path)
 	memset (message, 0x00, strlen(message));
 	if ((dp = opendir(path)) == NULL)
 	{
-		printf("폴더를 열수 없습니다.\n");
+		BXLog (DBG, "[%s] Can not open folder...\n", __LINE__);
 		return -1;
 	}
 	while ((file = readdir(dp)) != NULL)
 	{
-	// filepath에 현재 path넣기 //
+	// filepath에 현재 path넣기
 	sprintf (filepath, "%s/%s", path, file->d_name);
 	lstat (filepath, &buf);
 		// 폴더 //
 		if (S_ISDIR (buf.st_mode))
 		{
-			// .이거하고 ..이거 제외 //
+			// .이거하고 ..이거 제외
 			if ((!strcmp (file->d_name, ".")) || (!strcmp (file->d_name, "..")))
 			{
 				continue;
 			}
-			// 안에 폴더로 재귀함수 //
+			// 안에 폴더로 재귀함수
 			func_Detect(filepath);
 		}
-		// 파일 //
+		// 파일
 		else if (S_ISREG (buf.st_mode))
 		{
 			BXLog (DBG, "[%s] Start File Detecting...\n", file->d_name);
 
 			fp = fopen (filepath, "r");
+			BXLog (DBG, "[%s] Open FILE\n", __LINE__);
 			if (NULL == fp)
 			{
-				printf("파일을 열수 없습니다.\n");
+				BXLog (DBG, "[%s] Can not open file...\n", __LINE__);
 				return 1;
 			}
 			strcpy (commande, "file -b ");
@@ -642,7 +648,7 @@ int func_Detect (gchar *path)
 				ftypesig = 1;
 			}
 
-			// 파일 크기만큼 버퍼에 저장 후 find_text에 넣어서 정규식검사로 이동 //
+			// 파일 크기만큼 버퍼에 저장 후 find_text에 넣어서 정규식검사로 이동
 			fseek (fp, 0, SEEK_END);
 			lSize = ftell (fp);
 			rewind (fp);
@@ -668,15 +674,15 @@ int func_Detect (gchar *path)
 			// 메모리관리(초기화), 파일
 			fclose (fp);
 			free(buffer);
-			printf ("Close FILE\n");
+			BXLog (DBG, "[%s] Close FILE\n", __LINE__);
 			BXLog (DBG, "[%s] End File Detecting...\n", file->d_name);
 
-			chk_fname[0] = 0; // 초기화 //
+			chk_fname[0] = 0; // 초기화
 		}
 	}
 
 	closedir (dp);
-	printf ("Close DIR\n");
+	BXLog (DBG, "[%s] Close DIR\n", __LINE__);
 
 	return  0;
 }
@@ -686,7 +692,7 @@ int func_Detect (gchar *path)
 /*---------------------------------------------------------------------------*/
 /* Oppening RabbitMQ Socket, Channel                         */
 /*---------------------------------------------------------------------------*/
-// RabbitMQ 소켓, 채널 열기 //
+// RabbitMQ 소켓, 채널 열기
 int func_SetRabbit()
 {
 	port		=	PORT;
@@ -733,7 +739,7 @@ int func_SetRabbit()
 		reply_to_queue = amqp_bytes_malloc_dup (r->queue);
 		if (reply_to_queue.bytes == NULL)
 		{
-			fprintf (stderr, "Out of memory while copying queue name");
+			BXLog (DBG, "[%s] Out of memory while copying queue name", __LINE__);
 			return 1;
 		}
 	}
@@ -751,7 +757,7 @@ int func_Send()
 	//char message[1024];
 	//gdouble percent = 0.0;
 	size_t in_len = 0;
-	//routingkey = "ka"; // TRCODE //
+	//routingkey = "ka"; // TRCODE
 
 	/*
 	 send the message
@@ -770,7 +776,8 @@ int func_Send()
 		
 		if (props.reply_to.bytes == NULL)
 		{
-			fprintf (stderr, "Out of memory while copying queue name");
+			BXLog (DBG, "[%s] Out of memory while copying queue name", __LINE__);
+
 			return 1;
 		}
 		props.correlation_id = amqp_cstring_bytes ("1");
@@ -782,7 +789,7 @@ int func_Send()
 		{
 			case 0:	// 버전 확인 //
 				printf ("##### 버전 확인 #####\n");
-				//routingkey = "BPVCHK0R"; // TRCODE //
+				//routingkey = "BPVCHK0R"; // TRCODE
 				routingkey = "ka";
 				enc = "Version Check";
 				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
@@ -792,7 +799,7 @@ int func_Send()
 
 			case 1:	// 사용자 확인 //
 				printf ("##### 사용자 확인 #####\n");
-				routingkey = "ka"; // TRCODE //
+				routingkey = "ka"; // TRCODE
 				enc = "User Check";
 				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 									amqp_cstring_bytes (routingkey), 0, 0,
@@ -800,13 +807,13 @@ int func_Send()
 				break;
 			
 			case 2:	// 사용자 등록 //
-				printf("##### 사용자 등록 #####\n");
-				//routingkey = "BPDEPT0R"; // TRCODE //
+				BXLog (DBG, "[%s] ##### 사용자 등록 #####\n", __LINE__);
+				//routingkey = "BPDEPT0R"; // TRCODE
 				routingkey = "ka";
 				in_len = sizeof(uDs);
 				enc = b64_encode ((unsigned char *)&uDs, in_len, enc);
-				printf ("[enc_data: %s]\n", enc);
-				printf ("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
+				//printf ("[enc_data: %s]\n", enc);
+				//printf ("[UUID: %s, %s/%s/%s]\n\n", uDs.uuid, uDs.udept, uDs.uname, uDs.ujob);
 				
 				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 									amqp_cstring_bytes (routingkey), 0, 0,
@@ -814,8 +821,8 @@ int func_Send()
 				break;
 
 			case 3:	// 검출 결과 //
-				printf ("##### 검출 결과  #####\n");
-				routingkey = "ka"; // TRCODE //
+				BXLog (DBG, "[%s] ##### 검출 결과  #####\n", __LINE__);
+				routingkey = "ka"; // TRCODE
 
 				for (int i = 0; i <= chk_fcnt; i++)
 				{
@@ -823,9 +830,9 @@ int func_Send()
 					in_len = sizeof(fDs[i]);
 					//printf("fds[%d]: %ld\n", i ,in_len); //구조체 크기확인
 					enc = b64_encode ((unsigned char *)&fDs[i], in_len, enc);
-					printf ("[enc_data: %s]\n", enc);
-					printf ("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
-								fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
+					//printf ("[enc_data: %s]\n", enc);
+					//printf ("[UUID: %s, cnt: %d, jumin: %d, driver: %d, forign: %d, pass: %d, fsize: %d, fstat: %s, fpath: %s]\n\n",
+								//fDs[i].uuid, i, fDs[i].jcnt, fDs[i].dcnt, fDs[i].fgcnt, fDs[i].pcnt, fDs[i].fsize, fDs[i].stat, fDs[i].fpath);
 
 					die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 									amqp_cstring_bytes (routingkey), 0, 0,
@@ -837,11 +844,11 @@ int func_Send()
 				break;
 
 			case 4:	// 파일 삭제 //
-				printf ("##### 파일 삭제  #####\n");
-				routingkey = "ka"; // TRCODE //
+				BXLog (DBG, "[%s] ##### 파일 삭제  #####\n", __LINE__);
+				routingkey = "ka"; // TRCODE
 				in_len = sizeof(sfDs);
 				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
-				printf ("[enc_data: %s]\n", enc);
+				//printf ("[enc_data: %s]\n", enc);
 				
 				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 									amqp_cstring_bytes (routingkey), 0, 0,
@@ -849,12 +856,12 @@ int func_Send()
 				break;
 				
 			case 5:	// 파일 암호화 //
-				printf ("##### 파일 암호화  #####\n");
+				BXLog (DBG, "[%s] ##### 파일 암호화  #####\n", __LINE__);
 				routingkey = "ka"; // TRCODE //
 				in_len = sizeof(sfDs);
 				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
-				printf ("[enc_data: %s]\n", enc);
-				
+				//printf ("[enc_data: %s]\n", enc);
+
 				die_on_error (amqp_basic_publish (conn, 1, amqp_cstring_bytes (EXCHANGE),
 									amqp_cstring_bytes (routingkey), 0, 0,
 									&props, amqp_cstring_bytes (enc)), "Publishing");
@@ -997,7 +1004,7 @@ int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
 			break;
 	}
 
-	label=gtk_label_new (message);
+	label = gtk_label_new (message);
 	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_container_add (GTK_CONTAINER (content_area), label);
 	gtk_widget_show_all (dialog);
@@ -1040,45 +1047,45 @@ int func_file_eraser (int type)
 						MsgTmp[0] = 'A';
 						memset( msize, MsgTmp[0], ERASER_SIZE );
 						break;
-						
+
 					case 1 :
 						MsgTmp[0] = '^';
 						memset( msize, MsgTmp[0], ERASER_SIZE );
 						break;
-						
+
 					case 2 :
 						srand(time(NULL));
 						if( size < ERASER_SIZE )
 							for( int j=0 ; j < ERASER_SIZE ; j++ )
 								msize[j] = 'A' + (random() % 26);
 						break;
-						
+
 					case 3 :
 						MsgTmp[0] = 'Z';
 						memset( msize, MsgTmp[0], ERASER_SIZE );
 						break;
-						
+
 					case 4 :
 						MsgTmp[0] = 'A';
 						memset( msize, MsgTmp[0], ERASER_SIZE );
 						break;
-						
+
 					case 5 :
 						MsgTmp[0] = '^';
 						memset( msize, MsgTmp[0], ERASER_SIZE );
 						break;
-						
+
 					case 6 :
 						srand(time(NULL));
 						if( size < ERASER_SIZE )
-							for( int j=0 ; j < ERASER_SIZE ; j++ )
+							for( int j = 0 ; j < ERASER_SIZE ; j++ )
 								msize[j] = 'A' + (random() % 26);
 						break;
-						
+
 					default :
 						break;
 				}
-				
+
 				size += ERASER_SIZE;
 			}
 
@@ -1104,13 +1111,14 @@ int func_file_eraser (int type)
 /*---------------------------------------------------------------------------*/
 void func_ARIA ()
 {
-	char message[1134] = {0,};
 	FILE *fp;
-	long lSize;
-	unsigned char *buff = NULL, *temp = NULL;
-	uint cur = 0, sum = 0;
-	static unsigned char *aribuf = NULL;
 	int mok = 0, nam = 0, asize = 16;
+	uint cur = 0, sum = 0;
+	long lSize = 0;
+	char message[1134] = {0,};
+	unsigned char *buff = NULL, *temp = NULL;
+	static unsigned char *aribuf = NULL;
+	
 
 	if (sfDs.fpath[0] == 0x00)
 	{
@@ -1129,7 +1137,7 @@ void func_ARIA ()
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
 			{
-				printf("파일을 열수 없습니다.\n");
+				BXLog (DBG, "[%s] Can not open file...\n", __LINE__);
 				return;
 			}
 
@@ -1147,12 +1155,13 @@ void func_ARIA ()
 
 			if (sum != lSize)
 			{
-				printf("파일을 읽을수 없습니다.\n");
+				BXLog (DBG, "[%s] Can not open file...\n", __LINE__);
 			}
 
 			mok = sfDs.fsize / 16;
 			nam = sfDs.fsize % 16;
 			aribuf = (unsigned char *) malloc (sizeof(char) *asize);
+
 			for (int i = 0; i <= mok; i++)
 			{
 				if ( i != mok)
@@ -1174,6 +1183,7 @@ void func_ARIA ()
 					memset (aribuf, 0, nam);
 				}
 			}
+
 			fclose (fp);
 			remove(sfDs.fpath);
 
@@ -1189,14 +1199,14 @@ void func_ARIA ()
 				if (res == 0)
 				{
 					strcpy (fDs[i].stat, "암호화");
-					printf ("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", i, fDs[i].fname, fDs[i].stat);
+					BXLog (DBG, "[%s] 결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", __LINE__, i, fDs[i].fname, fDs[i].stat);
 				}
 			}
 
 			gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
 
-			printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+			//printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 			d_view = d_create_view_and_model();
 			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
@@ -1206,14 +1216,15 @@ void func_ARIA ()
 			free (buff);
 			fclose (fp);
 			chk_df = 5;
-			printf ("Close FILE\n");
+			BXLog (DBG, "[%s] Close FILE\n", __LINE__);
 			chk_fname[0] = 0; // 초기화 //
 		}
 		else
 		{
-			printf ("취소 되었습니다.\n");
+			printf("취소 되었습니다.\n");
 		}
 	}
+
 	return;
 }
 // end of func_ARIA (); //
@@ -1222,30 +1233,33 @@ void func_ARIA ()
 /*---------------------------------------------------------------------------*/
 /* BXLog start                                               */
 /*---------------------------------------------------------------------------*/
-int BXLog(const char *logfile, int logflag, int logline, const char *fmt, ...)
+int BXLog (const char *logfile, int logflag, int logline, const char *fmt, ...)
 {
 	int fd, len;
 	struct	timeval	t;
 	struct tm *tm;
-	static char	fname[128];
-	static char sTmp[1024*2], sFlg[5];
+	static char fname[128];
+	static char sTmp[1024 * 2], sFlg[5];
 
 	va_list ap;
 
 	//if( LOGMODE < logflag ) return 0;
 
-	switch( logflag )
+	switch (logflag)
 	{
 		case	0 :
 		case	1 :
-			sprintf( sFlg, "E" );
+			sprintf (sFlg, "E");
 			break;
+
 		case	2 :
-			sprintf( sFlg, "I" );
+			sprintf (sFlg, "I");
 			break;
+
 		case	3 :
-			sprintf( sFlg, "W" );
+			sprintf (sFlg, "W");
 			break;
+
 		case	4 :
 		default   :
 #ifndef _BXDBG
@@ -1256,25 +1270,29 @@ int BXLog(const char *logfile, int logflag, int logline, const char *fmt, ...)
 			break;
 	}
 
-	memset( sTmp, 0x00, sizeof(sTmp) );
-	gettimeofday(&t, NULL);
-	tm = localtime(&t.tv_sec);
+	memset (sTmp, 0x00, sizeof (sTmp));
+	gettimeofday (&t, NULL);
+	tm = localtime (&t.tv_sec);
 
 	/* [HHMMSS ssssss flag __LINE__] */
-	len = sprintf(sTmp, "[%5d:%08x/%02d%02d%02d %06ld/%s:%4d:%4d]",
-			getpid(), (unsigned int)pthread_self(),
+	len = sprintf (sTmp, "[%5d:%08x/%02d%02d%02d %06ld/%s:%4d:%4d]",
+			getpid(), (unsigned int) pthread_self(),
 			tm->tm_hour, tm->tm_min, tm->tm_sec, t.tv_usec, 
 			sFlg, errno, logline );
 
-	va_start(ap, fmt);
-	vsprintf((char *)&sTmp[len], fmt, ap);
-	va_end(ap);
+	va_start (ap, fmt);
+	vsprintf ((char *) &sTmp[len], fmt, ap);
+	va_end (ap);
 
-	sprintf(fname, "%s.%02d%02d", logfile, tm->tm_mon+1, tm->tm_mday);
-	if (access(fname, 0) != 0)
-		fd = open(fname, O_WRONLY|O_CREAT, 0660);
+	sprintf (fname, "%s.%02d%02d", logfile, tm->tm_mon+1, tm->tm_mday);
+	if (access (fname, 0) != 0)
+	{
+		fd = open (fname, O_WRONLY|O_CREAT, 0660);
+	}
 	else
-		fd = open(fname, O_WRONLY|O_APPEND, 0660);
+	{
+		fd = open (fname, O_WRONLY|O_APPEND, 0660);
+	}
 
 	if (fd >= 0)
 	{
@@ -1319,7 +1337,7 @@ void m_window_destroy()
 void d_detect_entry_activate (GtkEntry *d_detect_entry, gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text (d_detect_entry);
-	g_print ("선택한 폴더 위치: %s\n", path);
+	//g_print ("선택한 폴더 위치: %s\n", path);
 
 	return;
 }
@@ -1344,7 +1362,7 @@ void d_folder_btn_clicked (GtkButton *d_folder_btn, gpointer *data)
 
 	gtk_widget_destroy (filechooserdialog);
 
-	g_print ("선택한 폴더 위치: %s\n", path);
+	//g_print ("선택한 폴더 위치: %s\n", path);
 
 	return;
 }
@@ -1367,11 +1385,11 @@ enum
 } ;
 
 gboolean
-d_view_selection_func 	(GtkTreeSelection *selection,
-							GtkTreeModel     *model,
-							GtkTreePath      *path,
-							gboolean          path_currently_selected,
-							gpointer          userdata)
+d_view_selection_func 	(GtkTreeSelection	*selection,
+							GtkTreeModel			*model,
+							GtkTreePath			*path,
+							gboolean				 path_currently_selected,
+							gpointer				 userdata)
 {
 	GtkTreeIter iter;
 	gchar *stat, *fpath;
@@ -1381,24 +1399,24 @@ d_view_selection_func 	(GtkTreeSelection *selection,
 	{
 		if (!path_currently_selected)
 		{
-			// set select data //
-			gtk_tree_model_get (model, &iter, d_treeview_filename, 	&fname, -1);
-			gtk_tree_model_get (model, &iter, d_treeview_size,			&fsize, -1);
-			gtk_tree_model_get (model, &iter, d_treeview_stat,			&stat, -1);
-			gtk_tree_model_get (model, &iter, d_treeview_fileloca,	&fpath, -1);
+			// set select data
+			gtk_tree_model_get (model, &iter, d_treeview_filename, 	&fname,	-1);
+			gtk_tree_model_get (model, &iter, d_treeview_size,		&fsize,	-1);
+			gtk_tree_model_get (model, &iter, d_treeview_stat,		&stat,		-1);
+			gtk_tree_model_get (model, &iter, d_treeview_fileloca,	&fpath,	-1);
 
-			// input data in structure //
+			// input data in structure
 			strcpy (sfDs.fname, fname);
 			sfDs.fsize = fsize;
 			strcpy (sfDs.stat, stat);
 			strcpy (sfDs.fpath, fpath);
 
-			g_print ("파일위치: [%s], 파일크기: [%d] 선택.\n", sfDs.fpath, sfDs.fsize);
+			//g_print ("파일위치: [%s], 파일크기: [%d] 선택.\n", sfDs.fpath, sfDs.fsize);
 
 		}
 		else
 		{
-			g_print ("파일위치: [%s] 선택 해제.\n", sfDs.fpath);
+			//g_print ("파일위치: [%s] 선택 해제.\n", sfDs.fpath);
 		}
 	}
 
@@ -1565,7 +1583,7 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	d_view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
-	printf("Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", chktime, chktime/chk_fcnt);
+	BXLog (DBG, "[%s] Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", __LINE__, chktime, chktime/chk_fcnt);
 
 	return;
 }
@@ -1584,13 +1602,13 @@ void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)
 	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 	//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
 
-	printf("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+	//printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 	d_view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 
-	strcpy(sfDs.stat, "암호화");
+	strcpy (sfDs.stat, "암호화");
 	func_Send();
 
 
@@ -1623,14 +1641,14 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 				if (res == 0)
 				{
 					strcpy (fDs[i].stat, "삭제");
-					printf ("결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
+					BXLog (DBG, "[%s] 결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", __LINE__, i, fDs[i].fname, fDs[i].stat);
 				}
 			}
 
 			gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
 			//gtk_tree_store_remove(dtreestore, &diter);				// 선택한거만 지우기
 
-			printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
+			//printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
 			d_view = d_create_view_and_model();
 			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
@@ -1651,14 +1669,14 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 void d_close_btn_clicked (GtkButton *d_close_btn, gpointer *data)
 {
 	gtk_widget_hide (GTK_WIDGET (data));
-	
+
 	return;
 }
 
 void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 {
 	gtk_widget_destroy (GTK_WIDGET (detect_window));
-	
+
 	return;
 }
 /* end of detect_window function */
@@ -1670,8 +1688,8 @@ void detect_window_destroy (GtkWidget *detect_window, gpointer *data)
 void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
 {
 	name = (gchar *)gtk_entry_get_text (e_name_entry);
-	strcpy(uDs.uname, name);
-	printf("%s\n", name);
+	strcpy (uDs.uname, name);
+	BXLog (DBG, "[%s] %s\n", __LINE__, name);
 	
 	return;
 }
@@ -1680,7 +1698,7 @@ void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data)
 {
 	job = (gchar *)gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (e_jobtitle_cbxtext))));
 	strcpy (uDs.ujob, job);
-	printf ("%s\n", uDs.ujob);
+	BXLog (DBG, "[%s] %s\n", __LINE__, uDs.ujob);
 
 	return;
 }
@@ -1693,11 +1711,11 @@ enum
 } ;
 
 gboolean
-e_view_selection_func 	(GtkTreeSelection *selection,
-							GtkTreeModel     *model,
-							GtkTreePath      *path,
-							gboolean          path_currently_selected,
-							gpointer          userdata)
+e_view_selection_func 	(GtkTreeSelection	*selection,
+							GtkTreeModel			*model,
+							GtkTreePath			*path,
+							gboolean				 path_currently_selected,
+							gpointer				 userdata)
 {
 	GtkTreeIter iter;
 
@@ -1707,11 +1725,11 @@ e_view_selection_func 	(GtkTreeSelection *selection,
 
 		if (!path_currently_selected)
 		{
-			g_print ("부서: [%s] 선택.\n", vs_dept);
+			//g_print ("부서: [%s] 선택.\n", vs_dept);
 		}
 		else
 		{
-			g_print ("부서: [%s] 선택 해제.\n", vs_dept);
+			//g_print ("부서: [%s] 선택 해제.\n", vs_dept);
 		}
 
 		strcpy (uDs.udept, vs_dept);
@@ -1731,93 +1749,93 @@ e_create_and_fill_model (void)
 	e_treestore = gtk_tree_store_new (NUM_COL, G_TYPE_STRING);
 
 	/*대표이사 0*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "대표이사",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"대표이사",
+								 -1);
 
 	/*임원실 1*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "임원실",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"임원실",
+								 -1);
 
 	/*대전지사 2*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "대전지사",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"대전지사",
+								 -1);
 					 
 	/*경영혁신팀 3*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "경영혁신팀",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"경영혁신팀",
+								 -1);
 
 	/*솔루션사업부 4*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "솔루션사업부",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"솔루션사업부",
+								 -1);
 		/*솔루션사업부 영업팀 8*/
-		gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-		gtk_tree_store_set (e_treestore, &parent,
-						 e_treeview_col, "솔루션사업부 영업팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+		gtk_tree_store_set		(e_treestore, &parent,
+									 e_treeview_col,	"솔루션사업부 영업팀",
+									 -1);
 		/*솔루션사업부 사업팀 9*/
-		gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-		gtk_tree_store_set (e_treestore, &parent,
-						 e_treeview_col, "솔루션사업부 기술팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+		gtk_tree_store_set		(e_treestore, &parent,
+									 e_treeview_col,	"솔루션사업부 기술팀",
+									 -1);
 
 	/*보안인프라사업부 5*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "보안인프라사업부",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"보안인프라사업부",
+								 -1);
 		/*보안인프라사업부 영업팀 10*/
-		gtk_tree_store_append (e_treestore, &child1, &parent);
-		gtk_tree_store_set (e_treestore, &child1,
-						 e_treeview_col, "보안인프라사업부 영업팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &child1, &parent);
+		gtk_tree_store_set		(e_treestore, &child1,
+									 e_treeview_col,	"보안인프라사업부 영업팀",
+									 -1);
 		/*보안인프라사업부 기술팀 11*/
-		gtk_tree_store_append (e_treestore, &child1, &parent);
-		gtk_tree_store_set (e_treestore, &child1,
-						 e_treeview_col, "보안인프라사업부 기술팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &child1, &parent);
+		gtk_tree_store_set		(e_treestore, &child1,
+									 e_treeview_col,	"보안인프라사업부 기술팀",
+									 -1);
 
 	/*부설연구소 6*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "부설연구소",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"부설연구소",
+								 -1);
 		/*부설연구소 개발1팀 12*/
-		gtk_tree_store_append (e_treestore, &child1, &parent);
-		gtk_tree_store_set (e_treestore, &child1,
-						 e_treeview_col, "부설연구소 개발1팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &child1, &parent);
+		gtk_tree_store_set		(e_treestore, &child1,
+									 e_treeview_col,	"부설연구소 개발1팀",
+									 -1);
 		/*부설연구소 개발2팀 13*/
-		gtk_tree_store_append (e_treestore, &child1, &parent);
-		gtk_tree_store_set (e_treestore, &child1,
-						 e_treeview_col, "부설연구소 개발2팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &child1, &parent);
+		gtk_tree_store_set		(e_treestore, &child1,
+									 e_treeview_col,	"부설연구소 개발2팀",
+									 -1);
 
 	/*특수사업부 7*/
-	gtk_tree_store_append (e_treestore, &parent, e_treeview_col);
-	gtk_tree_store_set (e_treestore, &parent,
-					 e_treeview_col, "특수사업부",
-					 -1);
+	gtk_tree_store_append	(e_treestore, &parent, e_treeview_col);
+	gtk_tree_store_set		(e_treestore, &parent,
+								 e_treeview_col,		"특수사업부",
+								 -1);
 		/*특수사업부 자사품 TF팀 14*/
-		gtk_tree_store_append (e_treestore, &child1, &parent);
-		gtk_tree_store_set (e_treestore, &child1,
-						 e_treeview_col, "특수사업부 자사품 TF팀",
-						 -1);
+		gtk_tree_store_append	(e_treestore, &child1, &parent);
+		gtk_tree_store_set		(e_treestore, &child1,
+									 e_treeview_col,	"특수사업부 자사품 TF팀",
+									 -1);
 		/*특수사업부 컨설팅팀 15*/
-		gtk_tree_store_append (e_treestore, &child1, &parent);
-		gtk_tree_store_set (e_treestore, &child1,
-						 e_treeview_col, "특수사업부 컨설팅팀",
-						 -1);
-                     
+		gtk_tree_store_append	(e_treestore, &child1, &parent);
+		gtk_tree_store_set		(e_treestore, &child1,
+									 e_treeview_col, "특수사업부 컨설팅팀",
+									 -1);
+
 	return GTK_TREE_MODEL (e_treestore);
 }
 
@@ -1826,8 +1844,8 @@ e_create_view_and_model (void)
 {
 	GtkTreeViewColumn	*e_col;
 	GtkCellRenderer		*e_renderer;
-	GtkWidget		*e_view;
-	GtkTreeModel		*e_model;
+	GtkWidget				*e_view;
+	GtkTreeModel			*e_model;
 	GtkTreeSelection	*e_selection;
 	
 	e_view = gtk_tree_view_new();
@@ -1898,12 +1916,13 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	gtk_label_set_text (GTK_LABEL (m_userinfo_label), usrinfostr);
 	gtk_widget_show (main_window);
 
-	printf("부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
+	BXLog (DBG, "[%s] 부서: %s 사용자: %s, 직급: %s \n", __LINE__, uDs.udept, uDs.uname, uDs.ujob);
 	//printf("%s\n", usrinfostr);
 	func_Send();
 
 	gtk_main();
 	free(usrinfostr);
+
 	return;
 }
 /* end of enrollment_window */
@@ -1916,7 +1935,7 @@ void s_ip_entry_activate (GtkEntry  *s_ip_entry,	gpointer *data)
 {
 	char *hostname;
 	hostname = (gchar *) gtk_entry_get_text (s_ip_entry);
-	g_print ("HOST NAME: %s\n", hostname);
+	BXLog (DBG, "[%s] HOST NAME: %s\n", __LINE__, hostname);
 
 	return;
 }
@@ -1925,7 +1944,7 @@ void s_port_entry_activate (GtkEntry  *s_port_entry,	gpointer *data)
 {
 	char *port;
 	port = (gchar *) gtk_entry_get_text (s_port_entry);
-	g_print("PORT: %s\n", port);
+	BXLog (DBG, "[%s] PORT: %s\n", __LINE__, port);
 
 	return;
 }
@@ -1933,7 +1952,7 @@ void s_port_entry_activate (GtkEntry  *s_port_entry,	gpointer *data)
 void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(s_detect_entry);
-	g_print("선택한 디폴트 폴더 위치: %s\n", dpath);
+	BXLog (DBG, "[%s] 선택한 디폴트 폴더 위치: %s\n", __LINE__, dpath);
 
 	return;
 }
@@ -1950,7 +1969,8 @@ void s_folder_btn_clicked (GtkButton *s_folder_btn,	gpointer *data)
     if (resp == GTK_RESPONSE_ACCEPT)
     {
 	gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filechooserdialog));
-    } 
+    }
+
 	dpath = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filechooserdialog));
 
 	gtk_entry_set_text (GTK_ENTRY (data), dpath);
@@ -1958,7 +1978,7 @@ void s_folder_btn_clicked (GtkButton *s_folder_btn,	gpointer *data)
 
 	gtk_widget_destroy (filechooserdialog);
 
-	g_print ("선택한 디폴트 폴더 위치: %s\n", dpath);
+	BXLog (DBG, "[%s] 선택한 디폴트 폴더 위치: %s\n", __LINE__, dpath);
 
 	return;
 }
@@ -1966,21 +1986,22 @@ void s_folder_btn_clicked (GtkButton *s_folder_btn,	gpointer *data)
 void s_usrchg_btn_clicked (GtkButton *s_usrchg_btn,	gpointer *data)
 {
 	gtk_widget_show (enrollment_window);
+
 	return;
 }
 
 
 void s_ok_btn_clicked (GtkButton *s_ok_btn,		gpointer *data)
 {
-	gtk_widget_hide (GTK_WIDGET(data));
+	gtk_widget_hide (GTK_WIDGET (data));
 
 	return;
 }
 
 void s_cloese_btn_clicked (GtkButton *setting_window, gpointer *data)
 {
-	gtk_widget_hide (GTK_WIDGET(data));
-	
+	gtk_widget_hide (GTK_WIDGET (data));
+
 	return;
 }
 /* end of setting_window function */
@@ -1999,38 +2020,41 @@ int main (int argc, char *argv[])
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, "main.glade", NULL);
 
-	main_window		= GTK_WIDGET (gtk_builder_get_object (builder, "main_window"));
-	enrollment_window	= GTK_WIDGET (gtk_builder_get_object (builder, "enrollment_window"));
-	department_window	= GTK_WIDGET (gtk_builder_get_object (builder, "department_window"));
-	detect_window		= GTK_WIDGET (gtk_builder_get_object (builder, "detect_window"));
-	setting_window		= GTK_WIDGET (gtk_builder_get_object (builder, "setting_window"));
-	d_progressbar 		= GTK_WIDGET (gtk_builder_get_object (builder, "d_progressbar"));
-	d_scrolledwindow	= GTK_SCROLLED_WINDOW (gtk_builder_get_object (builder, "d_scrolledwindow"));
+	main_window				= GTK_WIDGET (gtk_builder_get_object (builder, "main_window"));
+	enrollment_window		= GTK_WIDGET (gtk_builder_get_object (builder, "enrollment_window"));
+	department_window		= GTK_WIDGET (gtk_builder_get_object (builder, "department_window"));
+	detect_window			= GTK_WIDGET (gtk_builder_get_object (builder, "detect_window"));
+	setting_window			= GTK_WIDGET (gtk_builder_get_object (builder, "setting_window"));
+	d_progressbar 			= GTK_WIDGET (gtk_builder_get_object (builder, "d_progressbar"));
+
+	d_scrolledwindow		= GTK_SCROLLED_WINDOW (gtk_builder_get_object (builder, "d_scrolledwindow"));
 	dept_scrolledwindow	= GTK_SCROLLED_WINDOW (gtk_builder_get_object (builder, "dept_scrolledwindow"));
-	m_userinfo_label = GTK_WIDGET (gtk_builder_get_object (builder, "m_userinfo_label"));
+
+	m_userinfo_label 		= GTK_WIDGET (gtk_builder_get_object (builder, "m_userinfo_label"));
+
 	gtk_window_set_position (GTK_WINDOW (detect_window), GTK_WIN_POS_CENTER);
 
-	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제 //
-	g_signal_connect (detect_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
-	g_signal_connect (setting_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
-	g_signal_connect (enrollment_window, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제
+	g_signal_connect (detect_window,			"delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	g_signal_connect (setting_window,		"delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
+	g_signal_connect (enrollment_window,	"delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
 	gtk_builder_connect_signals (builder, NULL);
 
-	func_Uuid();			// 사용자 UUID	//
+	func_Uuid();			// 사용자 UUID
 	
-	// Ini File Check //
-	chkini = func_ParseIni ("plover.ini");
+	// Ini File Check
+	chkini = func_ParseIni ("~/bxr_plover/client/lib/plover.ini");
 	if (chkini != 0)
 	{
 		func_CreateIni();
-		printf ("ini 파일 생성!\n");
+		BXLog (DBG, "[%s] ini 파일 생성!\n", __LINE__);
 		chkini = func_ParseIni ("plover.ini");
     }
 
-	func_SetRabbit();	// 서버와 연결	//
-	func_VerChk();		// 버전 확인	//
-	func_UsrChk();		// 사용자 확인	//
+	func_SetRabbit();	// 서버와 연결
+	func_VerChk();		// 버전 확인
+	func_UsrChk();		// 사용자 확인
 
 	g_object_unref(builder);
 
