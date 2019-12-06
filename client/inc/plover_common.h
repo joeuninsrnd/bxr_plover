@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <assert.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <fcntl.h>
+#include <libgen.h>
+#include <regex.h>
+#include <amqp.h>
+#include <amqp_tcp_socket.h>
+#include "iniparser.h"
+#include "dictionary.h"
+#include "utils.h"
+
