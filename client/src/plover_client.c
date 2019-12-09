@@ -1137,11 +1137,11 @@ void func_ARIA ()
 		{
 			int res = 0;
 
-			BXLog (DBG, "Start File Encrypt...\n", sfDs.fname);
+			BXLog (DBG, "[%s] Start File Encrypt...\n", sfDs.fname);
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
 			{
-				BXLog (DBG, "Can not open file...\n");
+				BXLog (DBG, "[%s] Can not open file...\n", sfDs.fname);
 				return;
 			}
 
@@ -1159,7 +1159,7 @@ void func_ARIA ()
 
 			if (sum != lSize)
 			{
-				BXLog (DBG, "Can not open file...\n");
+				BXLog (DBG, "[%s] Can not open file...\n", sfDs.fname);
 			}
 
 			mok = sfDs.fsize / 16;
@@ -1194,7 +1194,7 @@ void func_ARIA ()
 			fp = fopen (sfDs.fpath, "w+");
 			buff = temp;
 			fwrite (buff, lSize, 1, fp);
-			BXLog (DBG, "End File Encrypt...\n", sfDs.fname);
+			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
 
 			for (int i = 0; i <= chk_fcnt; i++)
 			{
@@ -1220,7 +1220,7 @@ void func_ARIA ()
 			free (buff);
 			fclose (fp);
 			chk_df = 5;
-			BXLog (DBG, "Close FILE\n");
+			BXLog (DBG, "[%s] Close FILE\n", sfDs.fname);
 			chk_fname[0] = 0; // 초기화 //
 		}
 		else
