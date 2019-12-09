@@ -373,7 +373,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 		else
 		{
-			BXLog (DBG, "No more matches. %d\n", nomatch);
+			//BXLog (DBG, "No more matches. %d\n", nomatch);
 
 			return 0;
 		}
@@ -435,7 +435,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 		}
 		else
 		{
-			BXLog (DBG, "No more matches.\n");
+			//BXLog (DBG, "No more matches.\n");
 
 			return 0;
 		}
@@ -496,7 +496,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 		}
 		else
 		{
-			BXLog (DBG, "No more matches.\n");
+			//BXLog (DBG, "No more matches.\n");
 
 			return 0;
 		}
@@ -599,7 +599,7 @@ int func_Detect (gchar *path)
 	memset (message, 0x00, strlen(message));
 	if ((dp = opendir(path)) == NULL)
 	{
-		BXLog (DBG, "Can not open folder...\n");
+		BXLog (DBG, "[%s] Can not open folder...\n", file->d_name);;
 		return -1;
 	}
 	while ((file = readdir(dp)) != NULL)
@@ -621,13 +621,13 @@ int func_Detect (gchar *path)
 		// 파일
 		else if (S_ISREG (buf.st_mode))
 		{
-			BXLog (DBG, "Start File Detecting...\n", file->d_name);
+			BXLog (DBG, "[%s] Start File Detecting...\n", file->d_name);
 
 			fp = fopen (filepath, "r");
-			BXLog (DBG, "Open FILE\n");
+			BXLog (DBG, "[%s] Open FILE\n", file->d_name);
 			if (NULL == fp)
 			{
-				BXLog (DBG, "Can not open file...\n");
+				BXLog (DBG, "[%s] Can not open file...\n", file->d_name);
 				return 1;
 			}
 			strcpy (commande, "file -b ");
@@ -674,8 +674,8 @@ int func_Detect (gchar *path)
 			// 메모리관리(초기화), 파일
 			fclose (fp);
 			free(buffer);
-			BXLog (DBG, "Close FILE\n");
-			BXLog (DBG, "End File Detecting...\n", file->d_name);
+			BXLog (DBG, "[%s] Close FILE\n", file->d_name);
+			BXLog (DBG, "[%s] End File Detecting...\n", file->d_name);
 
 			chk_fname[0] = 0; // 초기화
 		}
