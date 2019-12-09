@@ -1195,6 +1195,7 @@ void func_ARIA ()
 			buff = temp;
 			fwrite (buff, lSize, 1, fp);
 			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
+			func_gtk_dialog_modal (0, window, "\n    암호화가 완료되었습니다.    \n");
 
 			for (int i = 0; i <= chk_fcnt; i++)
 			{
@@ -1595,6 +1596,8 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 	BXLog (DBG, "Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", chktime, chktime/chk_fcnt);
+
+	func_gtk_dialog_modal (0, window, "\n    검출이 완료되었습니다.    \n");
 
 	return;
 }
