@@ -1,0 +1,1113 @@
+        -:    0:Source:iniparser.c
+        -:    0:Graph:./main.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:
+        -:    2:/*-------------------------------------------------------------------------*/
+        -:    3:/**
+        -:    4:   @file    iniparser.c
+        -:    5:   @author  N. Devillard
+        -:    6:   @brief   Parser for ini files.
+        -:    7:*/
+        -:    8:/*--------------------------------------------------------------------------*/
+        -:    9:/*---------------------------- Includes ------------------------------------*/
+        -:   10:#include <ctype.h>
+        -:   11:#include <stdarg.h>
+        -:   12:#include "iniparser.h"
+        -:   13:
+        -:   14:/*---------------------------- Defines -------------------------------------*/
+        -:   15:#define ASCIILINESZ         (1024)
+        -:   16:#define INI_INVALID_KEY     ((char*)-1)
+        -:   17:
+        -:   18:/*---------------------------------------------------------------------------
+        -:   19:                        Private to this module
+        -:   20: ---------------------------------------------------------------------------*/
+        -:   21:/**
+        -:   22: * This enum stores the status for each parsed line (internal use only).
+        -:   23: */
+        -:   24:typedef enum _line_status_ {
+        -:   25:    LINE_UNPROCESSED,
+        -:   26:    LINE_ERROR,
+        -:   27:    LINE_EMPTY,
+        -:   28:    LINE_COMMENT,
+        -:   29:    LINE_SECTION,
+        -:   30:    LINE_VALUE
+        -:   31:} line_status ;
+        -:   32:
+        -:   33:/*-------------------------------------------------------------------------*/
+        -:   34:/**
+        -:   35:  @brief    Convert a string to lowercase.
+        -:   36:  @param    in   String to convert.
+        -:   37:  @param    out Output buffer.
+        -:   38:  @param    len Size of the out buffer.
+        -:   39:  @return   ptr to the out buffer or NULL if an error occured.
+        -:   40:
+        -:   41:  This function convert a string into lowercase.
+        -:   42:  At most len - 1 elements of the input string will be converted.
+        -:   43: */
+        -:   44:/*--------------------------------------------------------------------------*/
+function strlwc called 0 returned 0% blocks executed 0%
+    #####:   45:static const char * strlwc(const char * in, char *out, unsigned len)
+        -:   46:{
+        -:   47:    unsigned i ;
+        -:   48:
+    #####:   49:    if (in==NULL || out == NULL || len==0) return NULL ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   50:    i=0 ;
+    #####:   51:    while (in[i] != '\0' && i < len-1) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   52:        out[i] = (char)tolower((int)in[i]);
+    #####:   53:        i++ ;
+        -:   54:    }
+    #####:   55:    out[i] = '\0';
+    #####:   56:    return out ;
+        -:   57:}
+        -:   58:
+        -:   59:/*-------------------------------------------------------------------------*/
+        -:   60:/**
+        -:   61:  @brief    Duplicate a string
+        -:   62:  @param    s String to duplicate
+        -:   63:  @return   Pointer to a newly allocated string, to be freed with free()
+        -:   64:
+        -:   65:  This is a replacement for strdup(). This implementation is provided
+        -:   66:  for systems that do not have it.
+        -:   67: */
+        -:   68:/*--------------------------------------------------------------------------*/
+function xstrdup called 0 returned 0% blocks executed 0%
+    #####:   69:static char * xstrdup(const char * s)
+        -:   70:{
+        -:   71:    char * t ;
+        -:   72:    size_t len ;
+    #####:   73:    if (!s)
+branch  0 never executed
+branch  1 never executed
+    #####:   74:        return NULL ;
+        -:   75:
+    #####:   76:    len = strlen(s) + 1 ;
+    #####:   77:    t = (char*) malloc(len) ;
+    #####:   78:    if (t) {
+branch  0 never executed
+branch  1 never executed
+    #####:   79:        memcpy(t, s, len) ;
+        -:   80:    }
+    #####:   81:    return t ;
+        -:   82:}
+        -:   83:
+        -:   84:/*-------------------------------------------------------------------------*/
+        -:   85:/**
+        -:   86:  @brief    Remove blanks at the beginning and the end of a string.
+        -:   87:  @param    str  String to parse and alter.
+        -:   88:  @return   unsigned New size of the string.
+        -:   89: */
+        -:   90:/*--------------------------------------------------------------------------*/
+function strstrip called 0 returned 0% blocks executed 0%
+    #####:   91:static unsigned strstrip(char * s)
+        -:   92:{
+    #####:   93:    char *last = NULL ;
+    #####:   94:    char *dest = s;
+        -:   95:
+    #####:   96:    if (s==NULL) return 0;
+branch  0 never executed
+branch  1 never executed
+        -:   97:
+    #####:   98:    last = s + strlen(s);
+    #####:   99:    while (isspace((int)*s) && *s) s++;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  100:    while (last > s) {
+branch  0 never executed
+branch  1 never executed
+    #####:  101:        if (!isspace((int)*(last-1)))
+branch  0 never executed
+branch  1 never executed
+    #####:  102:            break ;
+    #####:  103:        last -- ;
+        -:  104:    }
+    #####:  105:    *last = (char)0;
+        -:  106:
+    #####:  107:    memmove(dest,s,last - s + 1);
+    #####:  108:    return last - s;
+        -:  109:}
+        -:  110:
+        -:  111:/*-------------------------------------------------------------------------*/
+        -:  112:/**
+        -:  113:  @brief    Default error callback for iniparser: wraps `fprintf(stderr, ...)`.
+        -:  114: */
+        -:  115:/*--------------------------------------------------------------------------*/
+function default_error_callback called 0 returned 0% blocks executed 0%
+    #####:  116:static int default_error_callback(const char *format, ...)
+        -:  117:{
+        -:  118:  int ret;
+        -:  119:  va_list argptr;
+    #####:  120:  va_start(argptr, format);
+    #####:  121:  ret = vfprintf(stderr, format, argptr);
+call    0 never executed
+    #####:  122:  va_end(argptr);
+    #####:  123:  return ret;
+        -:  124:}
+        -:  125:
+        -:  126:static int (*iniparser_error_callback)(const char*, ...) = default_error_callback;
+        -:  127:
+        -:  128:/*-------------------------------------------------------------------------*/
+        -:  129:/**
+        -:  130:  @brief    Configure a function to receive the error messages.
+        -:  131:  @param    errback  Function to call.
+        -:  132:
+        -:  133:  By default, the error will be printed on stderr. If a null pointer is passed
+        -:  134:  as errback the error callback will be switched back to default.
+        -:  135: */
+        -:  136:/*--------------------------------------------------------------------------*/
+function iniparser_set_error_callback called 0 returned 0% blocks executed 0%
+    #####:  137:void iniparser_set_error_callback(int (*errback)(const char *, ...))
+        -:  138:{
+    #####:  139:  if (errback) {
+branch  0 never executed
+branch  1 never executed
+    #####:  140:    iniparser_error_callback = errback;
+        -:  141:  } else {
+    #####:  142:    iniparser_error_callback = default_error_callback;
+        -:  143:  }
+    #####:  144:}
+        -:  145:
+        -:  146:/*-------------------------------------------------------------------------*/
+        -:  147:/**
+        -:  148:  @brief    Get number of sections in a dictionary
+        -:  149:  @param    d   Dictionary to examine
+        -:  150:  @return   int Number of sections found in dictionary
+        -:  151:
+        -:  152:  This function returns the number of sections found in a dictionary.
+        -:  153:  The test to recognize sections is done on the string stored in the
+        -:  154:  dictionary: a section name is given as "section" whereas a key is
+        -:  155:  stored as "section:key", thus the test looks for entries that do not
+        -:  156:  contain a colon.
+        -:  157:
+        -:  158:  This clearly fails in the case a section name contains a colon, but
+        -:  159:  this should simply be avoided.
+        -:  160:
+        -:  161:  This function returns -1 in case of error.
+        -:  162: */
+        -:  163:/*--------------------------------------------------------------------------*/
+function iniparser_getnsec called 0 returned 0% blocks executed 0%
+    #####:  164:int iniparser_getnsec(const dictionary * d)
+        -:  165:{
+        -:  166:    int i ;
+        -:  167:    int nsec ;
+        -:  168:
+    #####:  169:    if (d==NULL) return -1 ;
+branch  0 never executed
+branch  1 never executed
+    #####:  170:    nsec=0 ;
+    #####:  171:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  172:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  173:            continue ;
+    #####:  174:        if (strchr(d->key[i], ':')==NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:  175:            nsec ++ ;
+        -:  176:        }
+        -:  177:    }
+    #####:  178:    return nsec ;
+        -:  179:}
+        -:  180:
+        -:  181:/*-------------------------------------------------------------------------*/
+        -:  182:/**
+        -:  183:  @brief    Get name for section n in a dictionary.
+        -:  184:  @param    d   Dictionary to examine
+        -:  185:  @param    n   Section number (from 0 to nsec-1).
+        -:  186:  @return   Pointer to char string
+        -:  187:
+        -:  188:  This function locates the n-th section in a dictionary and returns
+        -:  189:  its name as a pointer to a string statically allocated inside the
+        -:  190:  dictionary. Do not free or modify the returned string!
+        -:  191:
+        -:  192:  This function returns NULL in case of error.
+        -:  193: */
+        -:  194:/*--------------------------------------------------------------------------*/
+function iniparser_getsecname called 0 returned 0% blocks executed 0%
+    #####:  195:const char * iniparser_getsecname(const dictionary * d, int n)
+        -:  196:{
+        -:  197:    int i ;
+        -:  198:    int foundsec ;
+        -:  199:
+    #####:  200:    if (d==NULL || n<0) return NULL ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  201:    foundsec=0 ;
+    #####:  202:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  203:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  204:            continue ;
+    #####:  205:        if (strchr(d->key[i], ':')==NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:  206:            foundsec++ ;
+    #####:  207:            if (foundsec>n)
+branch  0 never executed
+branch  1 never executed
+    #####:  208:                break ;
+        -:  209:        }
+        -:  210:    }
+    #####:  211:    if (foundsec<=n) {
+branch  0 never executed
+branch  1 never executed
+    #####:  212:        return NULL ;
+        -:  213:    }
+    #####:  214:    return d->key[i] ;
+        -:  215:}
+        -:  216:
+        -:  217:/*-------------------------------------------------------------------------*/
+        -:  218:/**
+        -:  219:  @brief    Dump a dictionary to an opened file pointer.
+        -:  220:  @param    d   Dictionary to dump.
+        -:  221:  @param    f   Opened file pointer to dump to.
+        -:  222:  @return   void
+        -:  223:
+        -:  224:  This function prints out the contents of a dictionary, one element by
+        -:  225:  line, onto the provided file pointer. It is OK to specify @c stderr
+        -:  226:  or @c stdout as output files. This function is meant for debugging
+        -:  227:  purposes mostly.
+        -:  228: */
+        -:  229:/*--------------------------------------------------------------------------*/
+function iniparser_dump called 0 returned 0% blocks executed 0%
+    #####:  230:void iniparser_dump(const dictionary * d, FILE * f)
+        -:  231:{
+        -:  232:    int     i ;
+        -:  233:
+    #####:  234:    if (d==NULL || f==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  235:    for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  236:        if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  237:            continue ;
+    #####:  238:        if (d->val[i]!=NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:  239:            fprintf(f, "[%s]=[%s]\n", d->key[i], d->val[i]);
+call    0 never executed
+        -:  240:        } else {
+    #####:  241:            fprintf(f, "[%s]=UNDEF\n", d->key[i]);
+call    0 never executed
+        -:  242:        }
+        -:  243:    }
+    #####:  244:    return ;
+        -:  245:}
+        -:  246:
+        -:  247:/*-------------------------------------------------------------------------*/
+        -:  248:/**
+        -:  249:  @brief    Save a dictionary to a loadable ini file
+        -:  250:  @param    d   Dictionary to dump
+        -:  251:  @param    f   Opened file pointer to dump to
+        -:  252:  @return   void
+        -:  253:
+        -:  254:  This function dumps a given dictionary into a loadable ini file.
+        -:  255:  It is Ok to specify @c stderr or @c stdout as output files.
+        -:  256: */
+        -:  257:/*--------------------------------------------------------------------------*/
+function iniparser_dump_ini called 0 returned 0% blocks executed 0%
+    #####:  258:void iniparser_dump_ini(const dictionary * d, FILE * f)
+        -:  259:{
+        -:  260:    int          i ;
+        -:  261:    int          nsec ;
+        -:  262:    const char * secname ;
+        -:  263:
+    #####:  264:    if (d==NULL || f==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  265:
+    #####:  266:    nsec = iniparser_getnsec(d);
+call    0 never executed
+    #####:  267:    if (nsec<1) {
+branch  0 never executed
+branch  1 never executed
+        -:  268:        /* No section in file: dump all keys as they are */
+    #####:  269:        for (i=0 ; i<d->size ; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  270:            if (d->key[i]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  271:                continue ;
+    #####:  272:            fprintf(f, "%s = %s\n", d->key[i], d->val[i]);
+call    0 never executed
+        -:  273:        }
+    #####:  274:        return ;
+        -:  275:    }
+    #####:  276:    for (i=0 ; i<nsec ; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  277:        secname = iniparser_getsecname(d, i) ;
+call    0 never executed
+    #####:  278:        iniparser_dumpsection_ini(d, secname, f);
+call    0 never executed
+        -:  279:    }
+    #####:  280:    fprintf(f, "\n");
+call    0 never executed
+    #####:  281:    return ;
+        -:  282:}
+        -:  283:
+        -:  284:/*-------------------------------------------------------------------------*/
+        -:  285:/**
+        -:  286:  @brief    Save a dictionary section to a loadable ini file
+        -:  287:  @param    d   Dictionary to dump
+        -:  288:  @param    s   Section name of dictionary to dump
+        -:  289:  @param    f   Opened file pointer to dump to
+        -:  290:  @return   void
+        -:  291:
+        -:  292:  This function dumps a given section of a given dictionary into a loadable ini
+        -:  293:  file.  It is Ok to specify @c stderr or @c stdout as output files.
+        -:  294: */
+        -:  295:/*--------------------------------------------------------------------------*/
+function iniparser_dumpsection_ini called 0 returned 0% blocks executed 0%
+    #####:  296:void iniparser_dumpsection_ini(const dictionary * d, const char * s, FILE * f)
+        -:  297:{
+        -:  298:    int     j ;
+        -:  299:    char    keym[ASCIILINESZ+1];
+        -:  300:    int     seclen ;
+        -:  301:
+    #####:  302:    if (d==NULL || f==NULL) return ;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  303:    if (! iniparser_find_entry(d, s)) return ;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  304:
+    #####:  305:    seclen  = (int)strlen(s);
+    #####:  306:    fprintf(f, "\n[%s]\n", s);
+call    0 never executed
+    #####:  307:    sprintf(keym, "%s:", s);
+    #####:  308:    for (j=0 ; j<d->size ; j++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  309:        if (d->key[j]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  310:            continue ;
+    #####:  311:        if (!strncmp(d->key[j], keym, seclen+1)) {
+branch  0 never executed
+branch  1 never executed
+    #####:  312:            fprintf(f,
+        -:  313:                    "%-30s = %s\n",
+    #####:  314:                    d->key[j]+seclen+1,
+call    0 never executed
+    #####:  315:                    d->val[j] ? d->val[j] : "");
+branch  0 never executed
+branch  1 never executed
+        -:  316:        }
+        -:  317:    }
+    #####:  318:    fprintf(f, "\n");
+call    0 never executed
+    #####:  319:    return ;
+        -:  320:}
+        -:  321:
+        -:  322:/*-------------------------------------------------------------------------*/
+        -:  323:/**
+        -:  324:  @brief    Get the number of keys in a section of a dictionary.
+        -:  325:  @param    d   Dictionary to examine
+        -:  326:  @param    s   Section name of dictionary to examine
+        -:  327:  @return   Number of keys in section
+        -:  328: */
+        -:  329:/*--------------------------------------------------------------------------*/
+function iniparser_getsecnkeys called 0 returned 0% blocks executed 0%
+    #####:  330:int iniparser_getsecnkeys(const dictionary * d, const char * s)
+        -:  331:{
+        -:  332:    int     seclen, nkeys ;
+        -:  333:    char    keym[ASCIILINESZ+1];
+        -:  334:    int j ;
+        -:  335:
+    #####:  336:    nkeys = 0;
+        -:  337:
+    #####:  338:    if (d==NULL) return nkeys;
+branch  0 never executed
+branch  1 never executed
+    #####:  339:    if (! iniparser_find_entry(d, s)) return nkeys;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  340:
+    #####:  341:    seclen  = (int)strlen(s);
+    #####:  342:    strlwc(s, keym, sizeof(keym));
+call    0 never executed
+    #####:  343:    keym[seclen] = ':';
+        -:  344:
+    #####:  345:    for (j=0 ; j<d->size ; j++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  346:        if (d->key[j]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  347:            continue ;
+    #####:  348:        if (!strncmp(d->key[j], keym, seclen+1))
+branch  0 never executed
+branch  1 never executed
+    #####:  349:            nkeys++;
+        -:  350:    }
+        -:  351:
+    #####:  352:    return nkeys;
+        -:  353:
+        -:  354:}
+        -:  355:
+        -:  356:/*-------------------------------------------------------------------------*/
+        -:  357:/**
+        -:  358:  @brief    Get the number of keys in a section of a dictionary.
+        -:  359:  @param    d    Dictionary to examine
+        -:  360:  @param    s    Section name of dictionary to examine
+        -:  361:  @param    keys Already allocated array to store the keys in
+        -:  362:  @return   The pointer passed as `keys` argument or NULL in case of error
+        -:  363:
+        -:  364:  This function queries a dictionary and finds all keys in a given section.
+        -:  365:  The keys argument should be an array of pointers which size has been
+        -:  366:  determined by calling `iniparser_getsecnkeys` function prior to this one.
+        -:  367:
+        -:  368:  Each pointer in the returned char pointer-to-pointer is pointing to
+        -:  369:  a string allocated in the dictionary; do not free or modify them.
+        -:  370: */
+        -:  371:/*--------------------------------------------------------------------------*/
+function iniparser_getseckeys called 0 returned 0% blocks executed 0%
+    #####:  372:const char ** iniparser_getseckeys(const dictionary * d, const char * s, const char ** keys)
+        -:  373:{
+        -:  374:    int i, j, seclen ;
+        -:  375:    char keym[ASCIILINESZ+1];
+        -:  376:
+    #####:  377:    if (d==NULL || keys==NULL) return NULL;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  378:    if (! iniparser_find_entry(d, s)) return NULL;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  379:
+    #####:  380:    seclen  = (int)strlen(s);
+    #####:  381:    strlwc(s, keym, sizeof(keym));
+call    0 never executed
+    #####:  382:    keym[seclen] = ':';
+        -:  383:
+    #####:  384:    i = 0;
+        -:  385:
+    #####:  386:    for (j=0 ; j<d->size ; j++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  387:        if (d->key[j]==NULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  388:            continue ;
+    #####:  389:        if (!strncmp(d->key[j], keym, seclen+1)) {
+branch  0 never executed
+branch  1 never executed
+    #####:  390:            keys[i] = d->key[j];
+    #####:  391:            i++;
+        -:  392:        }
+        -:  393:    }
+        -:  394:
+    #####:  395:    return keys;
+        -:  396:}
+        -:  397:
+        -:  398:/*-------------------------------------------------------------------------*/
+        -:  399:/**
+        -:  400:  @brief    Get the string associated to a key
+        -:  401:  @param    d       Dictionary to search
+        -:  402:  @param    key     Key string to look for
+        -:  403:  @param    def     Default value to return if key not found.
+        -:  404:  @return   pointer to statically allocated character string
+        -:  405:
+        -:  406:  This function queries a dictionary for a key. A key as read from an
+        -:  407:  ini file is given as "section:key". If the key cannot be found,
+        -:  408:  the pointer passed as 'def' is returned.
+        -:  409:  The returned char pointer is pointing to a string allocated in
+        -:  410:  the dictionary, do not free or modify it.
+        -:  411: */
+        -:  412:/*--------------------------------------------------------------------------*/
+function iniparser_getstring called 0 returned 0% blocks executed 0%
+    #####:  413:const char * iniparser_getstring(const dictionary * d, const char * key, const char * def)
+        -:  414:{
+        -:  415:    const char * lc_key ;
+        -:  416:    const char * sval ;
+        -:  417:    char tmp_str[ASCIILINESZ+1];
+        -:  418:
+    #####:  419:    if (d==NULL || key==NULL)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  420:        return def ;
+        -:  421:
+    #####:  422:    lc_key = strlwc(key, tmp_str, sizeof(tmp_str));
+call    0 never executed
+    #####:  423:    sval = dictionary_get(d, lc_key, def);
+call    0 never executed
+    #####:  424:    return sval ;
+        -:  425:}
+        -:  426:
+        -:  427:/*-------------------------------------------------------------------------*/
+        -:  428:/**
+        -:  429:  @brief    Get the string associated to a key, convert to an long int
+        -:  430:  @param    d Dictionary to search
+        -:  431:  @param    key Key string to look for
+        -:  432:  @param    notfound Value to return in case of error
+        -:  433:  @return   long integer
+        -:  434:
+        -:  435:  This function queries a dictionary for a key. A key as read from an
+        -:  436:  ini file is given as "section:key". If the key cannot be found,
+        -:  437:  the notfound value is returned.
+        -:  438:
+        -:  439:  Supported values for integers include the usual C notation
+        -:  440:  so decimal, octal (starting with 0) and hexadecimal (starting with 0x)
+        -:  441:  are supported. Examples:
+        -:  442:
+        -:  443:  "42"      ->  42
+        -:  444:  "042"     ->  34 (octal -> decimal)
+        -:  445:  "0x42"    ->  66 (hexa  -> decimal)
+        -:  446:
+        -:  447:  Warning: the conversion may overflow in various ways. Conversion is
+        -:  448:  totally outsourced to strtol(), see the associated man page for overflow
+        -:  449:  handling.
+        -:  450:
+        -:  451:  Credits: Thanks to A. Becker for suggesting strtol()
+        -:  452: */
+        -:  453:/*--------------------------------------------------------------------------*/
+function iniparser_getlongint called 0 returned 0% blocks executed 0%
+    #####:  454:long int iniparser_getlongint(const dictionary * d, const char * key, long int notfound)
+        -:  455:{
+        -:  456:    const char * str ;
+        -:  457:
+    #####:  458:    str = iniparser_getstring(d, key, INI_INVALID_KEY);
+call    0 never executed
+    #####:  459:    if (str==INI_INVALID_KEY) return notfound ;
+branch  0 never executed
+branch  1 never executed
+    #####:  460:    return strtol(str, NULL, 0);
+call    0 never executed
+        -:  461:}
+        -:  462:
+        -:  463:
+        -:  464:/*-------------------------------------------------------------------------*/
+        -:  465:/**
+        -:  466:  @brief    Get the string associated to a key, convert to an int
+        -:  467:  @param    d Dictionary to search
+        -:  468:  @param    key Key string to look for
+        -:  469:  @param    notfound Value to return in case of error
+        -:  470:  @return   integer
+        -:  471:
+        -:  472:  This function queries a dictionary for a key. A key as read from an
+        -:  473:  ini file is given as "section:key". If the key cannot be found,
+        -:  474:  the notfound value is returned.
+        -:  475:
+        -:  476:  Supported values for integers include the usual C notation
+        -:  477:  so decimal, octal (starting with 0) and hexadecimal (starting with 0x)
+        -:  478:  are supported. Examples:
+        -:  479:
+        -:  480:  "42"      ->  42
+        -:  481:  "042"     ->  34 (octal -> decimal)
+        -:  482:  "0x42"    ->  66 (hexa  -> decimal)
+        -:  483:
+        -:  484:  Warning: the conversion may overflow in various ways. Conversion is
+        -:  485:  totally outsourced to strtol(), see the associated man page for overflow
+        -:  486:  handling.
+        -:  487:
+        -:  488:  Credits: Thanks to A. Becker for suggesting strtol()
+        -:  489: */
+        -:  490:/*--------------------------------------------------------------------------*/
+function iniparser_getint called 0 returned 0% blocks executed 0%
+    #####:  491:int iniparser_getint(const dictionary * d, const char * key, int notfound)
+        -:  492:{
+    #####:  493:    return (int)iniparser_getlongint(d, key, notfound);
+call    0 never executed
+        -:  494:}
+        -:  495:
+        -:  496:/*-------------------------------------------------------------------------*/
+        -:  497:/**
+        -:  498:  @brief    Get the string associated to a key, convert to a double
+        -:  499:  @param    d Dictionary to search
+        -:  500:  @param    key Key string to look for
+        -:  501:  @param    notfound Value to return in case of error
+        -:  502:  @return   double
+        -:  503:
+        -:  504:  This function queries a dictionary for a key. A key as read from an
+        -:  505:  ini file is given as "section:key". If the key cannot be found,
+        -:  506:  the notfound value is returned.
+        -:  507: */
+        -:  508:/*--------------------------------------------------------------------------*/
+function iniparser_getdouble called 0 returned 0% blocks executed 0%
+    #####:  509:double iniparser_getdouble(const dictionary * d, const char * key, double notfound)
+        -:  510:{
+        -:  511:    const char * str ;
+        -:  512:
+    #####:  513:    str = iniparser_getstring(d, key, INI_INVALID_KEY);
+call    0 never executed
+    #####:  514:    if (str==INI_INVALID_KEY) return notfound ;
+branch  0 never executed
+branch  1 never executed
+    #####:  515:    return atof(str);
+        -:  516:}
+        -:  517:
+        -:  518:/*-------------------------------------------------------------------------*/
+        -:  519:/**
+        -:  520:  @brief    Get the string associated to a key, convert to a boolean
+        -:  521:  @param    d Dictionary to search
+        -:  522:  @param    key Key string to look for
+        -:  523:  @param    notfound Value to return in case of error
+        -:  524:  @return   integer
+        -:  525:
+        -:  526:  This function queries a dictionary for a key. A key as read from an
+        -:  527:  ini file is given as "section:key". If the key cannot be found,
+        -:  528:  the notfound value is returned.
+        -:  529:
+        -:  530:  A true boolean is found if one of the following is matched:
+        -:  531:
+        -:  532:  - A string starting with 'y'
+        -:  533:  - A string starting with 'Y'
+        -:  534:  - A string starting with 't'
+        -:  535:  - A string starting with 'T'
+        -:  536:  - A string starting with '1'
+        -:  537:
+        -:  538:  A false boolean is found if one of the following is matched:
+        -:  539:
+        -:  540:  - A string starting with 'n'
+        -:  541:  - A string starting with 'N'
+        -:  542:  - A string starting with 'f'
+        -:  543:  - A string starting with 'F'
+        -:  544:  - A string starting with '0'
+        -:  545:
+        -:  546:  The notfound value returned if no boolean is identified, does not
+        -:  547:  necessarily have to be 0 or 1.
+        -:  548: */
+        -:  549:/*--------------------------------------------------------------------------*/
+function iniparser_getboolean called 0 returned 0% blocks executed 0%
+    #####:  550:int iniparser_getboolean(const dictionary * d, const char * key, int notfound)
+        -:  551:{
+        -:  552:    int          ret ;
+        -:  553:    const char * c ;
+        -:  554:
+    #####:  555:    c = iniparser_getstring(d, key, INI_INVALID_KEY);
+call    0 never executed
+    #####:  556:    if (c==INI_INVALID_KEY) return notfound ;
+branch  0 never executed
+branch  1 never executed
+    #####:  557:    if (c[0]=='y' || c[0]=='Y' || c[0]=='1' || c[0]=='t' || c[0]=='T') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  558:        ret = 1 ;
+    #####:  559:    } else if (c[0]=='n' || c[0]=='N' || c[0]=='0' || c[0]=='f' || c[0]=='F') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  560:        ret = 0 ;
+        -:  561:    } else {
+    #####:  562:        ret = notfound ;
+        -:  563:    }
+    #####:  564:    return ret;
+        -:  565:}
+        -:  566:
+        -:  567:/*-------------------------------------------------------------------------*/
+        -:  568:/**
+        -:  569:  @brief    Finds out if a given entry exists in a dictionary
+        -:  570:  @param    ini     Dictionary to search
+        -:  571:  @param    entry   Name of the entry to look for
+        -:  572:  @return   integer 1 if entry exists, 0 otherwise
+        -:  573:
+        -:  574:  Finds out if a given entry exists in the dictionary. Since sections
+        -:  575:  are stored as keys with NULL associated values, this is the only way
+        -:  576:  of querying for the presence of sections in a dictionary.
+        -:  577: */
+        -:  578:/*--------------------------------------------------------------------------*/
+function iniparser_find_entry called 0 returned 0% blocks executed 0%
+    #####:  579:int iniparser_find_entry(const dictionary * ini, const char * entry)
+        -:  580:{
+    #####:  581:    int found=0 ;
+    #####:  582:    if (iniparser_getstring(ini, entry, INI_INVALID_KEY)!=INI_INVALID_KEY) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  583:        found = 1 ;
+        -:  584:    }
+    #####:  585:    return found ;
+        -:  586:}
+        -:  587:
+        -:  588:/*-------------------------------------------------------------------------*/
+        -:  589:/**
+        -:  590:  @brief    Set an entry in a dictionary.
+        -:  591:  @param    ini     Dictionary to modify.
+        -:  592:  @param    entry   Entry to modify (entry name)
+        -:  593:  @param    val     New value to associate to the entry.
+        -:  594:  @return   int 0 if Ok, -1 otherwise.
+        -:  595:
+        -:  596:  If the given entry can be found in the dictionary, it is modified to
+        -:  597:  contain the provided value. If it cannot be found, the entry is created.
+        -:  598:  It is Ok to set val to NULL.
+        -:  599: */
+        -:  600:/*--------------------------------------------------------------------------*/
+function iniparser_set called 0 returned 0% blocks executed 0%
+    #####:  601:int iniparser_set(dictionary * ini, const char * entry, const char * val)
+        -:  602:{
+        -:  603:    char tmp_str[ASCIILINESZ+1];
+    #####:  604:    return dictionary_set(ini, strlwc(entry, tmp_str, sizeof(tmp_str)), val) ;
+call    0 never executed
+call    1 never executed
+        -:  605:}
+        -:  606:
+        -:  607:/*-------------------------------------------------------------------------*/
+        -:  608:/**
+        -:  609:  @brief    Delete an entry in a dictionary
+        -:  610:  @param    ini     Dictionary to modify
+        -:  611:  @param    entry   Entry to delete (entry name)
+        -:  612:  @return   void
+        -:  613:
+        -:  614:  If the given entry can be found, it is deleted from the dictionary.
+        -:  615: */
+        -:  616:/*--------------------------------------------------------------------------*/
+function iniparser_unset called 0 returned 0% blocks executed 0%
+    #####:  617:void iniparser_unset(dictionary * ini, const char * entry)
+        -:  618:{
+        -:  619:    char tmp_str[ASCIILINESZ+1];
+    #####:  620:    dictionary_unset(ini, strlwc(entry, tmp_str, sizeof(tmp_str)));
+call    0 never executed
+call    1 never executed
+    #####:  621:}
+        -:  622:
+        -:  623:/*-------------------------------------------------------------------------*/
+        -:  624:/**
+        -:  625:  @brief    Load a single line from an INI file
+        -:  626:  @param    input_line  Input line, may be concatenated multi-line input
+        -:  627:  @param    section     Output space to store section
+        -:  628:  @param    key         Output space to store key
+        -:  629:  @param    value       Output space to store value
+        -:  630:  @return   line_status value
+        -:  631: */
+        -:  632:/*--------------------------------------------------------------------------*/
+function iniparser_line called 0 returned 0% blocks executed 0%
+    #####:  633:static line_status iniparser_line(
+        -:  634:    const char * input_line,
+        -:  635:    char * section,
+        -:  636:    char * key,
+        -:  637:    char * value)
+        -:  638:{
+        -:  639:    line_status sta ;
+    #####:  640:    char * line = NULL;
+        -:  641:    size_t      len ;
+        -:  642:
+    #####:  643:    line = xstrdup(input_line);
+call    0 never executed
+    #####:  644:    len = strstrip(line);
+call    0 never executed
+        -:  645:
+    #####:  646:    sta = LINE_UNPROCESSED ;
+    #####:  647:    if (len<1) {
+branch  0 never executed
+branch  1 never executed
+        -:  648:        /* Empty line */
+    #####:  649:        sta = LINE_EMPTY ;
+    #####:  650:    } else if (line[0]=='#' || line[0]==';') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  651:        /* Comment line */
+    #####:  652:        sta = LINE_COMMENT ;
+    #####:  653:    } else if (line[0]=='[' && line[len-1]==']') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  654:        /* Section name */
+    #####:  655:        sscanf(line, "[%[^]]", section);
+    #####:  656:        strstrip(section);
+call    0 never executed
+    #####:  657:        strlwc(section, section, len);
+call    0 never executed
+    #####:  658:        sta = LINE_SECTION ;
+    #####:  659:    } else if (sscanf (line, "%[^=] = \"%[^\"]\"", key, value) == 2
+branch  0 never executed
+branch  1 never executed
+    #####:  660:           ||  sscanf (line, "%[^=] = '%[^\']'",   key, value) == 2) {
+branch  0 never executed
+branch  1 never executed
+        -:  661:        /* Usual key=value with quotes, with or without comments */
+    #####:  662:        strstrip(key);
+call    0 never executed
+    #####:  663:        strlwc(key, key, len);
+call    0 never executed
+        -:  664:        /* Don't strip spaces from values surrounded with quotes */
+    #####:  665:        sta = LINE_VALUE ;
+    #####:  666:    } else if (sscanf (line, "%[^=] = %[^;#]", key, value) == 2) {
+branch  0 never executed
+branch  1 never executed
+        -:  667:        /* Usual key=value without quotes, with or without comments */
+    #####:  668:        strstrip(key);
+call    0 never executed
+    #####:  669:        strlwc(key, key, len);
+call    0 never executed
+    #####:  670:        strstrip(value);
+call    0 never executed
+        -:  671:        /*
+        -:  672:         * sscanf cannot handle '' or "" as empty values
+        -:  673:         * this is done here
+        -:  674:         */
+    #####:  675:        if (!strcmp(value, "\"\"") || (!strcmp(value, "''"))) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  676:            value[0]=0 ;
+        -:  677:        }
+    #####:  678:        sta = LINE_VALUE ;
+    #####:  679:    } else if (sscanf(line, "%[^=] = %[;#]", key, value)==2
+branch  0 never executed
+branch  1 never executed
+    #####:  680:           ||  sscanf(line, "%[^=] %[=]", key, value) == 2) {
+branch  0 never executed
+branch  1 never executed
+        -:  681:        /*
+        -:  682:         * Special cases:
+        -:  683:         * key=
+        -:  684:         * key=;
+        -:  685:         * key=#
+        -:  686:         */
+    #####:  687:        strstrip(key);
+call    0 never executed
+    #####:  688:        strlwc(key, key, len);
+call    0 never executed
+    #####:  689:        value[0]=0 ;
+    #####:  690:        sta = LINE_VALUE ;
+        -:  691:    } else {
+        -:  692:        /* Generate syntax error */
+    #####:  693:        sta = LINE_ERROR ;
+        -:  694:    }
+        -:  695:
+    #####:  696:    free(line);
+    #####:  697:    return sta ;
+        -:  698:}
+        -:  699:
+        -:  700:/*-------------------------------------------------------------------------*/
+        -:  701:/**
+        -:  702:  @brief    Parse an ini file and return an allocated dictionary object
+        -:  703:  @param    ininame Name of the ini file to read.
+        -:  704:  @return   Pointer to newly allocated dictionary
+        -:  705:
+        -:  706:  This is the parser for ini files. This function is called, providing
+        -:  707:  the name of the file to be read. It returns a dictionary object that
+        -:  708:  should not be accessed directly, but through accessor functions
+        -:  709:  instead.
+        -:  710:
+        -:  711:  The returned dictionary must be freed using iniparser_freedict().
+        -:  712: */
+        -:  713:/*--------------------------------------------------------------------------*/
+function iniparser_load called 0 returned 0% blocks executed 0%
+    #####:  714:dictionary * iniparser_load(const char * ininame)
+        -:  715:{
+        -:  716:    FILE * in ;
+        -:  717:
+        -:  718:    char line    [ASCIILINESZ+1] ;
+        -:  719:    char section [ASCIILINESZ+1] ;
+        -:  720:    char key     [ASCIILINESZ+1] ;
+        -:  721:    char tmp     [(ASCIILINESZ * 2) + 2] ;
+        -:  722:    char val     [ASCIILINESZ+1] ;
+        -:  723:
+    #####:  724:    int  last=0 ;
+        -:  725:    int  len ;
+    #####:  726:    int  lineno=0 ;
+    #####:  727:    int  errs=0;
+    #####:  728:    int  mem_err=0;
+        -:  729:
+        -:  730:    dictionary * dict ;
+        -:  731:
+    #####:  732:    if ((in=fopen(ininame, "r"))==NULL) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  733:        iniparser_error_callback("iniparser: cannot open %s\n", ininame);
+call    0 never executed
+    #####:  734:        return NULL ;
+        -:  735:    }
+        -:  736:
+    #####:  737:    dict = dictionary_new(0) ;
+call    0 never executed
+    #####:  738:    if (!dict) {
+branch  0 never executed
+branch  1 never executed
+    #####:  739:        fclose(in);
+call    0 never executed
+    #####:  740:        return NULL ;
+        -:  741:    }
+        -:  742:
+    #####:  743:    memset(line,    0, ASCIILINESZ);
+    #####:  744:    memset(section, 0, ASCIILINESZ);
+    #####:  745:    memset(key,     0, ASCIILINESZ);
+    #####:  746:    memset(val,     0, ASCIILINESZ);
+    #####:  747:    last=0 ;
+        -:  748:
+    #####:  749:    while (fgets(line+last, ASCIILINESZ-last, in)!=NULL) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  750:        lineno++ ;
+    #####:  751:        len = (int)strlen(line)-1;
+    #####:  752:        if (len<=0)
+branch  0 never executed
+branch  1 never executed
+    #####:  753:            continue;
+        -:  754:        /* Safety check against buffer overflows */
+    #####:  755:        if (line[len]!='\n' && !feof(in)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  756:            iniparser_error_callback(
+call    0 never executed
+        -:  757:              "iniparser: input line too long in %s (%d)\n",
+        -:  758:              ininame,
+        -:  759:              lineno);
+    #####:  760:            dictionary_del(dict);
+call    0 never executed
+    #####:  761:            fclose(in);
+call    0 never executed
+    #####:  762:            return NULL ;
+        -:  763:        }
+        -:  764:        /* Get rid of \n and spaces at end of line */
+    #####:  765:        while ((len>=0) &&
+branch  0 never executed
+branch  1 never executed
+    #####:  766:                ((line[len]=='\n') || (isspace(line[len])))) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  767:            line[len]=0 ;
+    #####:  768:            len-- ;
+        -:  769:        }
+    #####:  770:        if (len < 0) { /* Line was entirely \n and/or spaces */
+branch  0 never executed
+branch  1 never executed
+    #####:  771:            len = 0;
+        -:  772:        }
+        -:  773:        /* Detect multi-line */
+    #####:  774:        if (line[len]=='\\') {
+branch  0 never executed
+branch  1 never executed
+        -:  775:            /* Multi-line value */
+    #####:  776:            last=len ;
+    #####:  777:            continue ;
+        -:  778:        } else {
+    #####:  779:            last=0 ;
+        -:  780:        }
+    #####:  781:        switch (iniparser_line(line, section, key, val)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  782:            case LINE_EMPTY:
+        -:  783:            case LINE_COMMENT:
+    #####:  784:            break ;
+        -:  785:
+    #####:  786:            case LINE_SECTION:
+    #####:  787:            mem_err = dictionary_set(dict, section, NULL);
+call    0 never executed
+    #####:  788:            break ;
+        -:  789:
+    #####:  790:            case LINE_VALUE:
+    #####:  791:            sprintf(tmp, "%s:%s", section, key);
+    #####:  792:            mem_err = dictionary_set(dict, tmp, val);
+call    0 never executed
+    #####:  793:            break ;
+        -:  794:
+    #####:  795:            case LINE_ERROR:
+    #####:  796:            iniparser_error_callback(
+call    0 never executed
+        -:  797:              "iniparser: syntax error in %s (%d):\n-> %s\n",
+        -:  798:              ininame,
+        -:  799:              lineno,
+        -:  800:              line);
+    #####:  801:            errs++ ;
+    #####:  802:            break;
+        -:  803:
+    #####:  804:            default:
+    #####:  805:            break ;
+        -:  806:        }
+    #####:  807:        memset(line, 0, ASCIILINESZ);
+    #####:  808:        last=0;
+    #####:  809:        if (mem_err<0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  810:            iniparser_error_callback("iniparser: memory allocation failure\n");
+call    0 never executed
+    #####:  811:            break ;
+        -:  812:        }
+        -:  813:    }
+    #####:  814:    if (errs) {
+branch  0 never executed
+branch  1 never executed
+    #####:  815:        dictionary_del(dict);
+call    0 never executed
+    #####:  816:        dict = NULL ;
+        -:  817:    }
+    #####:  818:    fclose(in);
+call    0 never executed
+    #####:  819:    return dict ;
+        -:  820:}
+        -:  821:
+        -:  822:/*-------------------------------------------------------------------------*/
+        -:  823:/**
+        -:  824:  @brief    Free all memory associated to an ini dictionary
+        -:  825:  @param    d Dictionary to free
+        -:  826:  @return   void
+        -:  827:
+        -:  828:  Free all memory associated to an ini dictionary.
+        -:  829:  It is mandatory to call this function before the dictionary object
+        -:  830:  gets out of the current context.
+        -:  831: */
+        -:  832:/*--------------------------------------------------------------------------*/
+function iniparser_freedict called 0 returned 0% blocks executed 0%
+    #####:  833:void iniparser_freedict(dictionary * d)
+        -:  834:{
+    #####:  835:    dictionary_del(d);
+call    0 never executed
+    #####:  836:}

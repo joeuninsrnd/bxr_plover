@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="114" height="40" viewBox="0 0 114 40">
+    <defs>
+        <linearGradient id="a" x1="0%" y1="50%" y2="50%">
+            <stop offset="0%" stop-color="#5F676F"/>
+            <stop offset="100%" stop-color="#343A40"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <rect width="114" height="40" fill="url(#a)" rx="6"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-Bold, Apple SD Gothic Neo" font-size="14" font-weight="bold" letter-spacing="-.25" transform="translate(35 12)">
+            <tspan x="19.14" y="13">닫기</tspan>
+        </text>
+        <g stroke="#FFF" stroke-linecap="round" stroke-width="2">
+            <path d="M35 24.757L44.757 15M44.879 24.757L35.12 15"/>
+        </g>
+    </g>
+</svg>
