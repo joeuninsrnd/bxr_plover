@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="114" height="40" viewBox="0 0 114 40">
+    <defs>
+        <linearGradient id="a" x1="0%" y1="43.844%" y2="56.156%">
+            <stop offset="0%" stop-color="#FF5959"/>
+            <stop offset="100%" stop-color="#E10000"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <rect width="114" height="40" fill="url(#a)" rx="6"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-Bold, Apple SD Gothic Neo" font-size="14" font-weight="bold" letter-spacing="-.25">
+            <tspan x="43.28" y="25">완전삭제</tspan>
+        </text>
+        <g fill="#FFF" fill-rule="nonzero">
+            <path d="M22.138 28.252c0 .217.177.392.395.392h10.025a.393.393 0 0 0 .395-.392V15.553H22.138v12.7zm7.629-10.538h1.48v8.545h-1.48v-8.545zm-2.962 0h1.48v8.545h-1.48v-8.545zm-2.962 0h1.481v8.545h-1.48v-8.545zM30.906 12.765v-1.381a.392.392 0 0 0-.399-.384h-5.923a.392.392 0 0 0-.399.384V13.244H21.4a.392.392 0 0 0-.399.385v.971c0 .212.178.384.399.384H33.692c.22 0 .399-.172.399-.384v-.971a.392.392 0 0 0-.399-.384h-2.786v-.48zm-1.495.401h-3.73v-.726h3.73v.726z"/>
+        </g>
+    </g>
+</svg>

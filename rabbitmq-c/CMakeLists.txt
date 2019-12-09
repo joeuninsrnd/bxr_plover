@@ -1,5 +1,3 @@
-# 개발자 수행테스트 가능하도록 보완 필요.
-
 cmake_minimum_required(VERSION 2.8.12)
 project(rabbitmq-c "C")
 

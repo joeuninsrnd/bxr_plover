@@ -5,8 +5,20 @@
 /*----------------------------------------------------------------------------*/
 /*                1.0   2019-12 Initial version               */
 /******************************************************************************/
-#include "plover_common.h"
-#include "plover_client.h"
+#include "plover.h"
+#include <unistd.h>
+#include <assert.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <fcntl.h>
+#include <libgen.h>
+#include <regex.h>
+#include "iniparser.h"
+#include "iniparser.c"
+#include "dictionary.h"
+#include "dictionary.c"
 
 #define	MAX_ERROR_MSG	0x1000
 #define	ERASER_SIZE		512			//1k
@@ -21,7 +33,7 @@ char	*LogName;
 #define WRN LOGFILE,3,__LINE__
 #define DBG LOGFILE,4,__LINE__
 
-#define DEF "./plover_client.log",1,__LINE__
+#define DEF "./bxr_plover.log",1,__LINE__
 
 static char	*find_text;
 static gchar *dpath;				// default 경로
@@ -89,9 +101,9 @@ void func_CreateIni(void)
 {
 	FILE *ini ;
 
-	if ((ini = fopen ("/home/joeun/bxr_plover/client/lib/plover.ini", "w")) == NULL)
+	if ((ini = fopen ("plover.ini", "w")) == NULL)
 	{
-		BXLog (DBG, "iniparser: Can not create plover.ini\n");
+		BXLog (DBG, "[%s] iniparser: Can not create plover.ini\n");
 
 		return ;
 	}
@@ -119,7 +131,7 @@ int  func_ParseIni (char * ini_name)
 	ini = iniparser_load (ini_name);
 	if (ini == NULL)
 	{
-		BXLog (DBG, "Can not parse file: %s\n", ini_name);
+		BXLog (DBG, "[%s] Can not parse file: %s\n", __LINE__, ini_name);
 		return -1 ;
 	}
 	iniparser_dump (ini, stderr);
@@ -127,8 +139,8 @@ int  func_ParseIni (char * ini_name)
 	/* Get attributes */
 	INI_UUID = iniparser_getstring (ini, "USERINFO:UUID", NULL);
 	strcpy (chk_uuid ,INI_UUID);
-	BXLog (DBG, "********** INI FILE **********.\n");
-	BXLog (DBG, "INI UUID:	[%s]\n", INI_UUID ? INI_UUID : "UNDEF");
+	BXLog (DBG, "[%s] ********** INI FILE **********.\n", __LINE__);
+	BXLog (DBG, "[%s] INI UUID:	[%s]\n", __LINE__, INI_UUID ? INI_UUID : "UNDEF");
 
 	//i = iniparser_getint (ini, "a:b", -1);
 	//printf ("a:	[%d]\n", i);
@@ -167,12 +179,12 @@ int func_UsrChk()
 
 	if (tmp == 0)
 	{
-		BXLog (DBG, "사용자님 안녕하세요!\n");
+		BXLog (DBG, "[%s] 사용자님 안녕하세요!\n", __LINE__);
 		chk_df = 2;
 	}
 	else
 	{
-		BXLog (DBG, "사용자 등록을 해주세요!\n");
+		BXLog (DBG, "[%s] 사용자 등록을 해주세요!\n", __LINE__);
 		chk_df = 1;
 	}
 	 
@@ -206,7 +218,7 @@ int func_Uuid()
 
 	if (NULL == uidfp)
 	{
-        BXLog (DBG, "Can not open fstab file...\n");
+        BXLog (DBG, "[%s] Can not open fstab file...\n", __LINE__);
 		return 1;
 	}
 
@@ -224,7 +236,7 @@ int func_Uuid()
 				}
 				strcpy (uDs.uuid, set_uuid);
 				strcpy (sfDs.uuid, set_uuid);
-				BXLog (DBG, "UUID: [%s]\n", uDs.uuid);
+				BXLog (DBG, "[%s] UUID: [%s]\n", __LINE__, uDs.uuid);
 			}
 		}
     }
@@ -250,7 +262,7 @@ int compile_regex (regex_t *r, const char *regex_text)
 
 		regerror (status, r, error_message, MAX_ERROR_MSG);
 
-		BXLog (DBG, "Regex error compiling '%s': %s\n", regex_text, error_message);
+		BXLog (DBG, "[%s] Regex error compiling '%s': %s\n", __LINE__, regex_text, error_message);
 
 		return 1;
 	}
@@ -373,7 +385,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 
 		else
 		{
-			BXLog (DBG, "No more matches. %d\n", nomatch);
+			BXLog (DBG, "[%s] No more matches. %d\n", __LINE__, nomatch);
 
 			return 0;
 		}
@@ -435,7 +447,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 		}
 		else
 		{
-			BXLog (DBG, "No more matches.\n");
+			BXLog (DBG, "[%s] No more matches.\n", __LINE__);
 
 			return 0;
 		}
@@ -496,7 +508,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 		}
 		else
 		{
-			BXLog (DBG, "No more matches.\n");
+			BXLog (DBG, "[%s] No more matches.\n", __LINE__);
 
 			return 0;
 		}
@@ -531,19 +543,19 @@ void check_kind_of_data (const char *to_match, char *filepath, struct dirent *fi
 	*/
 
 	// 주민번호, 외국인등록번호 정규식 //
-	regex_text = "[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6}";
-	compile_regex(&r, regex_text); // 정규식 컴파일 //
-	match_regex_jnfg(&r, to_match, filepath, file, buf);
+	regex_text = 			"[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1,2][0-9]|3[0,1])-[1-4][0-9]{6}";
+	compile_regex		(&r, regex_text);	// 정규식 컴파일
+	match_regex_jnfg	(&r, find_text, filepath, file, buf);
 
 	// 운전면허 정규식 //
-	regex_text = "[0-9]{2}-[0-9]{6}-[0-9]{2}";
-	compile_regex (&r, regex_text); // 정규식 컴파일 //
-	match_regex_d (&r, to_match, filepath, file, buf);
+	regex_text =			"[0-9]{2}-[0-9]{6}-[0-9]{2}";
+	compile_regex 		(&r, regex_text);	// 정규식 컴파일
+	match_regex_d 		(&r, find_text, filepath, file, buf);
 
 	// 여권번호 정규식 //
-	regex_text = "[a-zA-Z]{1}[0-9]{8}";
-	compile_regex (&r, regex_text); // 정규식 컴파일 //
-	match_regex_p (&r, to_match, filepath, file, buf);
+	regex_text =			"[a-zA-Z]{1}[0-9]{8}";
+	compile_regex		(&r, regex_text);	// 정규식 컴파일
+	match_regex_p		(&r, find_text, filepath, file, buf);
 
 	return;
 }
@@ -599,7 +611,7 @@ int func_Detect (gchar *path)
 	memset (message, 0x00, strlen(message));
 	if ((dp = opendir(path)) == NULL)
 	{
-		BXLog (DBG, "Can not open folder...\n");
+		BXLog (DBG, "[%s] Can not open folder...\n", __LINE__);
 		return -1;
 	}
 	while ((file = readdir(dp)) != NULL)
@@ -621,13 +633,13 @@ int func_Detect (gchar *path)
 		// 파일
 		else if (S_ISREG (buf.st_mode))
 		{
-			BXLog (DBG, "Start File Detecting...\n", file->d_name);
+			BXLog (DBG, "[%s] Start File Detecting...\n", file->d_name);
 
 			fp = fopen (filepath, "r");
-			BXLog (DBG, "Open FILE\n");
+			BXLog (DBG, "[%s] Open FILE\n", __LINE__);
 			if (NULL == fp)
 			{
-				BXLog (DBG, "Can not open file...\n");
+				BXLog (DBG, "[%s] Can not open file...\n", __LINE__);
 				return 1;
 			}
 			strcpy (commande, "file -b ");
@@ -674,15 +686,15 @@ int func_Detect (gchar *path)
 			// 메모리관리(초기화), 파일
 			fclose (fp);
 			free(buffer);
-			BXLog (DBG, "Close FILE\n");
-			BXLog (DBG, "End File Detecting...\n", file->d_name);
+			BXLog (DBG, "[%s] Close FILE\n", __LINE__);
+			BXLog (DBG, "[%s] End File Detecting...\n", file->d_name);
 
 			chk_fname[0] = 0; // 초기화
 		}
 	}
 
 	closedir (dp);
-	BXLog (DBG, "Close DIR\n");
+	BXLog (DBG, "[%s] Close DIR\n", __LINE__);
 
 	return  0;
 }
@@ -739,7 +751,7 @@ int func_SetRabbit()
 		reply_to_queue = amqp_bytes_malloc_dup (r->queue);
 		if (reply_to_queue.bytes == NULL)
 		{
-			BXLog (DBG, "Out of memory while copying queue name");
+			BXLog (DBG, "[%s] Out of memory while copying queue name", __LINE__);
 			return 1;
 		}
 	}
@@ -776,7 +788,7 @@ int func_Send()
 		
 		if (props.reply_to.bytes == NULL)
 		{
-			BXLog (DBG, "Out of memory while copying queue name");
+			BXLog (DBG, "[%s] Out of memory while copying queue name", __LINE__);
 
 			return 1;
 		}
@@ -807,7 +819,7 @@ int func_Send()
 				break;
 			
 			case 2:	// 사용자 등록 //
-				BXLog (DBG, "##### 사용자 등록 #####\n");
+				BXLog (DBG, "[%s] ##### 사용자 등록 #####\n", __LINE__);
 				//routingkey = "BPDEPT0R"; // TRCODE
 				routingkey = "ka";
 				in_len = sizeof(uDs);
@@ -821,7 +833,7 @@ int func_Send()
 				break;
 
 			case 3:	// 검출 결과 //
-				BXLog (DBG, "##### 검출 결과  #####\n");
+				BXLog (DBG, "[%s] ##### 검출 결과  #####\n", __LINE__);
 				routingkey = "ka"; // TRCODE
 
 				for (int i = 0; i <= chk_fcnt; i++)
@@ -844,7 +856,7 @@ int func_Send()
 				break;
 
 			case 4:	// 파일 삭제 //
-				BXLog (DBG, "##### 파일 삭제  #####\n");
+				BXLog (DBG, "[%s] ##### 파일 삭제  #####\n", __LINE__);
 				routingkey = "ka"; // TRCODE
 				in_len = sizeof(sfDs);
 				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
@@ -856,7 +868,7 @@ int func_Send()
 				break;
 				
 			case 5:	// 파일 암호화 //
-				BXLog (DBG, "##### 파일 암호화  #####\n");
+				BXLog (DBG, "[%s] ##### 파일 암호화  #####\n", __LINE__);
 				routingkey = "ka"; // TRCODE //
 				in_len = sizeof(sfDs);
 				enc = b64_encode ((unsigned char *)&sfDs, in_len, enc);
@@ -999,10 +1011,6 @@ int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
 						("_OK"), GTK_RESPONSE_ACCEPT, 
 						("_Cancel"), GTK_RESPONSE_REJECT, NULL);
 			break;
-			
-		case 2 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags, 
-						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
 
 		default :
 			break;
@@ -1137,11 +1145,11 @@ void func_ARIA ()
 		{
 			int res = 0;
 
-			BXLog (DBG, "Start File Encrypt...\n", sfDs.fname);
+			BXLog (DBG, "[%s] Start File Encrypt...\n", sfDs.fname);
 			fp = fopen (sfDs.fpath, "r");
 			if (NULL == fp)
 			{
-				BXLog (DBG, "Can not open file...\n");
+				BXLog (DBG, "[%s] Can not open file...\n", __LINE__);
 				return;
 			}
 
@@ -1159,7 +1167,7 @@ void func_ARIA ()
 
 			if (sum != lSize)
 			{
-				BXLog (DBG, "Can not open file...\n");
+				BXLog (DBG, "[%s] Can not open file...\n", __LINE__);
 			}
 
 			mok = sfDs.fsize / 16;
@@ -1172,7 +1180,7 @@ void func_ARIA ()
 				{
 					memcpy (aribuf, buff, asize);
 
-					ARIA (aribuf);
+					ARIA (aribuf, asize);
 					memset (buff, 0, asize);
 					memcpy (buff, aribuf, asize);
 					memset (aribuf, 0, asize);
@@ -1181,7 +1189,7 @@ void func_ARIA ()
 				else
 				{
 					memcpy (aribuf, buff, nam);
-					ARIA (aribuf);
+					ARIA (aribuf, nam);
 					memset (buff, 0, nam);
 					memcpy (buff, aribuf, nam);
 					memset (aribuf, 0, nam);
@@ -1194,7 +1202,7 @@ void func_ARIA ()
 			fp = fopen (sfDs.fpath, "w+");
 			buff = temp;
 			fwrite (buff, lSize, 1, fp);
-			BXLog (DBG, "End File Encrypt...\n", sfDs.fname);
+			BXLog (DBG, "[%s] End File Encrypt...\n", sfDs.fname);
 
 			for (int i = 0; i <= chk_fcnt; i++)
 			{
@@ -1203,7 +1211,7 @@ void func_ARIA ()
 				if (res == 0)
 				{
 					strcpy (fDs[i].stat, "암호화");
-					BXLog (DBG, "결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", i, fDs[i].fname, fDs[i].stat);
+					BXLog (DBG, "[%s] 결과: [%d]번째 파일[%s]가 [%s] 되었습니다.\n", __LINE__, i, fDs[i].fname, fDs[i].stat);
 				}
 			}
 
@@ -1220,7 +1228,7 @@ void func_ARIA ()
 			free (buff);
 			fclose (fp);
 			chk_df = 5;
-			BXLog (DBG, "Close FILE\n");
+			BXLog (DBG, "[%s] Close FILE\n", __LINE__);
 			chk_fname[0] = 0; // 초기화 //
 		}
 		else
@@ -1395,9 +1403,9 @@ d_view_selection_func 	(GtkTreeSelection	*selection,
 							gboolean				 path_currently_selected,
 							gpointer				 userdata)
 {
-	GtkTreeIter iter;
-	gchar *stat, *fpath;
-	uint fsize;
+	GtkTreeIter	 iter;
+	uint			 fsize;
+	gchar 			*stat, *fpath;
 	
 	if (gtk_tree_model_get_iter (model, &iter, path))
 	{
@@ -1569,13 +1577,6 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	chk_fcnt = -1; 						// 파일개수 count 초기화
 	memset (&fDs, 0, sizeof(fDs));		// 구조체 초기화
 	double chktime = 0;
-	
-	if (path == 0x00)
-	{
-		func_gtk_dialog_modal (0, window, "\n    [파일/폴더]이 선택되지 않았습니다.    \n");
-
-		return;
-	}
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (data), percent);
 	sprintf (message, "진행중 입니다...");
@@ -1594,7 +1595,7 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	d_view = d_create_view_and_model();
 	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
-	BXLog (DBG, "Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", chktime, chktime/chk_fcnt);
+	BXLog (DBG, "[%s] Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", __LINE__, chktime, chktime/chk_fcnt);
 
 	return;
 }
@@ -1652,7 +1653,7 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 				if (res == 0)
 				{
 					strcpy (fDs[i].stat, "삭제");
-					BXLog (DBG, "결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", i, fDs[i].fname, fDs[i].stat);
+					BXLog (DBG, "[%s] 결과: [%d]번째 파일[%s]가 [%s] 되었습니다.", __LINE__, i, fDs[i].fname, fDs[i].stat);
 				}
 			}
 
@@ -1700,7 +1701,7 @@ void e_name_entry_activate (GtkEntry *e_name_entry, gpointer *data)
 {
 	name = (gchar *)gtk_entry_get_text (e_name_entry);
 	strcpy (uDs.uname, name);
-	BXLog (DBG, "%s\n", name);
+	BXLog (DBG, "[%s] %s\n", __LINE__, name);
 	
 	return;
 }
@@ -1709,7 +1710,7 @@ void e_jobtitle_cbxtext_changed	(GtkWidget *e_jobtitle_cbxtext, gpointer *data)
 {
 	job = (gchar *)gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (e_jobtitle_cbxtext))));
 	strcpy (uDs.ujob, job);
-	BXLog (DBG, "%s\n", uDs.ujob);
+	BXLog (DBG, "[%s] %s\n", __LINE__, uDs.ujob);
 
 	return;
 }
@@ -1927,7 +1928,7 @@ void e_enroll_btn_clicked (GtkButton *e_enroll_btn, gpointer *data)
 	gtk_label_set_text (GTK_LABEL (m_userinfo_label), usrinfostr);
 	gtk_widget_show (main_window);
 
-	BXLog (DBG, "부서: %s 사용자: %s, 직급: %s \n", uDs.udept, uDs.uname, uDs.ujob);
+	BXLog (DBG, "[%s] 부서: %s 사용자: %s, 직급: %s \n", __LINE__, uDs.udept, uDs.uname, uDs.ujob);
 	//printf("%s\n", usrinfostr);
 	func_Send();
 
@@ -1946,7 +1947,7 @@ void s_ip_entry_activate (GtkEntry  *s_ip_entry,	gpointer *data)
 {
 	char *hostname;
 	hostname = (gchar *) gtk_entry_get_text (s_ip_entry);
-	BXLog (DBG, "HOST NAME: %s\n", hostname);
+	BXLog (DBG, "[%s] HOST NAME: %s\n", __LINE__, hostname);
 
 	return;
 }
@@ -1955,7 +1956,7 @@ void s_port_entry_activate (GtkEntry  *s_port_entry,	gpointer *data)
 {
 	char *port;
 	port = (gchar *) gtk_entry_get_text (s_port_entry);
-	BXLog (DBG, "PORT: %s\n", port);
+	BXLog (DBG, "[%s] PORT: %s\n", __LINE__, port);
 
 	return;
 }
@@ -1963,7 +1964,7 @@ void s_port_entry_activate (GtkEntry  *s_port_entry,	gpointer *data)
 void s_detect_entry_activate	(GtkEntry  *s_detect_entry,	gpointer *data)
 {
 	path = (gchar *)gtk_entry_get_text(s_detect_entry);
-	BXLog (DBG, "선택한 디폴트 폴더 위치: %s\n", dpath);
+	BXLog (DBG, "[%s] 선택한 디폴트 폴더 위치: %s\n", __LINE__, dpath);
 
 	return;
 }
@@ -1989,7 +1990,7 @@ void s_folder_btn_clicked (GtkButton *s_folder_btn,	gpointer *data)
 
 	gtk_widget_destroy (filechooserdialog);
 
-	BXLog (DBG, "선택한 디폴트 폴더 위치: %s\n", dpath);
+	BXLog (DBG, "[%s] 선택한 디폴트 폴더 위치: %s\n", __LINE__, dpath);
 
 	return;
 }
@@ -2055,12 +2056,12 @@ int main (int argc, char *argv[])
 	func_Uuid();			// 사용자 UUID
 	
 	// Ini File Check
-	chkini = func_ParseIni ("/home/joeun/bxr_plover/client/lib/plover.ini");
+	chkini = func_ParseIni ("plover.ini");
 	if (chkini != 0)
 	{
 		func_CreateIni();
-		BXLog (DBG, "ini 파일 생성!\n");
-		chkini = func_ParseIni ("/home/joeun/bxr_plover/client/lib/plover.ini");
+		BXLog (DBG, "[%s] ini 파일 생성!\n", __LINE__);
+		chkini = func_ParseIni ("plover.ini");
     }
 
 	func_SetRabbit();	// 서버와 연결

@@ -1,0 +1,113 @@
+        -:    0:Source:encode.c
+        -:    0:Graph:./main.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:
+        -:    2:/**
+        -:    3: * `encode.c' - b64
+        -:    4: *
+        -:    5: * copyright (c) 2014 joseph werle
+        -:    6: */
+        -:    7:
+        -:    8:#include <stdio.h>
+        -:    9:#include <stdlib.h>
+        -:   10:#include "b64.h"
+        -:   11:
+        -:   12:#ifdef b64_USE_CUSTOM_MALLOC
+        -:   13:extern void* b64_malloc(size_t);
+        -:   14:#endif
+        -:   15:
+        -:   16:#ifdef b64_USE_CUSTOM_REALLOC
+        -:   17:extern void* b64_realloc(void*, size_t);
+        -:   18:#endif
+        -:   19:
+        -:   20:char *
+function b64_encode called 0 returned 0% blocks executed 0%
+    #####:   21:b64_encode (const unsigned char *src, size_t len, char *enc) {
+    #####:   22:  int i = 0;
+    #####:   23:  int j = 0;
+        -:   24:
+    #####:   25:  size_t size = 0;
+        -:   26:  unsigned char buf[4];
+        -:   27:  unsigned char tmp[3];
+        -:   28:
+        -:   29:  // alloc
+    #####:   30:  enc = (char *) b64_malloc(1);
+    #####:   31:  if (NULL == enc) { return NULL; }
+branch  0 never executed
+branch  1 never executed
+        -:   32:
+        -:   33:  // parse until end of source
+    #####:   34:  while (len--) {
+branch  0 never executed
+branch  1 never executed
+        -:   35:    // read up to 3 bytes at a time into `tmp'
+    #####:   36:    tmp[i++] = *(src++);
+        -:   37:
+        -:   38:    // if 3 bytes read then encode into `buf'
+    #####:   39:    if (3 == i) {
+branch  0 never executed
+branch  1 never executed
+    #####:   40:      buf[0] = (tmp[0] & 0xfc) >> 2;
+    #####:   41:      buf[1] = ((tmp[0] & 0x03) << 4) + ((tmp[1] & 0xf0) >> 4);
+    #####:   42:      buf[2] = ((tmp[1] & 0x0f) << 2) + ((tmp[2] & 0xc0) >> 6);
+    #####:   43:      buf[3] = tmp[2] & 0x3f;
+        -:   44:
+        -:   45:      // allocate 4 new byts for `enc` and
+        -:   46:      // then translate each encoded buffer
+        -:   47:      // part by index from the base 64 index table
+        -:   48:      // into `enc' unsigned char array
+    #####:   49:      enc = (char *) b64_realloc(enc, size + 4);
+    #####:   50:      for (i = 0; i < 4; ++i) {
+branch  0 never executed
+branch  1 never executed
+    #####:   51:        enc[size++] = b64_table[buf[i]];
+        -:   52:      }
+        -:   53:
+        -:   54:      // reset index
+    #####:   55:      i = 0;
+        -:   56:    }
+        -:   57:  }
+        -:   58:
+        -:   59:  // remainder
+    #####:   60:  if (i > 0) {
+branch  0 never executed
+branch  1 never executed
+        -:   61:    // fill `tmp' with `\0' at most 3 times
+    #####:   62:    for (j = i; j < 3; ++j) {
+branch  0 never executed
+branch  1 never executed
+    #####:   63:      tmp[j] = '\0';
+        -:   64:    }
+        -:   65:
+        -:   66:    // perform same codec as above
+    #####:   67:    buf[0] = (tmp[0] & 0xfc) >> 2;
+    #####:   68:    buf[1] = ((tmp[0] & 0x03) << 4) + ((tmp[1] & 0xf0) >> 4);
+    #####:   69:    buf[2] = ((tmp[1] & 0x0f) << 2) + ((tmp[2] & 0xc0) >> 6);
+    #####:   70:    buf[3] = tmp[2] & 0x3f;
+        -:   71:
+        -:   72:    // perform same write to `enc` with new allocation
+    #####:   73:    for (j = 0; (j < i + 1); ++j) {
+branch  0 never executed
+branch  1 never executed
+    #####:   74:      enc = (char *) b64_realloc(enc, size + 1);
+    #####:   75:      enc[size++] = b64_table[buf[j]];
+        -:   76:    }
+        -:   77:
+        -:   78:    // while there is still a remainder
+        -:   79:    // append `=' to `enc'
+    #####:   80:    while ((i++ < 3)) {
+branch  0 never executed
+branch  1 never executed
+    #####:   81:      enc = (char *) b64_realloc(enc, size + 1);
+    #####:   82:      enc[size++] = '=';
+        -:   83:    }
+        -:   84:  }
+        -:   85:
+        -:   86:  // Make sure we have enough space to add '\0' character at end.
+    #####:   87:  enc = (char *) b64_realloc(enc, size + 1);
+    #####:   88:  enc[size] = '\0';
+        -:   89:
+    #####:   90:  return enc;
+        -:   91:}

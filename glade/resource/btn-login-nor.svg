@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="64" viewBox="0 0 420 64">
+    <defs>
+        <linearGradient id="a" x1="0%" y1="48.839%" y2="51.161%">
+            <stop offset="0%" stop-color="#00BAE8"/>
+            <stop offset="100%" stop-color="#0063F2"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="url(#a)" d="M0 0h420v64H0z"/>
+        <text fill="#FFF" font-family="SpoqaHanSans-Bold, SpoqaHanSans" font-size="16" font-weight="bold" letter-spacing="-.286">
+            <tspan x="209.066" y="39">등록</tspan>
+        </text>
+        <path stroke="#FFF" stroke-width="3" d="M181 33.031L185.978 38 197 27"/>
+    </g>
+</svg>
