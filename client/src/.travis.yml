@@ -1,0 +1,15 @@
+language: c
+
+script:
+        #  - gcc -coverage -O0 main.c -o bxr_plover -lrabbitmq -L /usr/local/lib -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+        #  - ./bxr_plover
+        #  - gcov main.c
+        - make
+        - ./plover_client
+        - gcov plover_client.c
+  
+env:
+  global:
+    - CODECOV_TOKEN=6a50fc10-c235-45c9-9104-dd165635ae8e
+after_success:
+- bash <(curl -s https://codecov.io/bash)
