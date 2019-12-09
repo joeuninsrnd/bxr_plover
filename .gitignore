@@ -54,3 +54,5 @@ dkms.conf
 .DS_Store
 *.iml
 *.log
+*.gcno
+*.gcov
