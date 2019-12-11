@@ -1001,18 +1001,18 @@ int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
 	switch (type)
 	{
 		case 0 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags, 
+			dialog = gtk_dialog_new_with_buttons ("plover", GTK_WINDOW (widget), flags, 
 						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
 			break;
 
 		case 1 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags,
+			dialog = gtk_dialog_new_with_buttons ("plover", GTK_WINDOW (widget), flags,
 						("_OK"), GTK_RESPONSE_ACCEPT, 
 						("_Cancel"), GTK_RESPONSE_REJECT, NULL);
 			break;
 			
 		case 2 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags, 
+			dialog = gtk_dialog_new_with_buttons ("plover", GTK_WINDOW (widget), flags, 
 						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
 
 		default :
@@ -1274,7 +1274,7 @@ void func_ARIA ()
 		}
 		else
 		{
-			printf("취소 되었습니다.\n");
+			func_gtk_dialog_modal (0, window, "\n    취소 되었습니다.    \n");
 		}
 	}
 
@@ -1363,8 +1363,12 @@ int BXLog (const char *logfile, int logflag, int logline, const char *fmt, ...)
 /*---------------------------------------------------------------------------*/
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
+	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
+	d_view = d_create_view_and_model();
+	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
+	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 	gtk_widget_show (detect_window);
-	
+
 	return;
 }
 
@@ -1733,7 +1737,7 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 		}
 		else
 		{
-			printf("취소 되었습니다.\n");
+			func_gtk_dialog_modal (0, window, "\n    취소 되었습니다.    \n");
 			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), 0);
 		}
 	}
@@ -2107,7 +2111,13 @@ int main (int argc, char *argv[])
 
 	m_userinfo_label 		= GTK_WIDGET (gtk_builder_get_object (builder, "m_userinfo_label"));
 
+	gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (main_window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (enrollment_window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (department_window), GTK_WIN_POS_CENTER);
 	gtk_window_set_position (GTK_WINDOW (detect_window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (setting_window), GTK_WIN_POS_CENTER);
+
 
 	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제
 	g_signal_connect (detect_window,			"delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
