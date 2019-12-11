@@ -8,6 +8,7 @@
 #include "plover_common.h"
 #include "plover_client.h"
 
+#define	PROGRESS_SIZE	102400		//100k
 #define	MAX_ERROR_MSG	0x1000
 #define	ERASER_SIZE		512			//1k
 #define	ERASER_ENC_SIZE	896			//1k
@@ -29,7 +30,7 @@ static gchar *path;					// 검사 파일경로
 static gchar *name;					// 등록 유저이름
 static gchar *job;					// 등록 직급이름
 static gchar *vs_dept;				// 등록 부서이름
-static float percent = 0.0;			// Progress Bar
+static gdouble percent = 0.0;		// Progress Bar
 static char message[1024] = {0,};	// Progress Bar Message
 static char *buffer = NULL;		// 검출돌고있는 파일 버퍼
 static int	chk_fcnt = -1;		// 검출파일 총 개수 0부터 1개
@@ -328,6 +329,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 						if (res != 0)
 						{
 							chk_fcnt++;
+							percent += 0.1;
 						}
 
 						// 읽고있는중인 파일 이름 저장
@@ -352,6 +354,7 @@ char match_regex_jnfg (regex_t *r, const char *to_match, char *filepath, struct 
 						if (res != 0)
 						{
 							chk_fcnt++;
+							percent += 0.1;
 						}
 
 					// 읽고있는중인 파일 이름 저장
@@ -415,6 +418,7 @@ char match_regex_d (regex_t *r, const char *to_match, char *filepath, struct dir
 					if (res != 0)
 					{
 						chk_fcnt++;
+						percent += 0.1;
 
 					}
 
@@ -477,6 +481,7 @@ char match_regex_p (regex_t *r, const char *to_match, char *filepath, struct dir
 					if (res != 0)
 					{
 						chk_fcnt++;
+						percent += 0.1;
 					}
 
 					// 읽고있는중인 파일 이름 저장
@@ -604,9 +609,9 @@ int func_Detect (gchar *path)
 	}
 	while ((file = readdir(dp)) != NULL)
 	{
-	// filepath에 현재 path넣기
-	sprintf (filepath, "%s/%s", path, file->d_name);
-	lstat (filepath, &buf);
+		// filepath에 현재 path넣기
+		sprintf (filepath, "%s/%s", path, file->d_name);
+		lstat (filepath, &buf);
 		// 폴더 //
 		if (S_ISDIR (buf.st_mode))
 		{
@@ -624,6 +629,17 @@ int func_Detect (gchar *path)
 			BXLog (DBG, "[%s] Start File Detecting...\n", file->d_name);
 
 			fp = fopen (filepath, "r");
+
+			while (gtk_events_pending ()) 
+					gtk_main_iteration (); 
+
+			memset( message, 0x00, strlen(message));
+			sprintf( message, "%.0f%% Complete", percent*100);
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+			while (gtk_events_pending ()) 
+					gtk_main_iteration (); 
+
 			BXLog (DBG, "[%s] Open FILE\n", file->d_name);
 			if (NULL == fp)
 			{
@@ -754,8 +770,6 @@ int func_SetRabbit()
 int func_Send()
 {
 	static char *enc;
-	//char message[1024];
-	//gdouble percent = 0.0;
 	size_t in_len = 0;
 	//routingkey = "ka"; // TRCODE
 
@@ -838,9 +852,6 @@ int func_Send()
 									amqp_cstring_bytes (routingkey), 0, 0,
 									&props, amqp_cstring_bytes (enc)), "Publishing");
 				}
-				sprintf (message, "%.0f%% Complete", 100.0);
-				gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), 1.0);
-				gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
 				break;
 
 			case 4:	// 파일 삭제 //
@@ -1027,78 +1038,96 @@ int func_file_eraser (int type)
 {
 	FILE *fp;
 	int mode = R_OK | W_OK;
-	char MsgTmp[5];
-	uint size = 0;
+	char MsgTmp[5] = {0,};
+	gdouble size = 0.0;
 	char *msize;
-
+	
+	percent = 0.0;
 	if (access (sfDs.fpath, mode) != 0 )
 	{
 		func_gtk_dialog_modal (0, window, "\n    파일이 삭제 가능한 상태가 아닙니다.    \n");
 	}
-	
 	else
-	{
-		msize = malloc (ERASER_SIZE);
-		fp = fopen (sfDs.fpath, "w");
-
-		for (int i=0 ; i < type ; i++)
 		{
-			while (size < sfDs.fsize)
+			msize = malloc (ERASER_SIZE);
+			fp = fopen (sfDs.fpath, "w");
+			
+			memset (message, 0x00, strlen (message));
+			sprintf (message, "%.0f%% Complete", percent);
+			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), percent / 100.0);
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
+
+			for( int i = 0 ; i < type ; i++ )
 			{
-				switch (i)
-				{
-					case 0 :
-						MsgTmp[0] = 'A';
-						memset( msize, MsgTmp[0], ERASER_SIZE );
-						break;
+				size = 0.0;
 
-					case 1 :
-						MsgTmp[0] = '^';
-						memset( msize, MsgTmp[0], ERASER_SIZE );
-						break;
+				while (size < sfDs.fsize)
+				{   
+					switch(i)
+					{
+						case 0 :
+							MsgTmp[0] = 'A';
+							memset( msize, MsgTmp[0], ERASER_SIZE );
+							break;
+						case 1 :
+							MsgTmp[0] = '^';
+							memset( msize, MsgTmp[0], ERASER_SIZE );
+							break;
+						case 2 :
+							srand(time(NULL));
+							if( size < ERASER_SIZE )
+								for( int j=0 ; j < ERASER_SIZE ; j++ )
+									msize[j] = 'A' + (random() % 26);
+							break;
+						case 3 :
+							MsgTmp[0] = 'Z';
+							memset( msize, MsgTmp[0], ERASER_SIZE );
+							break;
+						case 4 :
+							MsgTmp[0] = 'A';
+							memset( msize, MsgTmp[0], ERASER_SIZE );
+							break;
+						case 5 :
+							MsgTmp[0] = '^';
+							memset( msize, MsgTmp[0], ERASER_SIZE );
+							break;
+						case 6 :
+							srand(time(NULL));
+							if( size < ERASER_SIZE )
+								for( int j=0 ; j < ERASER_SIZE ; j++ )
+									msize[j] = 'A' + (random() % 26);
+							break;
+						default :
+							break;
 
-					case 2 :
-						srand(time(NULL));
-						if( size < ERASER_SIZE )
-							for( int j=0 ; j < ERASER_SIZE ; j++ )
-								msize[j] = 'A' + (random() % 26);
-						break;
+					}
 
-					case 3 :
-						MsgTmp[0] = 'Z';
-						memset( msize, MsgTmp[0], ERASER_SIZE );
-						break;
+					while (gtk_events_pending ()) 
+							gtk_main_iteration (); 
 
-					case 4 :
-						MsgTmp[0] = 'A';
-						memset( msize, MsgTmp[0], ERASER_SIZE );
-						break;
-
-					case 5 :
-						MsgTmp[0] = '^';
-						memset( msize, MsgTmp[0], ERASER_SIZE );
-						break;
-
-					case 6 :
-						srand(time(NULL));
-						if( size < ERASER_SIZE )
-							for( int j = 0 ; j < ERASER_SIZE ; j++ )
-								msize[j] = 'A' + (random() % 26);
-						break;
-
-					default :
-						break;
+					fwrite( msize, 1, ((sfDs.fsize/size))>0?ERASER_SIZE:(sfDs.fsize%ERASER_SIZE), fp);
+					size += ERASER_SIZE;
+					percent = (size+(sfDs.fsize*i))/(sfDs.fsize*type)*100.0;
+					if( (int)size % PROGRESS_SIZE == 0 )
+					{
+						memset( message, 0x00, strlen(message));
+						sprintf( message, "%.0f%% Complete", percent);
+					//				gchar *message = g_strdup_printf ("%.0f%% Complete", percent);
+						gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent / 100.0);
+						gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+					}
 				}
 
-				size += ERASER_SIZE;
+				fseek( fp, 0L, SEEK_SET );
 			}
 
-			fseek (fp, 0L, SEEK_SET);
+			sprintf( message, "%.0f%% Complete", 100.0);
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+	
+			fclose(fp);
+			free(msize);
 		}
-		
-		fclose (fp);
-		free (msize);
-	}
 
 	remove (sfDs.fpath);
 	func_gtk_dialog_modal (0, window, "\n    삭제가 완료되었습니다.    \n");
@@ -1118,10 +1147,12 @@ void func_ARIA ()
 	FILE *fp;
 	int mok = 0, nam = 0, asize = 16;
 	uint cur = 0, sum = 0;
+	gdouble size = 0;
 	long lSize = 0;
 	char message[1134] = {0,};
 	unsigned char *buff = NULL, *temp = NULL;
 	static unsigned char *aribuf = NULL;
+	percent = 0.0;
 	
 
 	if (sfDs.fpath[0] == 0x00)
@@ -1168,6 +1199,19 @@ void func_ARIA ()
 
 			for (int i = 0; i <= mok; i++)
 			{
+				size += 16;
+				percent = size / sfDs.fsize * 100.0;
+				if ((int)size % PROGRESS_SIZE == 0 )
+				{
+					while (gtk_events_pending ()) 
+						gtk_main_iteration ();
+
+					memset( message, 0x00, strlen(message));
+					sprintf( message, "%.0f%% Complete", percent);
+					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR (d_progressbar), percent / 100.0);
+					gtk_progress_bar_set_text (GTK_PROGRESS_BAR (d_progressbar), message);
+				}
+
 				if ( i != mok)
 				{
 					memcpy (aribuf, buff, asize);
@@ -1216,6 +1260,10 @@ void func_ARIA ()
 			d_view = d_create_view_and_model();
 			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
 			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
+			
+			sprintf( message, "%.0f%% Complete", 100.0);
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 
 			strcpy (sfDs.stat, "암호화");
 			free (buff);
@@ -1566,10 +1614,19 @@ d_create_view_and_model (void)
 
 void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 {
+	double chktime = 0;
 	chk_df = 3;
 	chk_fcnt = -1; 						// 파일개수 count 초기화
 	memset (&fDs, 0, sizeof(fDs));		// 구조체 초기화
-	double chktime = 0;
+
+	while (gtk_events_pending ()) 
+					gtk_main_iteration ();
+
+	percent = 0.0;
+	memset( message, 0x00, strlen(message));
+	sprintf( message, "%.0f%% Complete", 0.0);
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 0.0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 	
 	if (path == 0x00)
 	{
@@ -1578,16 +1635,21 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 		return;
 	}
 
-	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (data), percent);
-	sprintf (message, "진행중 입니다...");
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (data), message);
-
 	BXLog (DBG, "Start func_Detect()...\n");
 	start = time(NULL);
 	func_Detect (path);
 	end =time(NULL);
 	chktime = (double)(end - start);
 	BXLog (DBG, "End func_detect()...\n");
+
+	while (gtk_events_pending ()) 
+						gtk_main_iteration (); 
+
+	memset( message, 0x00, strlen(message));
+	sprintf( message, "%.0f%% Complete", 100.0);
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+
 
 	func_Send();
 
@@ -1625,14 +1687,12 @@ void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)
 	strcpy (sfDs.stat, "암호화");
 	func_Send();
 
-
 	return;
 }
 
 void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 {
-	char	message[1134];
-	
+	memset (message, 0x00, strlen (message));
 	if (sfDs.fpath[0] == 0x00)
 	{
 		func_gtk_dialog_modal (0, window, "\n    대상파일이 선택되지 않았습니다.    \n");
@@ -1674,6 +1734,7 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 		else
 		{
 			printf("취소 되었습니다.\n");
+			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), 0);
 		}
 	}
 
@@ -2073,6 +2134,7 @@ int main (int argc, char *argv[])
 	g_object_unref(builder);
 
 	gtk_widget_show(window);
+	gtk_main();
 
 	return 0;
 }
