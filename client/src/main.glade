@@ -8,6 +8,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">부서선택</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-on-parent</property>
     <child>
       <placeholder/>
     </child>
@@ -112,6 +113,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">검사</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-on-parent</property>
     <property name="default_width">660</property>
     <property name="default_height">610</property>
     <child>
@@ -186,7 +188,7 @@
                     <property name="receives_default">True</property>
                     <property name="margin_right">10</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="d_detect_btn_clicked" object="d_progressbar" swapped="no"/>
+                    <signal name="clicked" handler="d_detect_btn_clicked" object="detect_window" swapped="no"/>
                     <child>
                       <placeholder/>
                     </child>
@@ -318,7 +320,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="d_encrypt_btn_clicked" swapped="no"/>
+                    <signal name="clicked" handler="d_encrypt_btn_clicked" object="detect_window" swapped="no"/>
                     <child>
                       <placeholder/>
                     </child>
@@ -336,7 +338,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="d_delete_btn_clicked" swapped="no"/>
+                    <signal name="clicked" handler="d_delete_btn_clicked" object="detect_window" swapped="no"/>
                     <child>
                       <placeholder/>
                     </child>
@@ -421,6 +423,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">신규 사용자 등록</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-on-parent</property>
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <child type="titlebar">
@@ -707,6 +710,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">메인</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-on-parent</property>
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <signal name="destroy" handler="m_window_destroy" swapped="no"/>
@@ -884,6 +888,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">환경설정</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-on-parent</property>
     <property name="default_width">660</property>
     <property name="default_height">610</property>
     <child type="titlebar">
