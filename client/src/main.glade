@@ -8,7 +8,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">부서선택</property>
     <property name="resizable">False</property>
-    <property name="window_position">center-on-parent</property>
+    <property name="window_position">center-always</property>
     <child>
       <placeholder/>
     </child>
@@ -113,7 +113,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">검사</property>
     <property name="resizable">False</property>
-    <property name="window_position">center-on-parent</property>
+    <property name="window_position">center-always</property>
     <property name="default_width">660</property>
     <property name="default_height">610</property>
     <child>
@@ -423,7 +423,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">신규 사용자 등록</property>
     <property name="resizable">False</property>
-    <property name="window_position">center-on-parent</property>
+    <property name="window_position">center-always</property>
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <child type="titlebar">
@@ -710,7 +710,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">메인</property>
     <property name="resizable">False</property>
-    <property name="window_position">center-on-parent</property>
+    <property name="window_position">center-always</property>
     <property name="default_width">420</property>
     <property name="default_height">480</property>
     <signal name="destroy" handler="m_window_destroy" swapped="no"/>
@@ -888,7 +888,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">환경설정</property>
     <property name="resizable">False</property>
-    <property name="window_position">center-on-parent</property>
+    <property name="window_position">center-always</property>
     <property name="default_width">660</property>
     <property name="default_height">610</property>
     <child type="titlebar">

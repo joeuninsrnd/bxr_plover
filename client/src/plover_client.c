@@ -43,7 +43,6 @@ static gchar	*fname;
 static GtkTreeViewColumn	*dcol;
 static GtkCellRenderer		*drenderer;
 
-int BXLog(const char *, int , int , const char *, ...);
 
 /*---------------------------------------------------------------------------*/
 /* Related to Gtk and Glade                                  */
@@ -630,16 +629,6 @@ int func_Detect (gchar *path)
 
 			fp = fopen (filepath, "r");
 
-			while (gtk_events_pending ()) 
-					gtk_main_iteration (); 
-
-			memset( message, 0x00, strlen(message));
-			sprintf( message, "%.0f%% Complete", percent*100);
-			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
-			gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
-			while (gtk_events_pending ()) 
-					gtk_main_iteration (); 
-
 			BXLog (DBG, "[%s] Open FILE\n", file->d_name);
 			if (NULL == fp)
 			{
@@ -692,6 +681,16 @@ int func_Detect (gchar *path)
 			free(buffer);
 			BXLog (DBG, "[%s] Close FILE\n", file->d_name);
 			BXLog (DBG, "[%s] End File Detecting...\n", file->d_name);
+			
+			func_Refresh_ScrollWindow();
+
+			memset( message, 0x00, strlen(message));
+			sprintf( message, "%.0f%% Complete", percent * 100.0);
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), percent);
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
+
+			while (gtk_events_pending ()) 
+					gtk_main_iteration (); 
 
 			chk_fname[0] = 0; // 초기화
 		}
@@ -1001,18 +1000,18 @@ int func_gtk_dialog_modal (int type, GtkWidget *widget, char *message)
 	switch (type)
 	{
 		case 0 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags, 
+			dialog = gtk_dialog_new_with_buttons ("plover", GTK_WINDOW (widget), flags, 
 						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
 			break;
 
 		case 1 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags,
+			dialog = gtk_dialog_new_with_buttons ("plover", GTK_WINDOW (widget), flags,
 						("_OK"), GTK_RESPONSE_ACCEPT, 
 						("_Cancel"), GTK_RESPONSE_REJECT, NULL);
 			break;
 			
 		case 2 :
-			dialog = gtk_dialog_new_with_buttons ("Dialog", GTK_WINDOW (widget), flags, 
+			dialog = gtk_dialog_new_with_buttons ("plover", GTK_WINDOW (widget), flags, 
 						("_OK"), GTK_RESPONSE_ACCEPT, NULL );
 
 		default :
@@ -1051,7 +1050,10 @@ int func_file_eraser (int type)
 		{
 			msize = malloc (ERASER_SIZE);
 			fp = fopen (sfDs.fpath, "w");
-			
+
+			while (gtk_events_pending ()) 
+					gtk_main_iteration (); 
+
 			memset (message, 0x00, strlen (message));
 			sprintf (message, "%.0f%% Complete", percent);
 			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), percent / 100.0);
@@ -1252,14 +1254,9 @@ void func_ARIA ()
 				}
 			}
 
-			gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
-			//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
-
+			func_Refresh_ScrollWindow();
 			//printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
 
-			d_view = d_create_view_and_model();
-			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
-			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 			
 			sprintf( message, "%.0f%% Complete", 100.0);
 			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
@@ -1274,7 +1271,7 @@ void func_ARIA ()
 		}
 		else
 		{
-			printf("취소 되었습니다.\n");
+			func_gtk_dialog_modal (0, window, "\n    취소 되었습니다.    \n");
 		}
 	}
 
@@ -1359,12 +1356,28 @@ int BXLog (const char *logfile, int logflag, int logline, const char *fmt, ...)
 
 
 /*---------------------------------------------------------------------------*/
+/* Refresh ScrollWindow                                      */
+/*---------------------------------------------------------------------------*/
+void func_Refresh_ScrollWindow()
+{
+	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
+	d_view = d_create_view_and_model();
+	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
+	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
+
+	return;
+}
+/* func_Refresh_ScrollWindow() */
+
+
+/*---------------------------------------------------------------------------*/
 /* main_window function                                      */
 /*---------------------------------------------------------------------------*/
 void m_detect_btn_clicked (GtkButton *m_detect_btn, gpointer *data)
 {
+	func_Refresh_ScrollWindow();
 	gtk_widget_show (detect_window);
-	
+
 	return;
 }
 
@@ -1618,16 +1631,16 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	chk_df = 3;
 	chk_fcnt = -1; 						// 파일개수 count 초기화
 	memset (&fDs, 0, sizeof(fDs));		// 구조체 초기화
-
-	while (gtk_events_pending ()) 
-					gtk_main_iteration ();
-
 	percent = 0.0;
+
 	memset( message, 0x00, strlen(message));
 	sprintf( message, "%.0f%% Complete", 0.0);
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 0.0);
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
-	
+
+	while (gtk_events_pending ()) 
+					gtk_main_iteration (); 
+
 	if (path == 0x00)
 	{
 		func_gtk_dialog_modal (0, window, "\n    [파일/폴더]이 선택되지 않았습니다.    \n");
@@ -1650,13 +1663,12 @@ void d_detect_btn_clicked (GtkButton *d_detect_btn, gpointer *data)
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(d_progressbar), 100.0);
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR(d_progressbar), message);
 
+	while (gtk_events_pending ()) 
+						gtk_main_iteration (); 
 
 	func_Send();
 
-	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
-	d_view = d_create_view_and_model();
-	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
-	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
+	func_Refresh_ScrollWindow();
 	BXLog (DBG, "Total func_detect() Time: [%.3f]초, Average: [%.3f]초\n", chktime, chktime/chk_fcnt);
 
 	func_gtk_dialog_modal (0, window, "\n    검출이 완료되었습니다.    \n");
@@ -1675,14 +1687,8 @@ void d_encrypt_btn_clicked (GtkButton *d_encrypt_btn, gpointer *data)
 {
 	func_ARIA();
 
-	gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
-	//gtk_tree_store_remove(dtreestore, &diter);							// 선택한거만 지우기
-
+	func_Refresh_ScrollWindow();
 	//printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
-
-	d_view = d_create_view_and_model();
-	gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
-	gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
 
 	strcpy (sfDs.stat, "암호화");
 	func_Send();
@@ -1719,21 +1725,14 @@ void d_delete_btn_clicked (GtkButton *d_delete_btn, gpointer *data)
 				}
 			}
 
-			gtk_container_remove (GTK_CONTAINER (d_scrolledwindow), d_view);	// 다 지우기
-			//gtk_tree_store_remove(dtreestore, &diter);				// 선택한거만 지우기
-
-			//printf ("[UUID: %s], [파일이름: %s], [파일크기: %d], [파일상태: %s], [파일경로: %s]\n", sfDs.uuid, sfDs.fname, sfDs.fsize, sfDs.stat, sfDs.fpath);
-
-			d_view = d_create_view_and_model();
-			gtk_container_add (GTK_CONTAINER (d_scrolledwindow), d_view);
-			gtk_widget_show_all ((GtkWidget *) d_scrolledwindow);
+			func_Refresh_ScrollWindow();
 
 			strcpy (sfDs.stat, "삭제");
 			func_Send();
 		}
 		else
 		{
-			printf("취소 되었습니다.\n");
+			func_gtk_dialog_modal (0, window, "\n    취소 되었습니다.    \n");
 			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_progressbar), 0);
 		}
 	}
@@ -2107,7 +2106,13 @@ int main (int argc, char *argv[])
 
 	m_userinfo_label 		= GTK_WIDGET (gtk_builder_get_object (builder, "m_userinfo_label"));
 
+	gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (main_window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (enrollment_window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (department_window), GTK_WIN_POS_CENTER);
 	gtk_window_set_position (GTK_WINDOW (detect_window), GTK_WIN_POS_CENTER);
+	gtk_window_set_position (GTK_WINDOW (setting_window), GTK_WIN_POS_CENTER);
+
 
 	// 닫기x 버튼을 hide로 바꾸기, -버튼 활성화 하고 싶으면 glade에서 modal 해제
 	g_signal_connect (detect_window,			"delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
